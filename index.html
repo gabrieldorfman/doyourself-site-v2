@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Do Yourself: internet fibra, celular e energia com cashback</title>
+<title>Do Yourself: energia, internet fibra e celular com cashback</title>
 <meta name="description" content="Planos de internet fibra para casa e empresa, celular e energia solar por assinatura, contratados pelo site, com parte do valor de volta no PIX.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Do Yourself: internet fibra, celular e energia com cashback">
@@ -33,37 +33,38 @@
 }
 </style>
 <link rel="stylesheet" href="/css/v2.css">
+<link rel="stylesheet" href="/css/home.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
 <link rel="modulepreload" href="/kit/moments/lib.js">
 <link rel="modulepreload" href="/kit/moments/photo-chapters/moment.js">
+<script>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('gs');setTimeout(()=>{if(!window.gsap)document.documentElement.classList.remove('gs')},2500)}</script>
 <script src="/js/config.js"></script>
 </head>
 <body>
-<!-- Do Yourself v2 · página inicial (Taste Skill: tipo service; hero split, nav-mega, moment photo-chapters)
-     Cores: internet azul, celular verde, energia laranja, marca verde. Ícones 3D e fotos gerados no Magnific. -->
-
+<!-- Do Yourself v2 · página inicial: topo 3D + CEP, energia, internet, celular (CNPJ), combo, como funciona, dúvidas e rodapé-mapa -->
 <header class="nav">
   <div class="wrap nav__bar">
     <a class="skip-link" href="#top">Pular para o conteúdo</a>
     <a class="nav__logo" href="/" aria-label="Do Yourself, página inicial"><img src="/img/marca/dy-lockup-menu-claro.svg" alt="Do Yourself" width="178" height="34"></a>
     <nav class="nav__links" aria-label="Principal">
+      <div class="nav__item"><a class="nav__link" href="#energia">Energia</a></div>
       <div class="nav__item">
-        <a class="nav__link" href="#planos">Internet <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a class="nav__link" href="#internet">Internet <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <div class="nav__menu">
           <div class="wrap grid">
             <div class="menu-col span-3">
               <p class="t-label">Internet fibra</p>
-              <a href="#planos" data-lq-abrir="casa:1000">Para casa<span>Planos com streaming incluso</span></a>
-              <a href="#planos" data-lq-abrir="empresa:e1000">Para empresa<span>Planos no CNPJ</span></a>
-              <a href="#usos">Por uso<span>Jogos, streaming e casa toda</span></a>
+              <a href="#planos-internet">Para casa<span>Planos com streaming incluso</span></a>
+              <a href="#planos-internet">Para empresa<span>Planos no CNPJ</span></a>
+              <a href="#combo">Combo<span>Luz, internet e celular juntos</span></a>
             </div>
             <div class="menu-col span-3">
               <p class="t-label">Planos para casa</p>
-              <a href="#planos" data-lq-abrir="casa:800">800 Mega<span>Com YouTube Premium</span></a>
-              <a href="#planos" data-lq-abrir="casa:1000">1000 Mega<span>NoPing grátis por 6 meses</span></a>
-              <a href="#planos" data-lq-abrir="casa:2000">2000 Mega<span>Wi-Fi 7 e quatro streamings</span></a>
+              <a href="#planos-internet">800 Mega<span>Com YouTube Premium</span></a>
+              <a href="#planos-internet">1000 Mega<span>NoPing grátis por 6 meses</span></a>
+              <a href="#planos-internet">2000 Mega<span>Wi-Fi 7 e quatro streamings</span></a>
             </div>
             <a class="menu-card span-3 start-10" href="#como-funciona">
               <div class="panel"><img class="frame__img" src="/img/fotos/passo-instalacao.webp" alt="Técnico com o rolo de cabo de fibra chegando na casa da cliente"></div>
@@ -73,111 +74,234 @@
           </div>
         </div>
       </div>
-      <div class="nav__item"><a class="nav__link" href="#junte">Celular</a></div>
-      <div class="nav__item"><a class="nav__link" href="#junte">Energia</a></div>
-      <div class="nav__item"><a class="nav__link" href="#como-funciona">Como funciona</a></div>
-      <div class="nav__item"><a class="nav__link" href="#duvidas">Dúvidas</a></div>
+      <div class="nav__item"><a class="nav__link" href="#celular">Celular</a></div>
+      <div class="nav__item"><a class="nav__link" href="#combo">Combo</a></div>
+            <div class="nav__item"><a class="nav__link" href="#duvidas">Dúvidas</a></div>
     </nav>
     <div class="nav__actions">
-      <a class="btn btn--primary" href="/contratar?origem=home">Consultar meu CEP</a>
+      <a class="btn btn--primary" href="#cep-topo">Ver ofertas do meu CEP</a>
     </div>
     <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Abrir o menu">
-      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Menu</span>
     </button>
   </div>
 </header>
 
 <main id="top">
-  <section class="hero hero--split hero-dy" data-enter aria-labelledby="hero-h">
-    <div class="wrap"><div class="hero-text grid hero__grid">
-      <div class="hero__text span-5">
-        <p class="hero__kicker"><span class="dot" aria-hidden="true"></span>Atendimento no WhatsApp, 24 horas</p>
-        <h1 id="hero-h">Fibra, celular e energia com cashback no PIX</h1>
-        <p class="hero__lead">Contrate pelo site e receba parte do valor de volta: 50% na internet, 100% no celular e 10% na conta de luz.</p>
-        <div class="cta-pill">
-          <span class="cta-pill__q">Tem fibra na sua rua?</span>
-          <a class="cta-pill__btn" href="/contratar?origem=home">Consultar meu CEP<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+  <section class="topo" aria-labelledby="hero-h">
+    <div class="topo__painel">
+      <div class="cx topo__grid">
+        <div class="topo__txt">
+          <span class="eyebrow"><i style="background:var(--marca)">✓</i>Atendimento no WhatsApp, 24 horas</span>
+          <h1 id="hero-h">Luz, internet e celular com <em>cashback no PIX</em></h1>
+          <p class="lede">Conta de luz até 20% menor, internet fibra a partir de <span data-net-min>R$ 89,99</span> e planos de celular para empresas. Contrate pelo site e receba parte do valor de volta.</p>
         </div>
-        <a class="oferta oferta--m" href="#planos" data-lq-abrir="casa:1000">
-          <span class="oferta__selo">OFERTA DO MÊS</span>
-          <p class="oferta__num">1000<small>Mega</small></p>
-          <p class="oferta__det">Upload de 500 Mega · NoPing grátis por 6 meses</p>
-          <div class="oferta__preco"><b>R$ 99,99<small style="font-size:14px;font-weight:400">/mês</small></b><span>R$ 49,99 de volta<br>no PIX</span></div>
-        </a>
-        <p class="cta-sub">Prefere conversar? <a data-zap="Olá! Vim pelo site da Do Yourself e quero saber dos planos." href="https://wa.me/5541995701636">Fale no WhatsApp</a></p>
-      </div>
-      <div class="hero__media span-6 start-7">
-        <img src="/img/fotos/sala-casal.webp" alt="Casal sorrindo no sofá da sala, com a TV e o modem Wi-Fi no rack" style="--ly-pos: 62% 50%" width="1024" height="572" fetchpriority="high">
-        <div class="chips">
-          <a class="chip chip--cel" href="#junte"><img src="/img/3d/celular.webp" alt=""><span>Celular <small data-cel-min>a partir de R$ 39,99</small></span></a>
-          <a class="chip chip--luz" href="#junte"><img src="/img/3d/lampada.webp" alt=""><span>Conta de luz <small>até 20% menor</small></span></a>
+        <div class="topo__cena" aria-hidden="true">
+          <div class="obj obj--luz"><img src="/img/3d-g/lampada.webp" alt="" width="720" height="720"></div>
+          <div class="obj obj--net"><img src="/img/3d-g/wifi.webp" alt="" width="720" height="720"></div>
+          <div class="obj obj--cel"><img src="/img/3d-g/celular.webp" alt="" width="720" height="720"></div>
+          <a class="tag tag--luz" href="#energia" tabindex="-1"><i></i><span>Conta de luz<small>até 20% menor</small></span></a>
+          <a class="tag tag--net" href="#internet" tabindex="-1"><i></i><span>1000 Mega<small>R$ 99,99 por mês</small></span></a>
+          <a class="tag tag--cel" href="#celular" tabindex="-1"><i></i><span>Celular<small>a partir de <span data-cel-min>R$ 29,99</span></small></span></a>
         </div>
-        <a class="oferta" href="#planos" data-lq-abrir="casa:1000">
-          <span class="oferta__selo">OFERTA DO MÊS</span>
-          <p class="oferta__num">1000<small>Mega</small></p>
-          <p class="oferta__det">Upload de 500 Mega · NoPing grátis por 6 meses</p>
-          <div class="oferta__preco"><b>R$ 99,99<small style="font-size:14px;font-weight:400">/mês</small></b><span>R$ 49,99 de volta<br>no PIX</span></div>
-        </a>
       </div>
-    </div></div>
+    </div>
+    <div class="cx topo__cep" id="cep-topo">
+      <form class="cep" data-cep="home" novalidate>
+        <p class="cep__t">Veja as ofertas do seu endereço</p>
+        <div class="cep__campos">
+          <label class="cep__f"><span>CEP</span><input name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-label="CEP"></label>
+          <label class="cep__f"><span>Número</span><input name="numero" autocomplete="address-line2" placeholder="Nº do imóvel" aria-label="Número do imóvel"></label>
+          <button class="cep__btn" type="submit">Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        </div>
+        <div class="cep__busca" hidden>
+          <label class="cep__f"><span>Estado</span><select data-uf aria-label="Estado"></select></label>
+          <label class="cep__f"><span>Cidade</span><input data-cidade list="cidades-topo" autocomplete="address-level2" aria-label="Cidade"></label>
+          <label class="cep__f"><span>Rua</span><input data-rua autocomplete="address-line1" placeholder="Nome da rua" aria-label="Rua"></label>
+          <button class="cep__btn" type="button" data-buscar>Buscar</button>
+          <datalist id="cidades-topo"></datalist>
+          <ul class="cep__res"></ul>
+        </div>
+        <p class="cep__erro" role="status" aria-live="polite"></p>
+        <div class="cep__rodape"><button class="cep__nao" type="button">Não sei meu CEP</button><span class="cep__zap">Prefere conversar? <a data-zap="Olá! Vim pelo site da Do Yourself e quero saber das ofertas." href="https://wa.me/5541995701636">Fale no WhatsApp</a></span></div>
+      </form>
+    </div>
   </section>
 
-  <section class="section" id="inclusos" aria-labelledby="inclusos-h">
-    <div class="wrap">
-      <div class="section-head">
-        <h2 id="inclusos-h">O que vem em todos os planos de internet</h2>
-        <p>Do plano de 500 ao de 2000 Mega, para casa ou para a empresa.</p>
+  <section class="dy" aria-label="Por que a Do Yourself">
+    <div class="cx vantagens" data-sobe>
+      <div class="vant"><img src="/img/3d-g/cashback.webp" alt=""><div><b>Cashback no PIX</b><span>Parte do valor de volta, uma vez</span></div></div>
+      <div class="vant"><img src="/img/3d-g/conversa.webp" alt=""><div><b>WhatsApp 24 horas</b><span>Um número para os três serviços</span></div></div>
+      <div class="vant"><img src="/img/3d-g/instalacao.webp" alt=""><div><b>Instalação grátis</b><span>Fibra instalada em até 48 horas</span></div></div>
+      <div class="vant"><img src="/img/3d-g/casa.webp" alt=""><div><b>Para casa e empresa</b><span>Planos no CPF e no CNPJ</span></div></div>
+    </div>
+  </section>
+
+  <!-- 01 ENERGIA -->
+  <section class="dy svc svc--luz" id="energia" aria-labelledby="energia-h">
+    <div class="cx">
+      <div class="abre" data-sobe>
+        <div>
+          <span class="eyebrow"><i>01</i>Energia solar por assinatura</span>
+          <h2 class="h-sec" id="energia-h">A sua conta de luz até 20% menor</h2>
+          <p class="lede">Uma usina solar parceira gera a energia, e os créditos entram na sua conta. Você continua com a mesma distribuidora.</p>
+          <ul class="checks">
+            <li><span><b>Sem obra e sem placa</b> no telhado</span></li>
+            <li><span><b>Sem investimento:</b> você só assina</span></li>
+            <li><span><b>10% da nova conta de volta</b> no PIX, uma vez</span></li>
+          </ul>
+          <div class="botoes"><a class="bt bt--luz" href="#simulador">Simular minha economia<svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+        </div>
+        <div class="abre__obj" aria-hidden="true">
+          <div class="obj"><img src="/img/3d-g/solar.webp" alt="" width="720" height="720"></div>
+          <div class="obj obj--2"><img src="/img/3d-g/lampada.webp" alt="" width="720" height="720"></div>
+        </div>
       </div>
-      <div class="bnfs">
-        <div class="bnf"><span class="ic3d"><img src="/img/3d/instalacao.webp" alt=""></span><h3>Instalação grátis em até 48 horas</h3><p>O técnico instala a fibra e o modem Wi-Fi sem custo.</p></div>
-        <div class="bnf"><span class="ic3d"><img src="/img/3d/wifi.webp" alt=""></span><h3>Fibra até dentro de casa</h3><p>Sem trecho de cobre no caminho, com upload de 50% do plano.</p></div>
-        <div class="bnf"><span class="ic3d"><img src="/img/3d/tv.webp" alt=""></span><h3>Streaming incluso</h3><p>Paramount+, Globoplay, HBO Max ou YouTube Premium, conforme o plano.</p></div>
-        <div class="bnf"><span class="ic3d ic3d--marca"><img src="/img/3d/cashback.webp" alt=""></span><h3>Cashback no PIX</h3><p>Metade de uma mensalidade de volta, uma vez, depois do contrato.</p></div>
+
+      <div class="sub" id="simulador">
+        <div class="sub__topo" data-sobe><div><h3>Quanto você economiza</h3><p>Escolha o valor médio da sua conta. O valor exato sai da sua fatura.</p></div></div>
+        <div class="sim" data-sim data-sobe>
+          <div class="sim__in">
+            <p class="sim__q">Quanto você paga de luz por mês?</p>
+            <p class="sim__valor"><small>R$</small><span data-sim-valor>500</span></p>
+            <input type="range" min="150" max="5000" step="10" value="500" aria-label="Valor médio da conta de luz">
+            <div class="sim__chips"><button type="button" data-v="250">R$ 250</button><button type="button" data-v="500">R$ 500</button><button type="button" data-v="800">R$ 800</button><button type="button" data-v="1500">R$ 1.500</button></div>
+            <p class="sim__nota">Estimativa com 18% de desconto (15% em contas a partir de R$ 3.000). Disponível para contas a partir de R$ 150.</p>
+          </div>
+          <div class="sim__out">
+            <div class="sim__linha"><span>Economia por mês</span><b data-out="mes">R$ 90,00</b></div>
+            <div class="sim__linha"><span>Economia em um ano</span><b data-out="ano">R$ 1.080,00</b></div>
+            <div class="sim__linha sim__linha--cb"><span>Cashback no PIX</span><b data-out="cb">R$ 41,00</b></div>
+            <a class="bt bt--luz" data-sim-ir href="/contratar?origem=energia">Simular no meu endereço</a>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="section" id="planos" data-leque aria-labelledby="planos-h">
-    <div class="wrap">
-      <div class="titulo-ic">
-        <span class="ic3d"><img src="/img/3d/wifi.webp" alt=""></span>
-        <div class="section-head"><h2 id="planos-h">Planos de internet fibra</h2></div>
-      </div>
-      <div class="lq-topo">
-        <label class="lq-local">
-          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 18s6-5.2 6-10a6 6 0 0 0-12 0c0 4.8 6 10 6 10Z"/><circle cx="10" cy="8" r="2.2"/></svg>
-          <span>Ofertas para <b data-lq-uf>Paraná</b></span>
-          <span class="lq-trocar">Alterar</span>
-          <select data-lq-select aria-label="Escolha o seu estado"></select>
-        </label>
-        <div class="lq-abas" role="tablist" aria-label="Internet para">
-          <button type="button" role="tab" aria-selected="true" data-lq-tipo="casa"><img src="/img/3d/casa.webp" alt="">Para casa</button>
-          <button type="button" role="tab" aria-selected="false" data-lq-tipo="empresa"><img src="/img/3d/predio.webp" alt="">Para empresa</button>
+  <!-- 02 INTERNET -->
+  <section class="dy svc svc--net" id="internet" aria-labelledby="internet-h">
+    <div class="cx">
+      <div class="abre" data-sobe>
+        <div>
+          <span class="eyebrow"><i>02</i>Internet fibra</span>
+          <h2 class="h-sec" id="internet-h">Fibra até dentro de casa, instalada em até 48 horas</h2>
+          <p class="lede">Para casa ou para a empresa, com o modem Wi-Fi incluso e metade de uma mensalidade de volta no PIX.</p>
+          <ul class="checks">
+            <li><span><b>Instalação grátis</b> em até 48 horas</span></li>
+            <li><span><b>Upload de 50%</b> da velocidade do plano</span></li>
+            <li><span><b>Streaming incluso</b> em alguns planos</span></li>
+          </ul>
+          <div class="botoes"><a class="bt bt--net" href="#planos-internet">Ver os planos<svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+        </div>
+        <div class="abre__obj" aria-hidden="true">
+          <div class="obj"><img src="/img/3d-g/wifi.webp" alt="" width="720" height="720"></div>
+          <div class="obj obj--2"><img src="/img/3d-g/casa.webp" alt="" width="720" height="720"></div>
         </div>
       </div>
-      <div class="lq-aviso"><span data-lq-aviso role="status" aria-live="polite"></span></div>
-      <div class="lq-palco" data-lq-palco></div>
-      <div class="lq-pontos" data-lq-pontos></div>
-      <p class="nota">Valores no débito em conta. No boleto ou no PIX, o plano fica R$ 10 mais caro por mês. A disponibilidade depende do endereço.</p>
+
+      <div class="sub" id="planos-internet" data-net>
+        <div class="sub__topo" data-sobe>
+          <div><h3>Planos de internet fibra</h3><p>Valores no débito em conta. No boleto ou no PIX, R$ 10 a mais por mês.</p></div>
+          <div class="seletor">
+            <label class="local"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 18s6-5.2 6-10a6 6 0 0 0-12 0c0 4.8 6 10 6 10Z"/><circle cx="10" cy="8" r="2.2"/></svg><span>Ofertas para <b data-uf-nome>Paraná</b></span><u>Alterar</u><select data-uf-sel aria-label="Escolha o seu estado"></select></label>
+            <div class="abas" role="tablist" aria-label="Internet para">
+              <button type="button" role="tab" aria-selected="true" data-tipo="casa"><img src="/img/3d/casa.webp" alt="">Para casa</button>
+              <button type="button" role="tab" aria-selected="false" data-tipo="empresa"><img src="/img/3d/predio.webp" alt="">Para empresa</button>
+            </div>
+          </div>
+        </div>
+        <div class="trilho">
+          <div class="cards" aria-live="polite"></div>
+          <div class="dica" aria-hidden="true">Arraste para ver os outros planos<svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></div>
+          <div class="pontos"></div>
+          <div class="trilho__setas" style="justify-content:flex-end"><button type="button" aria-label="Planos anteriores"><svg viewBox="0 0 16 16"><path d="M13 8H3M7 4 3 8l4 4"/></svg></button><button type="button" aria-label="Próximos planos"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></div>
+        </div>
+
+        <div class="muito" data-sobe>
+          <div class="obj" aria-hidden="true"><img src="/img/3d-g/controle.webp" alt=""></div>
+          <div>
+            <span class="eyebrow">Para quem precisa de muito</span>
+            <h3>2000 Mega com Wi-Fi 7 e quatro streamings</h3>
+            <p>Para quem faz lives, joga e baixa arquivos grandes, ou tem a casa e o escritório cheios de aparelhos ligados ao mesmo tempo.</p>
+            <div class="muito__preco"><b data-2000>R$ 369,99</b><span data-2000-cb>R$ 184,99 de volta no PIX</span></div>
+            <div class="botoes"><a class="bt bt--ouro" href="/contratar?origem=internet&amp;para=casa&amp;plano=2000">Quero o 2000 Mega</a></div>
+          </div>
+          <ul class="muito__lista">
+            <li><b>1000 Mega de upload</b>Lives e envios sem fila</li>
+            <li><b>Modem Wi-Fi 7</b>Até 200 aparelhos ao mesmo tempo</li>
+            <li><b>HBO Max e Paramount+</b>Filmes, séries e esportes</li>
+            <li><b>Globoplay e Looke</b>Novelas, TV Globo ao vivo e filmes</li>
+          </ul>
+        </div>
+
+        <div class="logos" data-sobe>
+          <span><img src="/img/apps/youtube-premium-logo.svg" alt="">YouTube Premium <small>no 800 Mega</small></span>
+          <span><img src="/img/apps/paramount-44.svg" alt="">Paramount+ <small>no 600 e no 1000</small></span>
+          <span><img src="/img/apps/globoplay.png" alt="">Globoplay <small>no 600 Mega</small></span>
+          <span><img src="/img/apps/hbo-max.png" alt="">HBO Max <small>no 1000 Mega</small></span>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="section" id="usos" aria-labelledby="usos-h">
-    <div class="wrap">
-      <div class="section-head">
-        <h2 id="usos-h">Um plano para cada jeito de usar</h2>
-        <p>Toque em um uso e o plano que combina com ele abre na lista acima.</p>
+  <!-- 03 CELULAR -->
+  <section class="dy svc svc--cel" id="celular" aria-labelledby="celular-h">
+    <div class="cx">
+      <div class="abre" data-sobe>
+        <div>
+          <span class="eyebrow"><i>03</i>Planos de celular para empresas</span>
+          <h2 class="h-sec" id="celular-h">Celular no CNPJ, com ligações ilimitadas</h2>
+          <p class="lede">Planos empresariais para quem tem CNPJ ou MEI, com 100% de uma mensalidade de volta no PIX.</p>
+          <ul class="checks">
+            <li><span><b>Ligações e SMS ilimitados</b> para todo o Brasil</span></li>
+            <li><span><b>Redes sociais</b> sem gastar a internet</span></li>
+            <li><span><b>Portabilidade grátis:</b> traga o número que já está no seu CNPJ</span></li>
+          </ul>
+          <div class="botoes"><a class="bt bt--cel" href="#planos-celular">Ver os planos<svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+        </div>
+        <div class="abre__obj" aria-hidden="true">
+          <div class="obj"><img src="/img/3d-g/celular.webp" alt="" width="720" height="720"></div>
+          <div class="obj obj--2"><img src="/img/3d-g/predio.webp" alt="" width="720" height="720"></div>
+        </div>
       </div>
-      <div class="usos">
-        <a class="uso" href="#planos" data-lq-abrir="casa:1000"><span class="ic3d"><img src="/img/3d/controle.webp" alt=""></span><h3>Jogos online</h3><p>Upload de 500 Mega e NoPing para reduzir o atraso nas partidas.</p><span class="uso__plano">1000 Mega + NoPing</span></a>
-        <a class="uso" href="#planos" data-lq-abrir="casa:800"><span class="ic3d"><img src="/img/3d/tv.webp" alt=""></span><h3>Séries e vídeos</h3><p>YouTube Premium sem anúncios, com o YouTube Music incluso.</p><span class="uso__plano">800 Mega + YouTube Premium</span></a>
-        <a class="uso" href="#planos" data-lq-abrir="casa:2000"><span class="ic3d"><img src="/img/3d/casa.webp" alt=""></span><h3>Casa cheia de aparelhos</h3><p>Modem Wi-Fi 7 e quatro streamings no mesmo plano.</p><span class="uso__plano">2000 Mega + Wi-Fi 7</span></a>
-        <a class="uso" href="#planos" data-lq-abrir="empresa:e1000"><span class="ic3d"><img src="/img/3d/predio.webp" alt=""></span><h3>Empresa e comércio</h3><p>Maquininha, sistema na nuvem e Wi-Fi para clientes, no CNPJ.</p><span class="uso__plano">1000 Mega Empresas</span></a>
+      <div class="sub" id="planos-celular" data-cel>
+        <div class="sub__topo" data-sobe><div><h3>Planos de celular para CNPJ</h3><p>Preço por linha, no débito em conta. Escolha quantas linhas quiser na contratação.</p></div></div>
+        <div class="trilho">
+          <div class="cards"></div>
+          <div class="dica" aria-hidden="true">Arraste para ver os outros planos<svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></div>
+          <div class="pontos"></div>
+        </div>
+        <p class="mei" data-sobe><b>Tem MEI?</b> Você pode contratar no seu CNPJ e usar a linha no seu celular pessoal.</p>
       </div>
     </div>
   </section>
 
-  <section class="section" id="como-funciona" data-moment="photo-chapters" aria-labelledby="como-h">
+  <!-- COMBO -->
+  <section class="dy combo" id="combo" aria-labelledby="combo-h">
+    <div class="cx">
+      <div class="combo__painel" data-sobe data-combo>
+        <div class="combo__objs" aria-hidden="true">
+          <div class="obj"><img src="/img/3d-g/lampada.webp" alt=""></div><div class="obj"><img src="/img/3d-g/wifi.webp" alt=""></div><div class="obj"><img src="/img/3d-g/celular.webp" alt=""></div>
+        </div>
+        <div>
+          <span class="eyebrow"><i>+</i>Combo Do Yourself</span>
+          <h2 class="h-sec" id="combo-h">Junte os três e some os cashbacks</h2>
+          <p class="lede">Com uma conta de luz de R$ 700, a economia estimada é de <b data-eco>R$ 126,00</b> por mês, mais que a mensalidade da internet de 1000 Mega (<span data-net-1000>R$ 99,99</span>).</p>
+          <div class="botoes"><a class="bt bt--ouro" href="/contratar?origem=combo">Montar meu combo</a><a class="bt bt--linha" style="color:#fff;border-color:rgb(255 255 255 / .35)" data-zap="Olá! Quero montar um combo de luz, internet e celular." href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
+        </div>
+        <div class="conta">
+          <div class="conta__l"><img src="/img/3d/lampada.webp" alt=""><div><b>Energia solar</b><span>Conta de R$ 700 por mês</span></div><strong data-cb="luz">R$ 57,40</strong></div>
+          <div class="conta__l"><img src="/img/3d/wifi.webp" alt=""><div><b>Internet 1000 Mega</b><span>50% de uma mensalidade</span></div><strong data-cb="net">R$ 49,99</strong></div>
+          <div class="conta__l"><img src="/img/3d-g/celular.webp" alt=""><div><b>Celular 30 GB</b><span>100% de uma mensalidade, por linha</span></div><strong data-cb="cel">R$ 52,99</strong></div>
+          <div class="conta__total"><span>Volta para você no PIX</span><b data-cb="total">R$ 160,38</b></div>
+          <p class="conta__nota">Exemplo com uma linha de celular. O cashback é pago uma vez, depois que cada contrato é concluído.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section dy-como" id="como-funciona" data-moment="photo-chapters" aria-labelledby="como-h">
     <div class="wrap mo-ph">
       <div class="mo-ph__head"><h2 id="como-h">Como funciona a contratação</h2><p>Tudo pelo celular. Você fala com a gente no WhatsApp só se quiser.</p></div>
       <ol class="mo-ph__list">
@@ -200,64 +324,49 @@
     </div>
   </section>
 
-  <section class="section ground-surface" id="streaming" aria-labelledby="streaming-h">
-    <div class="wrap grid">
-      <div class="span-5">
-        <h2 id="streaming-h">Streaming incluso no preço do plano</h2>
-        <ul class="rows" style="margin-top: var(--s-6)">
-          <li><span class="rows__name"><img src="/img/apps/youtube-premium-logo.svg" alt="">YouTube Premium</span><a class="rows__value" href="#planos" data-lq-abrir="casa:800">800 Mega</a></li>
-          <li><span class="rows__name"><img src="/img/apps/paramount-44.svg" alt="">Paramount+</span><a class="rows__value" href="#planos" data-lq-abrir="casa:600">600 e 1000 Mega</a></li>
-          <li><span class="rows__name"><img src="/img/apps/globoplay.png" alt="">Globoplay</span><a class="rows__value" href="#planos" data-lq-abrir="casa:600">600 Mega</a></li>
-          <li><span class="rows__name"><img src="/img/apps/hbo-max.png" alt="">HBO Max</span><a class="rows__value" href="#planos" data-lq-abrir="casa:1000">1000 Mega</a></li>
-          <li><span class="rows__name">Os quatro e o Looke</span><a class="rows__value" href="#planos" data-lq-abrir="casa:2000">2000 Mega</a></li>
-        </ul>
-        <p class="nota">Globoplay e HBO Max vêm na versão com anúncios. Se quiser outra versão, a troca é feita no app e paga à parte.</p>
+  <section class="dy" id="duvidas" aria-labelledby="duvidas-h">
+    <div class="cx duv">
+      <div data-sobe>
+        <span class="eyebrow"><i style="background:var(--marca)">?</i>Dúvidas</span>
+        <h2 class="h-sec" id="duvidas-h">Perguntas frequentes</h2>
+        <p class="lede">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p>
+        <div class="botoes"><a class="bt bt--linha" data-zap="Olá! Tenho uma dúvida." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></div>
       </div>
-      <div class="frame frame--photo span-6 start-7">
-        <img class="frame__img" src="/img/fotos/futebol-sala.webp" alt="Família no sofá comemorando um gol na TV da sala, à noite" loading="lazy" width="1024" height="775">
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="junte" aria-labelledby="junte-h">
-    <div class="wrap">
-      <div class="section-head">
-        <h2 id="junte-h">Junte a internet com celular e energia</h2>
-        <p>O cashback de cada serviço é somado e pago de uma vez, no mesmo PIX.</p>
-      </div>
-      <div class="junte">
-        <a class="j-cel" data-zap="Olá! Quero saber dos planos de celular." href="https://wa.me/5541995701636"><span class="ic3d ic3d--cel"><img src="/img/3d/celular.webp" alt=""></span><div><h3>Planos de celular</h3><p>Ligações e SMS ilimitados, redes sociais sem gastar a internet e portabilidade grátis.</p><b>100% de uma mensalidade de volta</b></div></a>
-        <a class="j-luz" data-zap="Olá! Quero saber da energia solar por assinatura." href="https://wa.me/5541995701636"><span class="ic3d ic3d--luz"><img src="/img/3d/solar.webp" alt=""></span><div><h3>Energia solar por assinatura</h3><p>A conta de luz fica até 20% menor, sem obra e sem placa no telhado.</p><b>10% da nova conta de volta</b></div></a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="duvidas" aria-labelledby="duvidas-h">
-    <div class="wrap grid">
-      <div class="span-5">
-        <div class="titulo-ic"><span class="ic3d ic3d--marca"><img src="/img/3d/conversa.webp" alt=""></span><h2 id="duvidas-h">Perguntas sobre a internet</h2></div>
-        <p style="margin-top: var(--s-5)">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p>
-        <p style="margin-top: var(--s-4)"><a class="link" data-zap="Olá! Tenho uma dúvida sobre a internet fibra." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></p>
-      </div>
-      <div class="faq span-6 start-7">
-        <div class="faq__item"><h3>A instalação tem custo?</h3><p>Não. A instalação e o modem Wi-Fi são grátis, e o técnico instala em até 48 horas.</p></div>
-        <div class="faq__item"><h3>Tem fidelidade?</h3><p>Sim. No CPF são 12 meses; no CNPJ, 24. Quem cancela antes paga uma multa proporcional ao tempo que falta.</p></div>
-        <div class="faq__item"><h3>E se eu pagar no boleto ou no PIX?</h3><p>O plano fica R$ 10 mais caro por mês. No débito em conta vale o menor preço, com Banco do Brasil, Bradesco, C6, Inter, Itaú, Nubank ou Santander.</p></div>
-        <div class="faq__item"><h3>Posso mudar de endereço?</h3><p>Pode, sem custo. A gente confere antes se a fibra chega no endereço novo.</p></div>
-        <div class="faq__item"><h3>Vocês têm IP fixo?</h3><p>Não. Todos os planos usam IP dinâmico, que funciona com jogos, streaming e a VPN do trabalho sem configurar nada.</p></div>
+      <div class="faq" data-sobe>
+        <div class="faq__item"><h3>Quando recebo o cashback?</h3><p>Depois que o contrato é concluído, em até 7 dias, no PIX. É pago uma vez: 10% da nova conta de luz, 50% de uma mensalidade da internet e 100% de uma mensalidade do celular.</p></div>
+        <div class="faq__item"><h3>Preciso instalar placas para ter o desconto na luz?</h3><p>Não. A energia vem de uma usina solar parceira e os créditos abatem a sua conta. Nada é instalado no imóvel.</p></div>
+        <div class="faq__item"><h3>A instalação da internet tem custo?</h3><p>Não. A instalação e o modem Wi-Fi são grátis, e o técnico instala em até 48 horas.</p></div>
+        <div class="faq__item"><h3>Tem fidelidade na internet?</h3><p>Sim. No CPF são 12 meses; no CNPJ, 24. Quem cancela antes paga uma multa proporcional ao tempo que falta.</p></div>
+        <div class="faq__item"><h3>Posso usar o plano de celular do CNPJ no meu celular?</h3><p>Pode. Quem tem MEI contrata no CNPJ e usa a linha no celular pessoal. A portabilidade é grátis para números que já estão no mesmo CNPJ.</p></div>
       </div>
     </div>
   </section>
 </main>
 
+
+<div class="aviso" role="status" aria-live="polite"></div>
+
 <footer class="rod" id="contact">
   <div class="wrap">
     <div class="rod__cta">
       <div><h2>Veja os planos do seu endereço</h2><p>Você só precisa do CEP e do número da casa.</p></div>
-      <div class="cta-pill">
-        <span class="cta-pill__q">Tem fibra na sua rua?</span>
-        <a class="cta-pill__btn" href="/contratar?origem=home">Consultar meu CEP<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
-      </div>
+      <form class="cep" data-cep="home" novalidate style="flex:1 1 520px;max-width:640px">
+        <div class="cep__campos">
+          <label class="cep__f"><span>CEP</span><input name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-label="CEP"></label>
+          <label class="cep__f"><span>Número</span><input name="numero" placeholder="Nº do imóvel" aria-label="Número do imóvel"></label>
+          <button class="cep__btn" type="submit">Ver ofertas</button>
+        </div>
+        <div class="cep__busca" hidden>
+          <label class="cep__f"><span>Estado</span><select data-uf aria-label="Estado"></select></label>
+          <label class="cep__f"><span>Cidade</span><input data-cidade list="cidades-rod" aria-label="Cidade"></label>
+          <label class="cep__f"><span>Rua</span><input data-rua placeholder="Nome da rua" aria-label="Rua"></label>
+          <button class="cep__btn" type="button" data-buscar>Buscar</button>
+          <datalist id="cidades-rod"></datalist>
+          <ul class="cep__res"></ul>
+        </div>
+        <p class="cep__erro" role="status" aria-live="polite"></p>
+        <div class="cep__rodape"><button class="cep__nao" type="button">Não sei meu CEP</button></div>
+      </form>
     </div>
     <div class="rod__barra">
       <div class="rod__btns">
@@ -271,13 +380,13 @@
     </div>
     <nav class="rod__mapa" aria-label="Mapa do site">
       <details class="rod__col" open><summary>Combo Do Yourself</summary><ul>
-        <li><a href="/contratar?origem=combo">Montar meu combo</a></li><li><a href="#junte">Economize com o combo</a></li><li><a href="#como-funciona">Como funciona</a></li><li><a href="#duvidas">Dúvidas frequentes</a></li></ul></details>
+        <li><a href="/contratar?origem=combo">Montar meu combo</a></li><li><a href="#combo">Economize com o combo</a></li><li><a href="#como-funciona">Como funciona</a></li><li><a href="#duvidas">Dúvidas frequentes</a></li></ul></details>
       <details class="rod__col" open><summary>Energia solar</summary><ul>
-        <li><a href="/contratar?origem=energia">Simulador de economia</a></li><li><a class="em-breve" data-zap="Olá! Quero saber da energia solar para casa ou apartamento." href="https://wa.me/5541995701636">Para casas e apartamentos</a></li><li><a class="em-breve" data-zap="Olá! Quero saber da energia solar para condomínio." href="https://wa.me/5541995701636">Para condomínios</a></li><li><a class="em-breve" data-zap="Olá! Quero saber da energia solar para empresa." href="https://wa.me/5541995701636">Para comércios e empresas</a></li><li><a class="em-breve" data-zap="Olá! Quero entender como funciona a energia solar por assinatura." href="https://wa.me/5541995701636">Como funciona</a></li></ul></details>
+        <li><a href="#simulador">Simulador de economia</a></li><li><a class="em-breve" data-zap="Olá! Quero saber da energia solar para casa ou apartamento." href="https://wa.me/5541995701636">Para casas e apartamentos</a></li><li><a class="em-breve" data-zap="Olá! Quero saber da energia solar para condomínio." href="https://wa.me/5541995701636">Para condomínios</a></li><li><a class="em-breve" data-zap="Olá! Quero saber da energia solar para empresa." href="https://wa.me/5541995701636">Para comércios e empresas</a></li><li><a class="em-breve" data-zap="Olá! Quero entender como funciona a energia solar por assinatura." href="https://wa.me/5541995701636">Como funciona</a></li></ul></details>
       <details class="rod__col" open><summary>Internet fibra</summary><ul>
-        <li><a href="#planos" data-lq-abrir="casa:1000">Internet para casa</a></li><li><a href="#planos" data-lq-abrir="empresa:e1000">Internet para empresas</a></li><li><a href="#usos">Internet para home office</a></li><li><a href="#planos" data-lq-abrir="casa:1000">Internet gamer</a></li><li><a href="#streaming">Internet com streaming</a></li><li><a href="#planos" data-lq-abrir="casa:2000">Wi-Fi 7</a></li><li><a class="em-breve" data-zap="Olá! Quero ajuda para entrar nos aplicativos do plano." href="https://wa.me/5541995701636">Como entrar nos aplicativos</a></li><li><a href="#como-funciona">Como funciona</a></li><li><a href="#duvidas">Dúvidas frequentes</a></li></ul></details>
+        <li><a href="#planos-internet">Internet para casa</a></li><li><a href="#planos-internet">Internet para empresas</a></li><li><a href="#planos-internet">Internet para home office</a></li><li><a href="#internet">Internet gamer</a></li><li><a href="#internet">Internet com streaming</a></li><li><a href="#internet">Wi-Fi 7</a></li><li><a class="em-breve" data-zap="Olá! Quero ajuda para entrar nos aplicativos do plano." href="https://wa.me/5541995701636">Como entrar nos aplicativos</a></li><li><a href="#como-funciona">Como funciona</a></li><li><a href="#duvidas">Dúvidas frequentes</a></li></ul></details>
       <details class="rod__col" open><summary>Planos de celular</summary><ul>
-        <li><a class="em-breve" data-zap="Olá! Quero saber dos planos de celular para CNPJ." href="https://wa.me/5541995701636">Planos para CNPJ</a></li><li><a class="em-breve" data-zap="Olá! Quero saber dos planos de celular para CPF." href="https://wa.me/5541995701636">Planos para CPF</a></li><li><a class="em-breve" data-zap="Olá! Quero saber como funciona a portabilidade." href="https://wa.me/5541995701636">Portabilidade grátis</a></li></ul></details>
+        <li><a href="#planos-celular">Planos para CNPJ e MEI</a></li><li><a class="em-breve" data-zap="Olá! Quero saber como funciona a portabilidade." href="https://wa.me/5541995701636">Portabilidade grátis</a></li></ul></details>
       <details class="rod__col" open><summary>Institucional</summary><ul>
         <li><a class="em-breve" data-zap="Olá! Quero conhecer a Do Yourself." href="https://wa.me/5541995701636">Sobre a Do Yourself</a></li><li><a class="em-breve" data-zap="Olá! Quero saber se tem cobertura na minha cidade." href="https://wa.me/5541995701636">Cobertura</a></li><li><a class="em-breve" data-zap="Olá! Quero ser parceiro da Do Yourself." href="https://wa.me/5541995701636">Seja um parceiro</a></li></ul></details>
       <details class="rod__col" open><summary>Atendimento</summary><ul>
@@ -297,25 +406,13 @@
 </footer>
 
 <nav class="actionbar" aria-label="Ações rápidas">
-  <a class="btn btn--primary" href="/contratar?origem=home">Consultar meu CEP</a>
+  <a class="btn btn--primary" href="#cep-topo">Ver ofertas do meu CEP</a>
 </nav>
 
-<script>
-/* WhatsApp com mensagem pronta; menor preço de celular; o rodapé abre as colunas no desktop */
-(function () {
-  document.querySelectorAll('[data-zap]').forEach((a) => { a.href = DY.linkWhatsApp(a.dataset.zap); a.target = '_blank'; a.rel = 'noopener'; });
-  const cel = document.querySelector('[data-cel-min]');
-  const celMin = () => { try { const m = Math.min(...DY.planosCnpj.map((p) => p.preco)); if (cel && isFinite(m)) cel.textContent = 'a partir de ' + DY.brl(Math.round(m * 100)); } catch (e) {} };
-  celMin(); document.addEventListener('dy:planos', celMin);
-  const cols = document.querySelectorAll('.rod__col');
-  const ajusta = () => { const pc = matchMedia('(min-width: 768px)').matches; cols.forEach((d) => { if (pc) d.open = true; }); };
-  if (!matchMedia('(min-width: 768px)').matches) cols.forEach((d) => (d.open = false));
-  addEventListener('resize', ajusta);
-})();
-</script>
-<script src="/js/leque.js"></script>
+<script src="/js/vendor/gsap.min.js"></script>
+<script src="/js/vendor/ScrollTrigger.min.js"></script>
+<script src="/js/home.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
-<script type="module" src="/kit/layout/layout.js"></script>
 </body>
 </html>
