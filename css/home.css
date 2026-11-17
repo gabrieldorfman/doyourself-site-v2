@@ -596,3 +596,19 @@ main > section.dy > .cx.exp { display: grid; grid-template-columns: 5fr 6fr; gap
 .at__ic--combo img:nth-child(1) { left: 2px !important; } .at__ic--combo img:nth-child(2) { left: 17px !important; z-index: 1; } .at__ic--combo img:nth-child(3) { left: 33px !important; right: auto !important; }
 .atalhos a:hover .at__ic--combo img { transform: translateY(-50%); }
 @media (max-width: 619px) { .at__ic--combo img { width: 24px !important; height: 24px !important; } .at__ic--combo img:nth-child(2) { left: 14px !important; } .at__ic--combo img:nth-child(3) { left: 27px !important; } }
+
+/* ===== espaçamento entre seções (17/11) =====
+   o kit força cada seção a ter no mínimo a altura de uma tela no celular e no tablet;
+   aqui a seção tem só a altura do conteúdo */
+main > section.dy { min-height: 0 !important; }
+/* seções do mesmo serviço (explicação, planos, vantagens) ficam mais próximas entre si */
+@media (min-width: 620px) and (max-width: 1123px) {
+  main > section.dy { padding: 64px 0; }
+  main > section.dy:is(.net-exp, .net-planos, .net-vant, .emp-exp, .emp-planos, .emp-vant) { padding: 40px 0; }
+  main > section.atalhos-sec { padding: 40px 0 16px; }
+}
+@media (max-width: 619px) {
+  main > section.dy { padding: 40px 0; }
+  main > section.dy:is(.net-exp, .net-planos, .net-vant, .emp-exp, .emp-planos, .emp-vant) { padding: 28px 0; }
+  main > section.atalhos-sec { padding: 32px 0 8px; }
+}
