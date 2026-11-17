@@ -117,6 +117,7 @@
       if (ant) { ant.disabled = cards.scrollLeft <= 2; prox.disabled = cards.scrollLeft >= max; }
       const meio = cards.scrollLeft + cards.clientWidth / 2; let k = 0, dist = 1e9;
       $$('.pc', cards).forEach((p, i) => { const d = Math.abs(p.offsetLeft + p.offsetWidth / 2 - meio); if (d < dist) { dist = d; k = i; } });
+      if (max > 4 && cards.scrollLeft >= max - 2) k = $$('.pc', cards).length - 1; // no fim do trilho, o último ponto acende
       $$('button', pontos).forEach((b, i) => b.classList.toggle('is-on', i === k));
     };
     cards.addEventListener('scroll', () => { clearTimeout(t); t = setTimeout(estado, 60); if (dica && cards.scrollLeft > 30) dica.style.visibility = 'hidden'; }, { passive: true });
@@ -198,16 +199,32 @@
     $('[data-mil-ir]', box).href = linkContratar(p, 'casa');
     $('[data-mil-nome]', box).textContent = o.nome === 'Somente Internet' ? 'Internet + NoPing grátis por 6 meses' : `Com ${LOGO[o.nome][1]} incluso`;
   }
+  // empresa: o mesmo card da casa, com o que vem no plano no lugar do streaming
+  const emp_ = $('[data-emp]'); const tEmp = trilho(emp_);
+  const INCLUI = {
+    e1000: ['Gestão de equipe externa, 4 licenças', 'Antivírus incluso', 'Modem Wi-Fi 6'],
+    e600: ['Antivírus incluso', 'Audiolivros e cursos', 'Modem Wi-Fi 5'],
+    e500: ['Audiolivros e cursos', 'Instalação em até 48 horas', 'Modem Wi-Fi 5'],
+    e400: ['Antivírus incluso', 'Instalação em até 48 horas', 'Modem Wi-Fi 5'],
+    e300: ['Antivírus incluso', 'Instalação em até 48 horas', 'Modem Wi-Fi 5'],
+  };
+  function cardEmp(p) {
+    const o = p.opcoes[0]; const up = (p.detalhes.find((d) => d[1] === 'Upload') || [])[2];
+    const dest = p.selo === 'OFERTA DO MÊS';
+    return `<article class="pc pc--emp${dest ? ' is-dest' : ''}" data-id="${p.id}">
+      <span class="pc__selo">${p.selo}</span>
+      <p class="pc__vel"><b>${p.num}</b><span>Mega</span></p>
+      <p class="pc__sub">Upload de ${up}</p>
+      <div class="pc__op"><p class="pc__op-t">O plano inclui</p><ul class="pc__inc">${(INCLUI[p.id] || []).map((t) => `<li>${t}</li>`).join('')}</ul></div>
+      <div class="pc__pe"><p class="pc__de">De ${brl(o.de || p.de)}</p>${precoHtml(o.preco, p.id)}
+      <p class="pc__cb">${DY.brl(cb(o.preco, 50))} de volta no PIX</p>
+      <a class="pc__btn" href="${linkContratar(p, 'empresa')}">Quero este plano</a></div></article>`;
+  }
   function blocoEmp() {
-    const lista = emp();
-    $('[data-emp-lista]').innerHTML = lista.map((p) => {
-      const o = p.opcoes[0]; const up = (p.detalhes.find((d) => d[1] === 'Upload') || [])[2];
-      const extra = { e1000: 'Gestão de equipe externa (4 licenças) e antivírus', e600: 'Antivírus incluso', e400: 'Antivírus incluso', e300: 'Antivírus incluso' }[p.id] || 'Audiolivros e cursos inclusos';
-      return `<li class="ep${p.selo === 'OFERTA DO MÊS' ? ' is-dest' : ''}"><div class="ep__vel"><b>${p.num}</b><span>Mega</span></div>
-        <div class="ep__txt"><b>${extra}</b><span>Upload de ${up}${p.nota ? ' · taxa de R$ 960 isenta com 24 meses' : ''}</span></div>
-        <div class="ep__preco"><b data-num data-v="${o.preco}" data-id="${p.id}">${brl(o.preco)}</b><span>${DY.brl(cb(o.preco, 50))} de volta</span></div>
-        <a class="ep__btn" href="${linkContratar(p, 'empresa')}">Contratar</a></li>`;
-    }).join('');
+    const lista = emp(); const cards = $('.cards', emp_);
+    cards.style.setProperty('--n', lista.length);
+    cards.innerHTML = lista.map(cardEmp).join('');
+    tEmp.desenhou();
   }
   const precosNet = () => Object.fromEntries([...casa(), ...emp()].map((p) => [p.id, p.opcoes[opIdx(p)].preco]));
   function desenhaNet(anim, antigos) {
@@ -221,7 +238,7 @@
     $$('[data-uf-nome]').forEach((n) => (n.textContent = DY.UFS[DY.uf]));
     $$('[data-uf-sel]').forEach((s) => (s.value = DY.uf));
     tNet.desenhou();
-    if (anim) { contar(document, antigos || {}); if (temGsap) gsap.from([...$$('.pc', net), $('[data-mil]'), ...$$('.ep')], { y: 20, autoAlpha: 0, duration: .5, stagger: .05, ease: 'power3.out', clearProps: 'all' }); }
+    if (anim) { contar(document, antigos || {}); if (temGsap) gsap.from([...$$('.pc', net), $('[data-mil]'), ...$$('.pc', emp_)], { y: 20, autoAlpha: 0, duration: .5, stagger: .05, ease: 'power3.out', clearProps: 'all' }); }
     const p2 = (todos.find((p) => p.id === '2000') || {}).opcoes;
     if (p2) { $$('[data-2000]').forEach((e) => (e.textContent = brl(p2[0].preco))); }
     const min = Math.min(...todos.map((p) => p.opcoes[0].preco));
@@ -249,7 +266,7 @@
   function trocaNet(fn, msg) {
     const antes = precosNet();
     const sai = () => { fn(); desenhaNet(true, antes); avisar(msg); const ok = $('.regiao__ok'); if (ok) { ok.hidden = false; clearTimeout(ok._t); ok._t = setTimeout(() => (ok.hidden = true), 2600); } };
-    if (temGsap) gsap.to([...$$('.pc', net), $('[data-mil]'), ...$$('.ep')], { y: 14, autoAlpha: 0, duration: .2, stagger: .02, ease: 'power2.in', onComplete: sai }); else sai();
+    if (temGsap) gsap.to([...$$('.pc', net), $('[data-mil]'), ...$$('.pc', emp_)], { y: 14, autoAlpha: 0, duration: .2, stagger: .02, ease: 'power2.in', onComplete: sai }); else sai();
   }
   $$('[data-uf-sel]').forEach((s) => {
     Object.entries(DY.UFS).sort((a, b) => a[1].localeCompare(b[1], 'pt-BR')).forEach(([uf, n]) => s.add(new Option(n, uf)));

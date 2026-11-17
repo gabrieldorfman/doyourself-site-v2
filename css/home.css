@@ -513,3 +513,86 @@ main > section.emp-vant { background: linear-gradient(180deg, var(--creme) 0%, #
 /* empresa: tom azul-acinzentado */
 .svc--emp { --c: #2c4a66; --a: #eef1f5; --b: #d3dde8; --ink: #2c4a66; }
 .bt--emp { background: #2c4a66; color: #fff; }
+
+/* ===== ajustes 18/11: topo, atalhos por tela, explicações e cards de empresa ===== */
+/* o kit dava 120px de respiro em cima de toda seção; o topo começa colado no menu */
+main > section.topo { padding: var(--nav, 72px) 0 0; }
+
+/* atalhos rápidos — desktop: 4 + 4, ícone ao lado do texto */
+.atalhos { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.atalhos a { grid-template-columns: 64px 1fr; justify-items: start; align-items: center; gap: 14px; padding: 16px 18px; text-align: left; }
+.at__tx { display: grid; gap: 3px; }
+.atalhos b { font-size: 15px; }
+.atalhos small { font-size: 13px; line-height: 1.35; color: var(--cinza); }
+.at--emp { background: #eef1f5; }
+.at--so-cel { display: none !important; }
+.at__ic--combo { position: relative; }
+.at__ic--combo img { position: absolute; width: 34px; height: 34px; }
+.at__ic--combo img:nth-child(1) { left: 4px; top: 6px; } .at__ic--combo img:nth-child(2) { right: 3px; top: 8px; } .at__ic--combo img:nth-child(3) { left: 17px; bottom: 3px; width: 32px; height: 32px; }
+.atalhos a:hover .at__ic--combo img { transform: none; }
+/* tablet: 4 + 4, ícone em cima */
+@media (min-width: 620px) and (max-width: 1123px) {
+  .atalhos { gap: 12px; }
+  .atalhos a { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 10px; padding: 18px 10px 16px; }
+  .atalhos small { font-size: 12.5px; }
+}
+/* celular: 3 linhas de 3 */
+@media (max-width: 619px) {
+  .atalhos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; padding: 0; overflow: visible; }
+  .atalhos a { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 8px; padding: 12px 6px 12px; border-radius: 18px; }
+  .atalhos b { font-size: 13px; line-height: 1.2; }
+  .atalhos small { font-size: 11.5px; line-height: 1.3; }
+  .at__ic { width: 52px; height: 52px; border-radius: 15px; } .at__ic img { width: 44px; height: 44px; }
+  .at__ic--combo img { width: 28px; height: 28px; } .at__ic--combo img:nth-child(3) { left: 13px; width: 27px; height: 27px; }
+  .at--so-cel { display: grid !important; }
+}
+
+/* explicação (casa e empresa): texto à esquerda, passos à direita no desktop */
+main > section.dy > .cx.exp { display: grid; grid-template-columns: 5fr 6fr; gap: 64px; align-items: center; }
+.exp__txt .lede { max-width: 44ch; }
+.exp__passos { counter-reset: none; position: relative; }
+.exp__passos li { grid-template-columns: 36px 64px 1fr; align-items: center; gap: 16px; padding: 18px 22px; border-radius: 22px; box-shadow: 0 18px 36px -30px rgb(15 34 56 / .45); }
+.exp__passos span { width: 36px; height: 36px; font-size: 16px; }
+.exp__passos img { width: 64px; height: 64px; object-fit: contain; }
+.exp__passos li:nth-child(2) { margin-left: 28px; } .exp__passos li:nth-child(3) { margin-left: 56px; }
+.exp__cmp { box-shadow: 0 18px 36px -30px rgb(15 34 56 / .45); }
+@media (min-width: 620px) and (max-width: 1123px) {
+  main > section.dy > .cx.exp { grid-template-columns: 1fr; gap: 32px; }
+  .exp__txt .lede { max-width: 60ch; }
+  .exp__passos { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .exp__passos li { grid-template-columns: 1fr; justify-items: start; gap: 10px; margin: 0 !important; padding: 20px; }
+  .exp__passos li img { width: 72px; height: 72px; }
+  .exp__cmp { display: grid; grid-template-columns: 1fr 1fr; column-gap: 40px; padding: 8px 28px; }
+  .exp__cmp li:nth-last-child(2):nth-child(odd) { border-bottom: 1px solid #ecf0f4; }
+}
+@media (max-width: 619px) {
+  main > section.dy > .cx.exp { grid-template-columns: 1fr; gap: 24px; }
+  .exp__passos li { grid-template-columns: 32px 48px 1fr; gap: 12px; padding: 14px 16px; margin: 0 !important; }
+  .exp__passos span { width: 32px; height: 32px; font-size: 14px; }
+  .exp__passos img { width: 48px; height: 48px; }
+  .exp__passos b { font-size: 16px; } .exp__passos p { font-size: 14px; }
+  .exp__cmp { padding: 4px 18px; } .exp__cmp li { font-size: 14px; }
+}
+
+/* planos para empresa: o mesmo card da casa, em azul-acinzentado */
+.cards--emp { margin-top: 28px; }
+@media (min-width: 1124px) { .cards--emp { grid-auto-columns: calc((100% - (var(--n, 3) - 1) * 20px) / var(--n, 3)); } }
+.pc--emp { --pc: #2c4a66; --pc-ink: #2c4a66; --pc-a: #eef1f5; }
+.pc--emp .pc__op-t { color: #2c4a66; }
+.pc__inc { list-style: none; margin: 0; padding: 12px 14px; border-radius: 14px; background: var(--pc-a); display: grid; gap: 8px; }
+.pc__inc li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; font-size: 14px; line-height: 1.35; }
+.pc__inc li::before { content: ""; width: 18px; height: 18px; margin-top: 1px; border-radius: 50%; background: var(--pc) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3L15 6.5' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat; }
+.pc--emp.is-dest { background: linear-gradient(170deg, #34587a 0%, #1b2f43 65%); border-color: #3d6185; }
+.pc--emp.is-dest .pc__inc { background: rgb(255 255 255 / .09); color: #fff; }
+.pc--emp.is-dest .pc__inc li::before { background-color: var(--ouro); filter: none; }
+.pc--emp.is-dest .pc__op-t { color: #d5e0ec; }
+.emp__nota { margin: 6px auto 0; max-width: 60ch; text-align: center; font-size: 14px; color: var(--cinza); }
+.cards { position: relative; }
+.cards--emp { margin-top: 6px; }
+@media (max-width: 1123px) { .cards > .pc:first-child { scroll-snap-align: start; } .cards > .pc:last-child { scroll-snap-align: end; } }
+@media (min-width: 1124px) { .cards--casa, .cards--emp { overflow: visible; } }
+/* combo: três objetos lado a lado, sobrepostos */
+.at__ic--combo img { top: 50% !important; bottom: auto !important; width: 30px !important; height: 30px !important; transform: translateY(-50%); }
+.at__ic--combo img:nth-child(1) { left: 2px !important; } .at__ic--combo img:nth-child(2) { left: 17px !important; z-index: 1; } .at__ic--combo img:nth-child(3) { left: 33px !important; right: auto !important; }
+.atalhos a:hover .at__ic--combo img { transform: translateY(-50%); }
+@media (max-width: 619px) { .at__ic--combo img { width: 24px !important; height: 24px !important; } .at__ic--combo img:nth-child(2) { left: 14px !important; } .at__ic--combo img:nth-child(3) { left: 27px !important; } }

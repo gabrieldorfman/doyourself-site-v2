@@ -120,7 +120,7 @@ const HBO = (preco, de, resumo) => ({ nome: 'HBO Max', logo: 'hbo-max', preco, d
 
 // Peças reaproveitadas entre os blocos de estados (base: ofertas de NOVEMBRO/2026, válidas até 01/12/2026)
 // Valores no débito em conta; no boleto ou PIX, R$ 10,00 a mais por mês.
-const W56 = '6 ou 5', W67 = '6 ou 7';
+const W56 = '5', W67 = '6'; // 300 a 800 Mega: Wi-Fi 5 · 1000 Mega: Wi-Fi 6 · 2000 Mega: Wi-Fi 7
 const net800 = { id: '800', variante: 'soft', selo: 'COM YOUTUBE PREMIUM', num: '800', unidade: 'MEGA',
   detalhes: detNet('800 Mega', '400 Mega', W56), apps: ['aya-books', 'youtube-premium'], tituloAcao: 'Já vem incluso no seu plano',
   opcoes: [{ nome: 'YouTube Premium', logo: 'youtube-premium', preco: 129.99, de: 169.99, incluso: 'sem custo extra', resumo: '800 Mega + YouTube Premium' }], opcaoPadrao: 0, de: 169.99, tarja: { streaming: ['youtube-premium'] } };
