@@ -604,11 +604,135 @@ main > section.dy { min-height: 0 !important; }
 /* seções do mesmo serviço (explicação, planos, vantagens) ficam mais próximas entre si */
 @media (min-width: 620px) and (max-width: 1123px) {
   main > section.dy { padding: 64px 0; }
-  main > section.dy:is(.net-exp, .net-planos, .net-vant, .emp-exp, .emp-planos, .emp-vant) { padding: 40px 0; }
+  main > section.dy:is(.net-exp, .net-planos, .porque, .emp-exp, .emp-planos, .cel-exp, .cel-planos) { padding: 40px 0; }
   main > section.atalhos-sec { padding: 40px 0 16px; }
 }
 @media (max-width: 619px) {
   main > section.dy { padding: 40px 0; }
-  main > section.dy:is(.net-exp, .net-planos, .net-vant, .emp-exp, .emp-planos, .emp-vant) { padding: 28px 0; }
+  main > section.dy:is(.net-exp, .net-planos, .porque, .emp-exp, .emp-planos, .cel-exp, .cel-planos) { padding: 28px 0; }
   main > section.atalhos-sec { padding: 32px 0 8px; }
 }
+
+/* ===== celular em 4 seções e "por que contratar com a gente" (17/11) ===== */
+.eyebrow--cel { color: var(--cel-ink); }
+main > section.cel-exp { background: linear-gradient(180deg, var(--creme) 0%, #f1f8f4 100%); }
+main > section.cel-planos { background: linear-gradient(180deg, #f1f8f4 0%, #eaf6ef 60%, var(--creme) 100%); }
+main > section.cel-planos .sub { margin-top: 0; }
+@media (min-width: 1124px) { .cards--cel { overflow: visible; } }
+
+/* card de celular: apps em ícones, linhas e detalhes */
+.apps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.apps--3 { grid-template-columns: repeat(3, 1fr); }
+.apps li { display: grid; justify-items: center; gap: 5px; padding: 10px 2px 8px; border-radius: 14px; background: #fff; border: 1.5px solid var(--cel-b); font-size: 11px; font-weight: 600; color: var(--tinta); text-align: center; }
+.apps img { width: 28px; height: 28px; object-fit: contain; }
+.pc--cel .pc__op-t { color: var(--cel-ink); }
+.pc--cel .pc__preco em { white-space: nowrap; }
+.qtd { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; padding: 8px 8px 8px 16px; border-radius: 999px; background: var(--cel-a); }
+.qtd__l { font-size: 14px; font-weight: 700; color: var(--cel-ink); }
+.qtd__ctrl { display: flex; align-items: center; gap: 4px; }
+.qtd__ctrl button { width: 36px; height: 36px; border-radius: 50%; border: 0; background: #fff; color: var(--cel-ink); font: 600 20px/1 var(--font-text); cursor: pointer; box-shadow: 0 2px 6px -2px rgb(15 95 57 / .3); transition: transform .15s, opacity .2s; }
+.qtd__ctrl button:hover:not(:disabled) { transform: scale(1.08); }
+.qtd__ctrl button:disabled { opacity: .35; cursor: default; }
+.qtd__ctrl output { min-width: 28px; text-align: center; font-size: 18px; font-weight: 700; color: var(--tinta); display: inline-block; }
+.qtd__tot { margin: 8px 0 12px; min-height: 20px; font-size: 13px; color: var(--cinza); text-align: center; }
+.qtd__tot b { color: var(--tinta); }
+.pc--cel .pc__det { margin-inline: auto; border: 0; background: none; cursor: pointer; color: var(--cel-ink); font-family: var(--font-text); }
+.pc--cel { position: relative; }
+.pc__mais { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; gap: 10px; padding: 26px 22px 22px; border-radius: inherit; background: #fff; overflow-y: auto; }
+.pc__mais[hidden] { display: none; }
+.pc__mais-t { margin: 0; font: 600 26px/1.1 var(--font-display, inherit); color: var(--cel-ink); }
+.pc__lista { list-style: none; margin: 0; padding: 0; display: grid; }
+.pc__lista li { display: grid; gap: 2px; padding: 9px 0; border-bottom: 1px solid #e6efe9; font-size: 14px; }
+.pc__lista span { font-size: 12px; color: var(--cinza); } .pc__lista b { font-weight: 600; color: var(--tinta); }
+.pc__serv { margin: -4px 0 0; font-size: 14px; line-height: 1.5; color: var(--tinta); }
+.pc__fechar { margin-top: auto; padding: 12px; border-radius: 999px; border: 1.5px solid var(--cel); background: #fff; color: var(--cel-ink); font: 600 15px/1 var(--font-text); cursor: pointer; }
+/* card escuro (oferta do mês) */
+.pc--cel.is-dest .apps li { background: rgb(255 255 255 / .1); border-color: rgb(255 255 255 / .18); color: #fff; }
+.pc--cel.is-dest .apps img { background: #fff; border-radius: 8px; padding: 2px; }
+.pc--cel.is-dest .pc__op-t { color: #bfe8d0; }
+.pc--cel.is-dest .qtd { background: rgb(255 255 255 / .1); }
+.pc--cel.is-dest .qtd__l { color: #fff; }
+.pc--cel.is-dest .qtd__ctrl output { color: #fff; }
+.pc--cel.is-dest .qtd__tot { color: #cfe6d9; } .pc--cel.is-dest .qtd__tot b { color: #fff; }
+.pc--cel.is-dest .pc__det { color: var(--ouro); }
+.pc--cel.is-dest .pc__mais { background: #0e4a2e; color: #fff; }
+.pc--cel.is-dest .pc__mais-t { color: var(--ouro); }
+.pc--cel.is-dest .pc__lista li { border-color: rgb(255 255 255 / .12); }
+.pc--cel.is-dest .pc__lista span { color: #b7d8c5; } .pc--cel.is-dest .pc__lista b, .pc--cel.is-dest .pc__serv { color: #fff; }
+.pc--cel.is-dest .pc__fechar { background: transparent; border-color: var(--ouro); color: var(--ouro); }
+.mei a { color: var(--cel-ink); font-weight: 600; }
+
+/* seção 4 de cada serviço */
+main > section.porque { background: var(--creme); }
+main > section.porque--emp { background: linear-gradient(180deg, var(--creme) 0%, #eef1f5 50%, var(--creme) 100%); }
+.porque { --pq: var(--net); --pq-ink: var(--net-ink); --pq-a: var(--net-a); }
+.porque--emp { --pq: #2c4a66; --pq-ink: #2c4a66; --pq-a: #eef1f5; }
+.porque--cel { --pq: var(--cel); --pq-ink: var(--cel-ink); --pq-a: var(--cel-a); }
+.porque__topo { max-width: 760px; margin: 0 auto; text-align: center; }
+.porque__topo .lede { margin-inline: auto; max-width: 62ch; }
+.perfis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 40px; }
+.perfil { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 92px 20px 22px; border-radius: 24px; background: #fff; border: 1px solid #ebe9e2; color: var(--tinta); text-decoration: none; transition: transform .25s, box-shadow .25s; }
+a.perfil:hover { transform: translateY(-4px); box-shadow: 0 22px 40px -28px rgb(15 34 56 / .45); }
+.perfil > img, .perfil__logo { position: absolute; top: 14px; left: 14px; width: 76px; height: 76px; object-fit: contain; }
+.perfil__logo { display: grid; place-items: center; border-radius: 20px; background: var(--pq-a); }
+.perfil__logo img { width: 44px; height: auto; }
+.perfil__t { font-size: 13px; font-weight: 700; color: var(--pq-ink); }
+.perfil b { font-size: 18px; line-height: 1.25; }
+.perfil p { margin: 0; font-size: 14px; line-height: 1.45; color: var(--cinza); }
+a.perfil::after { content: "Ver o plano →"; margin-top: auto; padding-top: 10px; font-size: 14px; font-weight: 600; color: var(--pq-ink); }
+
+/* faixa: contratando direto × com a Do Yourself */
+.nos { margin-top: 28px; padding: 32px; border-radius: var(--raio-g, 32px); background: linear-gradient(160deg, #183a2b 0%, #0f2a1f 100%); color: #fff; display: grid; grid-template-columns: 1fr 1.6fr; gap: 32px; align-items: center; }
+.nos--net { background: linear-gradient(160deg, #183152 0%, #0f2238 100%); }
+.nos--emp { background: linear-gradient(160deg, #2c4a66 0%, #1b2f43 100%); }
+.nos__cab { display: grid; gap: 14px; }
+.nos__cab img { width: 96px; height: 96px; object-fit: contain; }
+.nos__eyebrow { margin: 0 0 6px; font-size: 13px; font-weight: 700; color: var(--ouro); }
+.nos h3 { margin: 0; font: 500 clamp(24px, 2.4vw, 32px)/1.15 var(--font-display, inherit); letter-spacing: -.01em; }
+.nos__cmp { display: grid; grid-template-columns: 1fr 1.25fr; gap: 12px; }
+.nos__col { list-style: none; margin: 0; padding: 18px 20px; border-radius: 22px; display: grid; gap: 12px; align-content: start; }
+.nos__col--eles { background: rgb(255 255 255 / .05); color: rgb(255 255 255 / .6); }
+.nos__col--nos { background: #fff; color: var(--tinta); }
+.nos__col li { position: relative; padding-left: 28px; font-size: 14px; line-height: 1.4; }
+.nos__col li.nos__t { padding-left: 0; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.nos__col--nos li.nos__t { color: var(--pq-ink); }
+.nos__col li:not(.nos__t)::before { content: ""; position: absolute; left: 0; top: 1px; width: 18px; height: 18px; border-radius: 50%; }
+.nos__col--eles li:not(.nos__t)::before { background: rgb(255 255 255 / .12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6.5 6.5l7 7M13.5 6.5l-7 7' fill='none' stroke='white' stroke-opacity='.7' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center/12px no-repeat; }
+.nos__col--nos li:not(.nos__t)::before { background: var(--pq) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3L15 6.5' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat; }
+
+/* tablet */
+@media (min-width: 620px) and (max-width: 1123px) {
+  .perfis { grid-template-columns: 1fr 1fr; gap: 14px; }
+  .nos { grid-template-columns: 1fr; gap: 22px; padding: 28px; }
+  .nos__cab { grid-template-columns: 80px 1fr; align-items: center; } .nos__cab img { width: 80px; height: 80px; }
+}
+/* celular */
+@media (max-width: 619px) {
+  .porque__topo { text-align: left; }
+  .perfis { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
+  .perfil { padding: 68px 14px 16px; border-radius: 20px; }
+  .perfil > img, .perfil__logo { width: 56px; height: 56px; top: 10px; left: 10px; } .perfil__logo { border-radius: 16px; } .perfil__logo img { width: 32px; }
+  .perfil b { font-size: 15px; } .perfil p { font-size: 13px; } .perfil__t { font-size: 12px; }
+  a.perfil::after { font-size: 13px; }
+  .nos { grid-template-columns: 1fr; gap: 18px; padding: 22px 16px 16px; border-radius: 26px; margin-top: 20px; }
+  .nos__cab { grid-template-columns: 60px 1fr; align-items: center; gap: 12px; } .nos__cab img { width: 60px; height: 60px; }
+  .nos h3 { font-size: 22px; }
+  .nos__cmp { grid-template-columns: 1fr; }
+  .nos__col { padding: 16px; border-radius: 18px; }
+  .nos__col--eles { order: 2; }
+  .apps li { font-size: 10px; padding: 8px 0 6px; } .apps img { width: 24px; height: 24px; }
+}
+/* apps só com ícone, lado a lado */
+.apps, .apps--3 { display: flex; flex-wrap: wrap; gap: 8px; grid-template-columns: none; }
+.apps li { width: 44px; height: 44px; padding: 0; place-items: center; border-radius: 13px; }
+.apps img { width: 26px; height: 26px; }
+.pc--cel.is-dest .apps img { background: none; padding: 0; }
+.pc--cel.is-dest .apps li { background: #fff; border-color: #fff; }
+.pc__mais:focus { outline: none; }
+/* objetos 3D dos perfis maiores, saindo do card */
+.perfil { padding-top: 100px; }
+.perfil > img { width: 100px; height: 100px; top: -14px; left: 10px; filter: drop-shadow(0 12px 14px rgb(15 34 56 / .18)); }
+.perfil__logo { top: 14px; left: 18px; }
+.perfis { margin-top: 52px; row-gap: 30px; }
+@media (max-width: 619px) { .perfil { padding-top: 70px; } .perfil > img { width: 72px; height: 72px; top: -12px; left: 6px; } .perfis { row-gap: 22px; margin-top: 34px; } .apps li { width: 40px; height: 40px; } .apps img { width: 24px; height: 24px; } }
+@media (max-width: 619px) { .apps, .apps--3 { gap: 6px; } .apps li { width: 36px; height: 36px; border-radius: 11px; } .apps img { width: 22px; height: 22px; } }

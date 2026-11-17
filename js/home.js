@@ -89,19 +89,52 @@
   /* ---------- Cards de plano ---------- */
   const APPS = { 'youtube-premium': '/img/apps/youtube-premium-logo.svg', paramount: '/img/apps/paramount-44.svg', 'hbo-max': '/img/apps/hbo-max.png', globoplay: '/img/apps/globoplay.png', whatsapp: '/img/apps/whatsapp.svg' };
   const precoHtml = (v, id) => { const { i, d } = partes(v); return `<p class="pc__preco"><small>R$</small><b data-num data-v="${v}" data-id="${id}">${i}</b><i>,${d}</i><em>/mês</em></p>`; };
+  // celular: os apps que não gastam a internet viram ícones, e cada card escolhe quantas linhas
+  const APP = { whatsapp: 'WhatsApp', messenger: 'Messenger', waze: 'Waze', facebook: 'Facebook', instagram: 'Instagram' };
+  const linhas = {}; const MAX_L = 9;
+  const linkCel = (p) => `/contratar?origem=celular&para=cnpj&plano=${encodeURIComponent(p.id)}&linhas=${linhas[p.id] || 1}`;
+  function totalCel(p) {
+    const n = linhas[p.id] || 1; const tot = c(p.preco) * n;
+    return n === 1 ? 'Valor de 1 linha' : `${n} linhas: <b>${DY.brl(tot)}/mês</b> · ${DY.brl(DY.cashbackCentavos(tot, 100))} de volta`;
+  }
   function cardCel(p) {
-    const dest = p.selo === 'OFERTA DO MÊS';
-    const link = `/contratar?origem=celular&para=cnpj&plano=${encodeURIComponent(p.id)}&linhas=1`;
-    const zero = (p.apps || []).length > 3 ? 'WhatsApp, Waze, Facebook e Instagram sem gastar a internet' : 'WhatsApp e Waze sem gastar a internet';
+    const dest = p.selo === 'OFERTA DO MÊS'; const n = linhas[p.id] || 1;
+    const apps = (p.apps || []).filter((k) => APP[k]);
+    const det = (p.detalhes || []).map((d) => `<li><span>${d[1]}</span><b>${d[2]}</b></li>`).join('');
     return `<article class="pc pc--cel${dest ? ' is-dest' : ''}" data-id="${p.id}">
       <span class="pc__selo">${p.selo}</span>
       <p class="pc__vel"><b>${p.gb}</b><span>GB</span></p>
       <p class="pc__sub">${p.plano} GB do plano + ${p.bonus} GB de bônus</p>
-      <p class="pc__hook"><img src="/img/apps/whatsapp.svg" alt=""><span>${zero}</span></p>
-      <div class="pc__pe">${precoHtml(p.preco, 'c' + p.id)}
-      <p class="pc__cb">${DY.brl(cb(p.preco, 100))} de volta no PIX</p>
-      <a class="pc__btn" href="${link}">Quero este plano</a></div></article>`;
+      <div class="pc__op"><p class="pc__op-t">Sem gastar a internet</p><ul class="apps apps--${apps.length}">${apps.map((k) => `<li title="${APP[k]}"><img src="/img/apps/${k}.svg" alt="${APP[k]}"></li>`).join('')}</ul></div>
+      <div class="pc__pe">${precoHtml(p.preco, 'c' + p.id).replace('/mês', '/mês por linha')}
+      <p class="pc__cb">${DY.brl(cb(p.preco, 100))} de volta por linha</p>
+      <div class="qtd"><span class="qtd__l" id="ql-${p.id}">Linhas</span><div class="qtd__ctrl" role="group" aria-labelledby="ql-${p.id}"><button type="button" data-l="-1" aria-label="Tirar uma linha"${n <= 1 ? ' disabled' : ''}>−</button><output aria-live="polite">${n}</output><button type="button" data-l="1" aria-label="Adicionar uma linha"${n >= MAX_L ? ' disabled' : ''}>+</button></div></div>
+      <p class="qtd__tot">${totalCel(p)}</p>
+      <a class="pc__btn" data-ir-cel href="${linkCel(p)}">Quero este plano</a>
+      <button type="button" class="pc__det" data-det aria-expanded="false">Ver detalhes do plano</button></div>
+      <div class="pc__mais" hidden tabindex="-1"><p class="pc__mais-t">${p.gb} GB por mês</p><ul class="pc__lista">${det}</ul>
+        <p class="pc__op-t">Também vem no plano</p><p class="pc__serv">${(p.servicos || []).join(' · ')}</p>
+        <button type="button" class="pc__fechar" data-det-fechar>Voltar ao plano</button></div></article>`;
   }
+  document.addEventListener('click', (e) => {
+    const bt = e.target.closest('.pc--cel [data-l]'); if (bt) {
+      const card = bt.closest('.pc'); const p = DY.planosCnpj.find((x) => x.id === card.dataset.id); if (!p) return;
+      const n = Math.max(1, Math.min(MAX_L, (linhas[p.id] || 1) + +bt.dataset.l)); linhas[p.id] = n;
+      $('output', card).textContent = n; $('.qtd__tot', card).innerHTML = totalCel(p); $('[data-ir-cel]', card).href = linkCel(p);
+      const [menos, mais] = $$('[data-l]', card); menos.disabled = n <= 1; mais.disabled = n >= MAX_L;
+      if (n === MAX_L) avisar('Para 10 linhas ou mais, fale com a gente no WhatsApp: tem condição especial.');
+      if (temGsap) gsap.fromTo($('output', card), { scale: 1.35 }, { scale: 1, duration: .4, ease: 'back.out(3)' });
+      return;
+    }
+    const ab = e.target.closest('[data-det]'), fe = e.target.closest('[data-det-fechar]');
+    if (ab || fe) {
+      const card = (ab || fe).closest('.pc'); const mais = $('.pc__mais', card); const abrir = !!ab;
+      mais.hidden = !abrir; card.classList.toggle('is-det', abrir); $('[data-det]', card).setAttribute('aria-expanded', String(abrir));
+      if (abrir && temGsap) gsap.from(mais, { autoAlpha: 0, y: 12, duration: .3, ease: 'power2.out' });
+      if (abrir) mais.scrollTop = 0; (abrir ? mais : $('[data-det]', card)).focus({ preventScroll: true });
+    }
+  });
+
 
   // trilho: setas no desktop quando sobra card, pontos e dica no celular
   function trilho(el) {
