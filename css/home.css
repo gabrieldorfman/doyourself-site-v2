@@ -736,3 +736,37 @@ a.perfil::after { content: "Ver o plano →"; margin-top: auto; padding-top: 10p
 .perfis { margin-top: 52px; row-gap: 30px; }
 @media (max-width: 619px) { .perfil { padding-top: 70px; } .perfil > img { width: 72px; height: 72px; top: -12px; left: 6px; } .perfis { row-gap: 22px; margin-top: 34px; } .apps li { width: 40px; height: 40px; } .apps img { width: 24px; height: 24px; } }
 @media (max-width: 619px) { .apps, .apps--3 { gap: 6px; } .apps li { width: 36px; height: 36px; border-radius: 11px; } .apps img { width: 22px; height: 22px; } }
+
+/* ===== oferta do mês antes dos outros planos; versão compacta no celular (17/11) ===== */
+.mil { margin-top: 64px; }
+.sub__rot { margin: 48px 0 18px; text-align: center; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--net-ink); }
+.mil__info span { display: block; }
+.mil__val { display: block; }
+@media (max-width: 1123px) { .mil { margin-top: 56px; } .sub__rot { margin-top: 40px; } }
+@media (max-width: 619px) {
+  .mil { margin-top: 44px; padding: 22px 16px 18px; gap: 14px; border-radius: 24px; }
+  .mil .obj { width: 92px; top: -38px; right: -4px; }
+  .mil__selo { padding: 6px 10px; font-size: 11px; }
+  .mil__vel { margin-top: 10px; font-size: 20px; }
+  .mil__vel b { font-size: 60px; margin-right: 4px; }
+  .mil__nome { margin-top: 6px; font-size: 14px; }
+  .mil__txt { display: none; }
+  /* destaques viram 4 etiquetas curtas, sem a descrição */
+  .mil__info { margin-top: 12px; gap: 6px; }
+  .mil__info li { padding: 8px 10px; border-radius: 12px; }
+  .mil__info b { font-size: 12.5px; margin: 0; }
+  .mil__info span { display: none; }
+  .mil__t { margin: 0 0 8px; font-size: 13px; }
+  .mil .op { padding: 8px 4px 7px; }
+  .mil .op__ic { width: 34px; height: 34px; }
+  /* preço riscado, preço e cashback em uma faixa só */
+  .mil__val { display: grid; grid-template-columns: auto 1fr; align-items: end; column-gap: 12px; margin-top: 12px; }
+  .mil__de { grid-column: 1 / -1; margin: 0; font-size: 12.5px; }
+  .mil .pc__preco--g b { font-size: 46px; }
+  .mil__cb { margin: 0 0 8px; font-size: 13px; line-height: 1.3; }
+  .mil__bts { margin-top: 14px; gap: 10px; justify-content: center; }
+  .mil__bts .bt { min-height: 48px; }
+  .mil__det { font-size: 14px; }
+  .sub__rot { margin: 32px 0 12px; font-size: 12px; }
+}
+@media (max-width: 619px) { .mil__info b { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .mil__info li { padding: 8px; } }

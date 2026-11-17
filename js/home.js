@@ -222,15 +222,31 @@
       <a class="pc__btn" data-ir="${p.id}" href="${linkContratar(p, 'casa')}">Quero este plano</a>
       ${DET[p.id] ? `<a class="pc__det" href="${V1 + DET[p.id]}">Ver detalhes do plano</a>` : '<span class="pc__det pc__det--vazio"></span>'}</div></article>`;
   }
+  // oferta do mês: o plano com esse selo aparece em destaque antes dos outros cards
+  const DESTAQUE = {
+    '1000': { obj: '/img/3d-g/controle.webp', nome: 'Internet + NoPing grátis por 6 meses',
+      txt: 'A velocidade para a casa toda: jogos, chamadas de vídeo, séries em 4K e vários aparelhos ligados ao mesmo tempo.',
+      info: [['500 Mega de upload', 'Envie vídeos e faça lives sem fila'], ['Modem Wi-Fi 6', 'Mais alcance pela casa, sem custo'], ['NoPing por 6 meses', 'Menos atraso nos jogos online'], ['Instalação em até 48 h', 'Grátis, com teste de velocidade']] },
+  };
+  const ofertaCasa = (todos) => todos.find((p) => p.selo === 'OFERTA DO MÊS' && p.id !== '2000') || todos.find((p) => p.id === '1000');
   function blocoMil(p) {
     const box = $('[data-mil]'); if (!p) { box.hidden = true; return; }
+    box.hidden = false; const d = DESTAQUE[p.id] || {};
+    const info = d.info || (p.detalhes || []).slice(0, 4).map((x) => [x[2], x[1]]);
     const o = p.opcoes[opIdx(p)];
+    $('[data-mil-num]', box).textContent = p.num;
+    $('[data-mil-t]', box).textContent = `Escolha como quer o seu ${p.num} Mega`;
+    $('[data-mil-txt]', box).textContent = d.txt || '';
+    $('[data-mil-txt]', box).hidden = !d.txt;
+    $('[data-mil-info]', box).innerHTML = info.map(([b, t]) => `<li><b>${b}</b><span>${t}</span></li>`).join('');
+    if (d.obj) $('[data-mil-obj]', box).src = d.obj;
+    if (DET[p.id]) $('[data-mil-det]', box).href = V1 + DET[p.id];
     $('[data-mil-ops]', box).innerHTML = opsVisiveis(p).map((k) => tile(p, k)).join('');
     $('[data-mil-preco]', box).innerHTML = precoHtml(o.preco, p.id).replace('pc__preco', 'pc__preco pc__preco--g');
     $('[data-mil-cb]', box).textContent = `${DY.brl(cb(o.preco, 50))} de volta no PIX`;
     $('[data-mil-de]', box).textContent = 'De ' + brl(o.de || p.de);
     $('[data-mil-ir]', box).href = linkContratar(p, 'casa');
-    $('[data-mil-nome]', box).textContent = o.nome === 'Somente Internet' ? 'Internet + NoPing grátis por 6 meses' : `Com ${LOGO[o.nome][1]} incluso`;
+    $('[data-mil-nome]', box).textContent = o.nome === 'Somente Internet' ? (d.nome || 'Somente internet') : `Com ${LOGO[o.nome][1]} incluso`;
   }
   // empresa: o mesmo card da casa, com o que vem no plano no lugar do streaming
   const emp_ = $('[data-emp]'); const tEmp = trilho(emp_);
@@ -262,11 +278,12 @@
   const precosNet = () => Object.fromEntries([...casa(), ...emp()].map((p) => [p.id, p.opcoes[opIdx(p)].preco]));
   function desenhaNet(anim, antigos) {
     const todos = casa();
-    const lista = todos.filter((p) => !['1000', '2000'].includes(p.id));
+    const destaque = ofertaCasa(todos);
+    const lista = todos.filter((p) => p !== destaque && p.id !== '2000');
     const cards = $('.cards', net);
     cards.style.setProperty('--n', lista.length);
     cards.innerHTML = lista.map(cardNet).join('');
-    blocoMil(todos.find((p) => p.id === '1000'));
+    blocoMil(destaque);
     blocoEmp();
     $$('[data-uf-nome]').forEach((n) => (n.textContent = DY.UFS[DY.uf]));
     $$('[data-uf-sel]').forEach((s) => (s.value = DY.uf));
@@ -286,8 +303,8 @@
     const grupo = b.parentElement;
     $$('.op', grupo).forEach((x) => { const on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-checked', String(on)); });
     if (temGsap) gsap.fromTo(b, { scale: .94 }, { scale: 1, duration: .45, ease: 'back.out(3)' });
-    const raiz = id === '1000' ? $('[data-mil]') : b.closest('.pc');
-    if (id === '1000') blocoMil(p);
+    const noDestaque = !!b.closest('[data-mil]'); const raiz = noDestaque ? $('[data-mil]') : b.closest('.pc');
+    if (noDestaque) blocoMil(p);
     else {
       raiz.querySelector('.pc__de').textContent = 'De ' + brl(o.de || p.de);
       raiz.querySelector('.pc__cb').textContent = `${DY.brl(cb(o.preco, 50))} de volta no PIX`;
