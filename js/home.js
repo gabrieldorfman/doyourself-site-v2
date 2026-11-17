@@ -159,8 +159,10 @@
   };
   // ordem dos streamings no card do 600: Globoplay primeiro
   const opsVisiveis = (p) => {
-    if (p.id === '600') return ['GloboPlay', 'Paramount+'].map((n) => p.opcoes.findIndex((o) => o.nome === n)).filter((k) => k >= 0);
-    return p.opcoes.map((_, k) => k);
+    // streamings em ordem crescente de preço; no 600, só os streamings (o 'somente internet' tem o mesmo preço do Paramount+)
+    let ks = p.opcoes.map((_, k) => k);
+    if (p.id === '600') ks = ks.filter((k) => p.opcoes[k].nome !== 'Somente Internet');
+    return ks.sort((a, b) => p.opcoes[a].preco - p.opcoes[b].preco);
   };
   const linkContratar = (p, tipo) => `/contratar?origem=internet&para=${tipo}&plano=${encodeURIComponent(p.id)}&opcao=${encodeURIComponent(p.opcoes[opIdx(p)].nome)}`;
   const tile = (p, k, fixo) => {
@@ -189,7 +191,7 @@
   function blocoMil(p) {
     const box = $('[data-mil]'); if (!p) { box.hidden = true; return; }
     const o = p.opcoes[opIdx(p)];
-    $('[data-mil-ops]', box).innerHTML = p.opcoes.map((_, k) => tile(p, k)).join('');
+    $('[data-mil-ops]', box).innerHTML = opsVisiveis(p).map((k) => tile(p, k)).join('');
     $('[data-mil-preco]', box).innerHTML = precoHtml(o.preco, p.id).replace('pc__preco', 'pc__preco pc__preco--g');
     $('[data-mil-cb]', box).textContent = `${DY.brl(cb(o.preco, 50))} de volta no PIX`;
     $('[data-mil-de]', box).textContent = 'De ' + brl(o.de || p.de);
