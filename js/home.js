@@ -111,10 +111,8 @@
       <div class="qtd"><span class="qtd__l" id="ql-${p.id}">Linhas</span><div class="qtd__ctrl" role="group" aria-labelledby="ql-${p.id}"><button type="button" data-l="-1" aria-label="Tirar uma linha"${n <= 1 ? ' disabled' : ''}>−</button><output aria-live="polite">${n}</output><button type="button" data-l="1" aria-label="Adicionar uma linha"${n >= MAX_L ? ' disabled' : ''}>+</button></div></div>
       <p class="qtd__tot">${totalCel(p)}</p>
       <a class="pc__btn" data-ir-cel href="${linkCel(p)}">Quero este plano</a>
-      <button type="button" class="pc__det" data-det aria-expanded="false">Ver detalhes do plano</button></div>
-      <div class="pc__mais" hidden tabindex="-1"><p class="pc__mais-t">${p.gb} GB por mês</p><ul class="pc__lista">${det}</ul>
-        <p class="pc__op-t">Também vem no plano</p><p class="pc__serv">${(p.servicos || []).join(' · ')}</p>
-        <button type="button" class="pc__fechar" data-det-fechar>Voltar ao plano</button></div></article>`;
+      ${btDet}</div>
+      ${painelDet(`${p.gb} GB por mês`, [...(p.detalhes || []).map((d) => [d[1], d[2]]), ['Também vem no plano', (p.servicos || []).join(' · ')]], '')}</article>`;
   }
   document.addEventListener('click', (e) => {
     const bt = e.target.closest('.pc--cel [data-l]'); if (bt) {
@@ -180,7 +178,7 @@
   /* internet: cards de casa (sem o 1000 e o 2000), o 1000 Mega em destaque e a lista para empresas */
   const V1 = 'https://doyourself-site.vercel.app';
   const DET = { '500': '/internet-fibra/casa/500-mega', '600': '/internet-fibra/casa/600-mega', '800': '/internet-fibra/casa/800-mega', '1000': '/internet-fibra/casa/1-giga' };
-  const LOGO = { 'GloboPlay': ['/img/apps/globoplay.png', 'Globoplay'], 'Paramount+': ['/img/apps/paramount-44.svg', 'Paramount+'], 'HBO Max': ['/img/apps/hbo-max.png', 'HBO Max'], 'YouTube Premium': ['/img/apps/youtube-premium-logo.svg', 'YouTube Premium'], 'Somente Internet': ['/img/3d/controle.webp', 'Internet + NoPing'] };
+  const LOGO = { 'GloboPlay': ['/img/apps/globoplay.png', 'Globoplay'], 'Paramount+': ['/img/apps/paramount-44.svg', 'Paramount+'], 'HBO Max': ['/img/apps/hbo-max.png', 'HBO Max'], 'YouTube Premium': ['/img/apps/youtube-premium-logo.svg', 'YouTube Premium'], 'Somente Internet': ['/img/apps/noping.svg', 'Internet + NoPing'] };
   const escolha = {}; // plano -> índice da opção
   const net = $('[data-net]');
   const tNet = trilho(net);
@@ -206,21 +204,36 @@
   };
   function areaOpcoes(p) {
     if (p.id === '800') return `<div class="pc__op"><p class="pc__op-t">Aplicativo incluso</p><div class="ops ops--1">${tile(p, 0, true)}</div></div>`;
-    if (p.opcoes.length > 1) return `<div class="pc__op"><p class="pc__op-t">Selecione seu streaming</p><div class="ops" role="radiogroup" aria-label="Streaming do plano de ${p.num} Mega">${opsVisiveis(p).map((k) => tile(p, k)).join('')}</div></div>`;
+    if (p.opcoes.length > 1) return `<div class="pc__op"><p class="pc__op-t">Selecione seu streaming</p><div class="ops" role="radiogroup" aria-label="Streaming do plano de ${milhar(p.num)} Mega">${opsVisiveis(p).map((k) => tile(p, k)).join('')}</div></div>`;
     return `<div class="pc__op"><p class="pc__op-t">Somente internet</p><p class="pc__op-vazio">Modem Wi-Fi e instalação grátis inclusos. Sem streaming.</p></div>`;
   }
+  const milhar = (n) => String(n).replace(/^(\d)(\d{3})$/, '$1.$2'); // 1000 → 1.000
+  // detalhes rápidos: o card vira uma lista curta do que importa, com a página completa do plano e a volta
+  const val = (p, k) => ((p.detalhes || []).find((d) => d[1].startsWith(k)) || [])[2] || '';
+  function painelDet(titulo, linhas, pagina) {
+    return `<div class="pc__mais" hidden tabindex="-1"><p class="pc__mais-t">${titulo}</p>
+      <ul class="pc__lista">${linhas.filter((l) => l[1]).map(([a, b]) => `<li><span>${a}</span><b>${b}</b></li>`).join('')}</ul>
+      <div class="pc__mais-bts">${pagina ? `<a class="bt-mini bt-mini--cheio" href="${pagina}">Página do plano</a>` : ''}<button type="button" class="bt-mini" data-det-fechar>Voltar</button></div></div>`;
+  }
+  const btDet = '<button type="button" class="bt-mini pc__det" data-det aria-expanded="false">Ver detalhes do plano</button>';
+  function appsNet(p) {
+    const nomes = p.opcoes.map((o) => (o.nome === 'Somente Internet' ? (p.id === '1000' ? 'NoPing por 6 meses' : '') : (LOGO[o.nome] || [0, o.nome])[1])).filter(Boolean);
+    if (!nomes.length) return 'Só internet, sem streaming';
+    return nomes.length === 1 ? nomes[0] + ' incluso' : nomes.join(', ').replace(/, ([^,]*)$/, ' ou $1') + ', à sua escolha';
+  }
+  const detNet = (p) => painelDet(`${milhar(p.num)} Mega`, [['Download', val(p, 'Download')], ['Upload', val(p, 'Upload')], ['Modem', val(p, 'Modem')], ['Aplicativos inclusos', appsNet(p)], ['Instalação', 'Grátis, em até 48 horas']], DET[p.id] ? V1 + DET[p.id] : '');
   function cardNet(p) {
     const o = p.opcoes[opIdx(p)];
     const up = (p.detalhes.find((d) => d[1] === 'Upload') || [])[2];
     return `<article class="pc" data-id="${p.id}">
       <span class="pc__selo">${p.selo}</span>
-      <p class="pc__vel"><b>${p.num}</b><span>Mega</span></p>
+      <p class="pc__vel"><b>${milhar(p.num)}</b><span>Mega</span></p>
       <p class="pc__sub">Upload de ${up}</p>
       ${areaOpcoes(p)}
       <div class="pc__pe"><p class="pc__de">De ${brl(o.de || p.de)}</p>${precoHtml(o.preco, p.id)}
       <p class="pc__cb" data-cb-id="${p.id}">${DY.brl(cb(o.preco, 50))} de volta no PIX</p>
       <a class="pc__btn" data-ir="${p.id}" href="${linkContratar(p, 'casa')}">Quero este plano</a>
-      ${DET[p.id] ? `<a class="pc__det" href="${V1 + DET[p.id]}">Ver detalhes do plano</a>` : '<span class="pc__det pc__det--vazio"></span>'}</div></article>`;
+      ${btDet}</div>${detNet(p)}</article>`;
   }
   // oferta do mês: o plano com esse selo aparece em destaque antes dos outros cards
   const DESTAQUE = {
@@ -234,8 +247,8 @@
     box.hidden = false; const d = DESTAQUE[p.id] || {};
     const info = d.info || (p.detalhes || []).slice(0, 4).map((x) => [x[2], x[1]]);
     const o = p.opcoes[opIdx(p)];
-    $('[data-mil-num]', box).textContent = p.num;
-    $('[data-mil-t]', box).textContent = `Escolha como quer o seu ${p.num} Mega`;
+    $('[data-mil-num]', box).textContent = milhar(p.num);
+    $('[data-mil-t]', box).textContent = `Escolha como quer o seu ${milhar(p.num)} Mega`;
     $('[data-mil-txt]', box).textContent = d.txt || '';
     $('[data-mil-txt]', box).hidden = !d.txt;
     $('[data-mil-info]', box).innerHTML = info.map(([b, t]) => `<li><b>${b}</b><span>${t}</span></li>`).join('');
@@ -262,12 +275,13 @@
     const dest = p.selo === 'OFERTA DO MÊS';
     return `<article class="pc pc--emp${dest ? ' is-dest' : ''}" data-id="${p.id}">
       <span class="pc__selo">${p.selo}</span>
-      <p class="pc__vel"><b>${p.num}</b><span>Mega</span></p>
+      <p class="pc__vel"><b>${milhar(p.num)}</b><span>Mega</span></p>
       <p class="pc__sub">Upload de ${up}</p>
       <div class="pc__op"><p class="pc__op-t">O plano inclui</p><ul class="pc__inc">${(INCLUI[p.id] || []).map((t) => `<li>${t}</li>`).join('')}</ul></div>
       <div class="pc__pe"><p class="pc__de">De ${brl(o.de || p.de)}</p>${precoHtml(o.preco, p.id)}
       <p class="pc__cb">${DY.brl(cb(o.preco, 50))} de volta no PIX</p>
-      <a class="pc__btn" href="${linkContratar(p, 'empresa')}">Quero este plano</a></div></article>`;
+      <a class="pc__btn" href="${linkContratar(p, 'empresa')}">Quero este plano</a>
+      ${btDet}</div>${painelDet(`${milhar(p.num)} Mega`, [['Download', val(p, 'Download')], ['Upload', val(p, 'Upload')], ['Modem', val(p, 'Modem')], ['O plano inclui', (INCLUI[p.id] || []).filter((t) => !t.startsWith('Modem')).join(' · ')], ['Fidelidade', '24 meses, com taxa de R$ 960 isenta']], '')}</article>`;
   }
   function blocoEmp() {
     const lista = emp(); const cards = $('.cards', emp_);

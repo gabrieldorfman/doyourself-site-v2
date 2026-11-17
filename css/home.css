@@ -770,3 +770,37 @@ a.perfil::after { content: "Ver o plano →"; margin-top: auto; padding-top: 10p
   .sub__rot { margin: 32px 0 12px; font-size: 12px; }
 }
 @media (max-width: 619px) { .mil__info b { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .mil__info li { padding: 8px; } }
+
+/* ===== mini botão "Ver detalhes", detalhes rápidos em todos os cards, selo maior (17/11) ===== */
+.bt-mini { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: 0 18px; border-radius: 999px; border: 1.5px solid currentColor; background: transparent; color: var(--pc-ink, var(--net-ink)); font: 600 14px/1 var(--font-text); text-decoration: none; cursor: pointer; transition: background .2s, color .2s, transform .15s; }
+.bt-mini:hover { background: var(--pc-a, var(--net-a)); }
+.bt-mini:active { transform: scale(.97); }
+.bt-mini--cheio { background: var(--pc, var(--net)); border-color: var(--pc, var(--net)); color: #fff; }
+.bt-mini--cheio:hover { background: var(--pc-ink, var(--net-ink)); }
+.pc .pc__det, .pc--cel .pc__det { display: flex; width: fit-content; margin: 12px auto 0; text-decoration: none; color: var(--pc-ink, var(--net-ink)); }
+.pc.is-dest .pc__det { color: var(--ouro); }
+.pc.is-dest .bt-mini:hover { background: rgb(255 255 255 / .08); }
+.mil__det.bt-mini--claro { color: #fff; text-decoration: none; border-color: rgb(255 255 255 / .55); }
+.mil__det.bt-mini--claro:hover { background: rgb(255 255 255 / .1); }
+
+/* painel de detalhes: vale para internet, empresa e celular */
+.pc { position: relative; }
+.pc__mais { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; gap: 10px; padding: 26px 22px 22px; border-radius: inherit; background: #fff; overflow-y: auto; }
+.pc__mais[hidden] { display: none; }
+.pc__mais-t { margin: 0; font: 500 28px/1.1 var(--font-display, inherit); letter-spacing: -.02em; color: var(--pc-ink, var(--net-ink)); }
+.pc__lista li { border-bottom-color: color-mix(in srgb, var(--pc, #2b6cb0) 14%, white); }
+.pc__mais-bts { margin-top: auto; padding-top: 8px; display: flex; flex-wrap: wrap; gap: 8px; }
+.pc__mais-bts .bt-mini { flex: 1 1 0; }
+.pc.is-dest .pc__mais { background: linear-gradient(170deg, var(--pc-escuro-1, #183152), var(--pc-escuro-2, #0f2238)); color: #fff; }
+.pc--emp.is-dest .pc__mais { --pc-escuro-1: #34587a; --pc-escuro-2: #1b2f43; }
+.pc--cel.is-dest .pc__mais { --pc-escuro-1: #155c3a; --pc-escuro-2: #0b3a24; }
+.pc.is-dest .pc__mais-t { color: var(--ouro); }
+.pc.is-dest .pc__lista li { border-color: rgb(255 255 255 / .12); }
+.pc.is-dest .pc__lista span { color: rgb(255 255 255 / .65); } .pc.is-dest .pc__lista b { color: #fff; }
+.pc.is-dest .pc__mais .bt-mini { color: var(--ouro); }
+.pc.is-dest .pc__mais .bt-mini--cheio { background: var(--ouro); border-color: var(--ouro); color: #3b2c06; }
+.pc__fechar { display: none; }
+
+/* etiqueta "Oferta do mês" um pouco maior */
+.mil__selo { padding: 9px 16px; font-size: 14px; letter-spacing: .06em; box-shadow: 0 6px 18px -6px rgb(231 198 107 / .7); }
+@media (max-width: 619px) { .mil__selo { padding: 8px 13px; font-size: 12.5px; } .bt-mini { min-height: 36px; font-size: 13.5px; } .pc__mais { padding: 22px 18px 18px; } }

@@ -120,23 +120,25 @@ const HBO = (preco, de, resumo) => ({ nome: 'HBO Max', logo: 'hbo-max', preco, d
 
 // Peças reaproveitadas entre os blocos de estados (base: ofertas de NOVEMBRO/2026, válidas até 01/12/2026)
 // Valores no débito em conta; no boleto ou PIX, R$ 10,00 a mais por mês.
-const W56 = '5', W67 = '6'; // 300 a 800 Mega: Wi-Fi 5 · 1000 Mega: Wi-Fi 6 · 2000 Mega: Wi-Fi 7
+const W56 = '5', W67 = '6'; // 300 a 800 Mega: Wi-Fi 5 · 1.000 Mega: Wi-Fi 6 · 2.000 Mega: Wi-Fi 7
 const net800 = { id: '800', variante: 'soft', selo: 'COM YOUTUBE PREMIUM', num: '800', unidade: 'MEGA',
   detalhes: detNet('800 Mega', '400 Mega', W56), apps: ['aya-books', 'youtube-premium'], tituloAcao: 'Já vem incluso no seu plano',
   opcoes: [{ nome: 'YouTube Premium', logo: 'youtube-premium', preco: 129.99, de: 169.99, incluso: 'sem custo extra', resumo: '800 Mega + YouTube Premium' }], opcaoPadrao: 0, de: 169.99, tarja: { streaming: ['youtube-premium'] } };
 const net1000 = { id: '1000', variante: 'premium', selo: 'OFERTA DO MÊS', num: '1000', unidade: 'MEGA',
-  detalhes: detNet('1000 Mega', '500 Mega', W67, true), apps: ['aya-books', 'aya-bancah', 'paramount-44'], tituloAcao: 'Personalize o seu plano',
-  opcoes: [{ ...SO(99.99, 189.99, '1000 Mega + NoPing'), nome: 'Somente Internet' }, PARA(149.99, 199.99, '1000 Mega + Paramount+', 'paramount-44'), HBO(159.99, 219.99, '1000 Mega + HBO Max')], opcaoPadrao: 0, de: 189.99, tarja: { streaming: ['paramount', 'hbo-max'] } };
+  detalhes: detNet('1.000 Mega', '500 Mega', W67, true), apps: ['aya-books', 'aya-bancah', 'paramount-44'], tituloAcao: 'Personalize o seu plano',
+  opcoes: [{ ...SO(99.99, 189.99, '1.000 Mega + NoPing'), nome: 'Somente Internet' }, PARA(149.99, 199.99, '1.000 Mega + Paramount+', 'paramount-44'), HBO(159.99, 219.99, '1.000 Mega + HBO Max')], opcaoPadrao: 0, de: 189.99, tarja: { streaming: ['paramount', 'hbo-max'] } };
 const net600 = { id: '600', variante: 'tint', selo: 'ESSENCIAL', num: '600', unidade: 'MEGA',
   detalhes: detNet('600 Mega', '300 Mega', W56), apps: ['aya-books', 'aya-bancah', 'paramount'], tituloAcao: 'Personalize o seu plano',
   opcoes: [SO(109.99, 149.99, '600 Mega'), PARA(109.99, 149.99, '600 Mega + Paramount+'), GLOBO(119.99, 159.99, '600 Mega + GloboPlay')], opcaoPadrao: 0, de: 149.99, tarja: { streaming: ['paramount', 'globoplay'] } };
 const net2000 = { id: '2000', variante: 'premium', selo: 'WI-FI 7', num: '2000', unidade: 'MEGA',
-  detalhes: detNet('2000 Mega', '1000 Mega', 7, true), apps: ['aya-books', 'aya-bancah', 'hbo-max', 'paramount', 'globoplay'], tituloAcao: 'Já vem incluso no seu plano',
-  opcoes: [{ nome: 'HBO Max, Paramount+, GloboPlay e Looke', logo: 'hbo-max', preco: 369.99, de: 419.99, incluso: 'quatro streamings', resumo: '2000 Mega + 4 streamings' }], opcaoPadrao: 0, de: 419.99, tarja: { streaming: ['hbo-max', 'paramount', 'globoplay'] } };
+  detalhes: detNet('2.000 Mega', '1.000 Mega', 7, true), apps: ['aya-books', 'aya-bancah', 'hbo-max', 'paramount', 'globoplay'], tituloAcao: 'Já vem incluso no seu plano',
+  opcoes: [{ nome: 'HBO Max, Paramount+, GloboPlay e Looke', logo: 'hbo-max', preco: 369.99, de: 419.99, incluso: 'quatro streamings', resumo: '2.000 Mega + 4 streamings' }], opcaoPadrao: 0, de: 419.99, tarja: { streaming: ['hbo-max', 'paramount', 'globoplay'] } };
+// velocidade escrita com ponto de milhar: 1.000 Mega, 2.000 Mega
+const mega = (n) => String(n).replace(/^(\d)(\d{3})$/, '$1.$2') + ' Mega';
 const netSimples = (id, preco, de, up, wifi, selo, variante, extra) => ({ id, variante, selo, num: id.replace(/^e/, ''), unidade: 'MEGA',
   ...(extra ? { nota: extra } : {}),
-  detalhes: detNet(id.replace(/^e/, '') + ' Mega', up, wifi, variante === 'premium'), apps: ['aya-books', 'aya-bancah'],
-  tituloAcao: 'Este plano inclui', opcoes: [SO(preco, de, id.replace(/^e/, '') + ' Mega')], opcaoPadrao: 0, de, tarja: { streaming: null } });
+  detalhes: detNet(mega(id.replace(/^e/, '')), up, wifi, variante === 'premium'), apps: ['aya-books', 'aya-bancah'],
+  tituloAcao: 'Este plano inclui', opcoes: [SO(preco, de, mega(id.replace(/^e/, '')))], opcaoPadrao: 0, de, tarja: { streaming: null } });
 const TAXA_CNPJ = 'Taxa de habilitação de R$ 960, isenta com 24 meses de contrato';
 
 DY.catalogo = {
