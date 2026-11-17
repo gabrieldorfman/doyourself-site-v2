@@ -88,28 +88,7 @@
 
   /* ---------- Cards de plano ---------- */
   const APPS = { 'youtube-premium': '/img/apps/youtube-premium-logo.svg', paramount: '/img/apps/paramount-44.svg', 'hbo-max': '/img/apps/hbo-max.png', globoplay: '/img/apps/globoplay.png', whatsapp: '/img/apps/whatsapp.svg' };
-  const hookNet = (p) => {
-    const m = {
-      '300': ['', 'Instalação grátis em até 48 horas'], '400': ['', 'Instalação grátis em até 48 horas'], '500': ['', 'Instalação grátis em até 48 horas'],
-      '600': ['paramount', 'Com Paramount+ no mesmo preço, ou Globoplay'], '800': ['youtube-premium', 'YouTube Premium incluso'], '1000': ['', 'NoPing grátis por 6 meses, ou com Paramount+ ou HBO Max'],
-      'e300': ['', 'Para o seu CNPJ, com instalação grátis'], 'e400': ['', 'Para o seu CNPJ, com instalação grátis'], 'e500': ['', 'Para o seu CNPJ, com instalação grátis'], 'e600': ['', 'Para o seu CNPJ, com antivírus incluso'], 'e1000': ['', 'Gestão de equipe e antivírus inclusos'],
-    }[p.id] || ['', ''];
-    return `<p class="pc__hook">${m[0] ? `<img src="${APPS[m[0]]}" alt="">` : '<img src="/img/3d/instalacao.webp" alt="">'}<span>${m[1]}</span></p>`;
-  };
   const precoHtml = (v, id) => { const { i, d } = partes(v); return `<p class="pc__preco"><small>R$</small><b data-num data-v="${v}" data-id="${id}">${i}</b><i>,${d}</i><em>/mês</em></p>`; };
-  function cardNet(p, tipo) {
-    const o = p.opcoes[0]; const dest = p.selo === 'OFERTA DO MÊS';
-    const up = (p.detalhes.find((d) => d[1] === 'Upload') || [])[2];
-    const link = `/contratar?origem=internet&para=${tipo}&plano=${encodeURIComponent(p.id)}&opcao=${encodeURIComponent(o.nome)}`;
-    return `<article class="pc${dest ? ' is-dest' : ''}" data-id="${p.id}">
-      <span class="pc__selo">${p.selo}</span>
-      <p class="pc__vel"><b>${p.num}</b><span>Mega</span></p>
-      <p class="pc__sub">Upload de ${up}${p.nota ? ' · taxa isenta em 24 meses' : ''}</p>
-      ${hookNet(p)}
-      <div class="pc__pe"><p class="pc__de">De ${brl(o.de || p.de)}</p>${precoHtml(o.preco, p.id)}
-      <p class="pc__cb">${DY.brl(cb(o.preco, 50))} de volta no PIX</p>
-      <a class="pc__btn" href="${link}">Quero este plano</a></div></article>`;
-  }
   function cardCel(p) {
     const dest = p.selo === 'OFERTA DO MÊS';
     const link = `/contratar?origem=celular&para=cnpj&plano=${encodeURIComponent(p.id)}&linhas=1`;
@@ -156,41 +135,120 @@
   function contar(raiz, antigos) {
     $$('[data-num]', raiz).forEach((el) => {
       const de = antigos[el.dataset.id], ate = +el.dataset.v; if (de == null || de === ate) return;
-      el.closest('.pc__preco').classList.add('is-mudou');
+      (el.closest('.pc__preco') || el.parentElement).classList.add('is-mudou');
       if (!temGsap) return;
-      const o = { v: de }; gsap.to(o, { v: ate, duration: .7, ease: 'power3.out', onUpdate: () => (el.textContent = partes(o.v).i), onComplete: () => (el.textContent = partes(ate).i) });
+      const o = { v: de }; gsap.to(o, { v: ate, duration: .7, ease: 'power3.out', onUpdate: () => (el.textContent = (el.closest('.ep') ? 'R$ ' : '') + partes(o.v).i + (el.closest('.ep') ? ',' + partes(o.v).d : '')), onComplete: () => (el.textContent = el.closest('.ep') ? brl(ate) : partes(ate).i) });
     });
   }
   const aviso = $('.aviso'); let tAviso;
   const avisar = (m) => { aviso.textContent = m; aviso.classList.add('is-on'); clearTimeout(tAviso); tAviso = setTimeout(() => aviso.classList.remove('is-on'), 2800); };
 
-  /* internet */
+  /* internet: cards de casa (sem o 1000 e o 2000), o 1000 Mega em destaque e a lista para empresas */
+  const V1 = 'https://doyourself-site.vercel.app';
+  const DET = { '500': '/internet-fibra/casa/500-mega', '600': '/internet-fibra/casa/600-mega', '800': '/internet-fibra/casa/800-mega', '1000': '/internet-fibra/casa/1-giga' };
+  const LOGO = { 'GloboPlay': ['/img/apps/globoplay.png', 'Globoplay'], 'Paramount+': ['/img/apps/paramount-44.svg', 'Paramount+'], 'HBO Max': ['/img/apps/hbo-max.png', 'HBO Max'], 'YouTube Premium': ['/img/apps/youtube-premium-logo.svg', 'YouTube Premium'], 'Somente Internet': ['/img/3d/controle.webp', 'Internet + NoPing'] };
+  const escolha = {}; // plano -> índice da opção
   const net = $('[data-net]');
-  let tipo = 'casa';
   const tNet = trilho(net);
-  const precosNet = () => Object.fromEntries(DY.planosInternet.map((p) => [p.id, p.opcoes[0].preco]));
+  const casa = () => DY.catalogo.casa[DY.blocoInternet(DY.uf)];
+  const emp = () => DY.catalogo.empresa[DY.blocoInternet(DY.uf)];
+  const opIdx = (p) => {
+    if (escolha[p.id] != null && p.opcoes[escolha[p.id]]) return escolha[p.id];
+    if (p.id === '600') { const k = p.opcoes.findIndex((o) => o.nome === 'Paramount+'); return k < 0 ? 0 : k; }
+    return 0;
+  };
+  // ordem dos streamings no card do 600: Globoplay primeiro
+  const opsVisiveis = (p) => {
+    if (p.id === '600') return ['GloboPlay', 'Paramount+'].map((n) => p.opcoes.findIndex((o) => o.nome === n)).filter((k) => k >= 0);
+    return p.opcoes.map((_, k) => k);
+  };
+  const linkContratar = (p, tipo) => `/contratar?origem=internet&para=${tipo}&plano=${encodeURIComponent(p.id)}&opcao=${encodeURIComponent(p.opcoes[opIdx(p)].nome)}`;
+  const tile = (p, k, fixo) => {
+    const o = p.opcoes[k]; const [src, nome] = LOGO[o.nome] || ['', o.nome]; const on = opIdx(p) === k;
+    return `<button type="button" class="op${on ? ' is-on' : ''}${fixo ? ' op--fixo' : ''}" role="radio" aria-checked="${on}" data-op="${k}" data-id="${p.id}" ${fixo ? 'tabindex="-1"' : ''}>
+      <span class="op__ic"><img src="${src}" alt=""></span><span class="op__n">${nome}</span>${fixo ? '' : `<small>${brl(o.preco)}</small>`}<i class="op__ok" aria-hidden="true"></i></button>`;
+  };
+  function areaOpcoes(p) {
+    if (p.id === '800') return `<div class="pc__op"><p class="pc__op-t">Aplicativo incluso</p><div class="ops ops--1">${tile(p, 0, true)}</div></div>`;
+    if (p.opcoes.length > 1) return `<div class="pc__op"><p class="pc__op-t">Selecione seu streaming</p><div class="ops" role="radiogroup" aria-label="Streaming do plano de ${p.num} Mega">${opsVisiveis(p).map((k) => tile(p, k)).join('')}</div></div>`;
+    return `<div class="pc__op"><p class="pc__op-t">Somente internet</p><p class="pc__op-vazio">Modem Wi-Fi e instalação grátis inclusos. Sem streaming.</p></div>`;
+  }
+  function cardNet(p) {
+    const o = p.opcoes[opIdx(p)];
+    const up = (p.detalhes.find((d) => d[1] === 'Upload') || [])[2];
+    return `<article class="pc" data-id="${p.id}">
+      <span class="pc__selo">${p.selo}</span>
+      <p class="pc__vel"><b>${p.num}</b><span>Mega</span></p>
+      <p class="pc__sub">Upload de ${up}</p>
+      ${areaOpcoes(p)}
+      <div class="pc__pe"><p class="pc__de">De ${brl(o.de || p.de)}</p>${precoHtml(o.preco, p.id)}
+      <p class="pc__cb" data-cb-id="${p.id}">${DY.brl(cb(o.preco, 50))} de volta no PIX</p>
+      <a class="pc__btn" data-ir="${p.id}" href="${linkContratar(p, 'casa')}">Quero este plano</a>
+      ${DET[p.id] ? `<a class="pc__det" href="${V1 + DET[p.id]}">Ver detalhes do plano</a>` : '<span class="pc__det pc__det--vazio"></span>'}</div></article>`;
+  }
+  function blocoMil(p) {
+    const box = $('[data-mil]'); if (!p) { box.hidden = true; return; }
+    const o = p.opcoes[opIdx(p)];
+    $('[data-mil-ops]', box).innerHTML = p.opcoes.map((_, k) => tile(p, k)).join('');
+    $('[data-mil-preco]', box).innerHTML = precoHtml(o.preco, p.id).replace('pc__preco', 'pc__preco pc__preco--g');
+    $('[data-mil-cb]', box).textContent = `${DY.brl(cb(o.preco, 50))} de volta no PIX`;
+    $('[data-mil-de]', box).textContent = 'De ' + brl(o.de || p.de);
+    $('[data-mil-ir]', box).href = linkContratar(p, 'casa');
+    $('[data-mil-nome]', box).textContent = o.nome === 'Somente Internet' ? 'Internet + NoPing grátis por 6 meses' : `Com ${LOGO[o.nome][1]} incluso`;
+  }
+  function blocoEmp() {
+    const lista = emp();
+    $('[data-emp-lista]').innerHTML = lista.map((p) => {
+      const o = p.opcoes[0]; const up = (p.detalhes.find((d) => d[1] === 'Upload') || [])[2];
+      const extra = { e1000: 'Gestão de equipe externa (4 licenças) e antivírus', e600: 'Antivírus incluso', e400: 'Antivírus incluso', e300: 'Antivírus incluso' }[p.id] || 'Audiolivros e cursos inclusos';
+      return `<li class="ep${p.selo === 'OFERTA DO MÊS' ? ' is-dest' : ''}"><div class="ep__vel"><b>${p.num}</b><span>Mega</span></div>
+        <div class="ep__txt"><b>${extra}</b><span>Upload de ${up}${p.nota ? ' · taxa de R$ 960 isenta com 24 meses' : ''}</span></div>
+        <div class="ep__preco"><b data-num data-v="${o.preco}" data-id="${p.id}">${brl(o.preco)}</b><span>${DY.brl(cb(o.preco, 50))} de volta</span></div>
+        <a class="ep__btn" href="${linkContratar(p, 'empresa')}">Contratar</a></li>`;
+    }).join('');
+  }
+  const precosNet = () => Object.fromEntries([...casa(), ...emp()].map((p) => [p.id, p.opcoes[opIdx(p)].preco]));
   function desenhaNet(anim, antigos) {
-    const lista = DY.planosInternet.filter((p) => p.id !== '2000');
-    $('.cards', net).innerHTML = lista.map((p) => cardNet(p, tipo)).join('');
+    const todos = casa();
+    const lista = todos.filter((p) => !['1000', '2000'].includes(p.id));
+    const cards = $('.cards', net);
+    cards.style.setProperty('--n', lista.length);
+    cards.innerHTML = lista.map(cardNet).join('');
+    blocoMil(todos.find((p) => p.id === '1000'));
+    blocoEmp();
     $$('[data-uf-nome]').forEach((n) => (n.textContent = DY.UFS[DY.uf]));
     $$('[data-uf-sel]').forEach((s) => (s.value = DY.uf));
     tNet.desenhou();
-    if (anim) { contar(net, antigos || {}); if (temGsap) gsap.from($$('.pc', net), { y: 24, autoAlpha: 0, duration: .55, stagger: .07, ease: 'power3.out', clearProps: 'all' }); }
-    const p2 = (DY.catalogo.casa[DY.blocoInternet(DY.uf)].find((p) => p.id === '2000') || {}).opcoes;
-    if (p2) { const v = p2[0].preco; $('[data-2000]').textContent = brl(v); $('[data-2000-cb]').textContent = DY.brl(cb(v, 50)) + ' de volta no PIX'; }
-    const min = Math.min(...DY.catalogo.casa[DY.blocoInternet(DY.uf)].map((p) => p.opcoes[0].preco));
+    if (anim) { contar(document, antigos || {}); if (temGsap) gsap.from([...$$('.pc', net), $('[data-mil]'), ...$$('.ep')], { y: 20, autoAlpha: 0, duration: .5, stagger: .05, ease: 'power3.out', clearProps: 'all' }); }
+    const p2 = (todos.find((p) => p.id === '2000') || {}).opcoes;
+    if (p2) { $$('[data-2000]').forEach((e) => (e.textContent = brl(p2[0].preco))); }
+    const min = Math.min(...todos.map((p) => p.opcoes[0].preco));
     $$('[data-net-min]').forEach((e) => (e.textContent = brl(min)));
   }
+  // escolher o streaming: muda o preço, o cashback e o link, com animação
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('.op:not(.op--fixo)'); if (!b) return;
+    const id = b.dataset.id, k = +b.dataset.op;
+    const p = casa().find((x) => x.id === id); if (!p || opIdx(p) === k) return;
+    const antes = p.opcoes[opIdx(p)].preco; escolha[id] = k; const o = p.opcoes[k];
+    const grupo = b.parentElement;
+    $$('.op', grupo).forEach((x) => { const on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-checked', String(on)); });
+    if (temGsap) gsap.fromTo(b, { scale: .94 }, { scale: 1, duration: .45, ease: 'back.out(3)' });
+    const raiz = id === '1000' ? $('[data-mil]') : b.closest('.pc');
+    if (id === '1000') blocoMil(p);
+    else {
+      raiz.querySelector('.pc__de').textContent = 'De ' + brl(o.de || p.de);
+      raiz.querySelector('.pc__cb').textContent = `${DY.brl(cb(o.preco, 50))} de volta no PIX`;
+      raiz.querySelector('[data-ir]').href = linkContratar(p, 'casa');
+      const num = raiz.querySelector('[data-num]'); num.dataset.v = o.preco;
+    }
+    contar(raiz, { [id]: antes });
+  });
   function trocaNet(fn, msg) {
     const antes = precosNet();
-    const sai = () => { fn(); desenhaNet(true, antes); avisar(msg); };
-    if (temGsap) gsap.to($$('.pc', net), { y: 16, autoAlpha: 0, duration: .2, stagger: .03, ease: 'power2.in', onComplete: sai }); else sai();
+    const sai = () => { fn(); desenhaNet(true, antes); avisar(msg); const ok = $('.regiao__ok'); if (ok) { ok.hidden = false; clearTimeout(ok._t); ok._t = setTimeout(() => (ok.hidden = true), 2600); } };
+    if (temGsap) gsap.to([...$$('.pc', net), $('[data-mil]'), ...$$('.ep')], { y: 14, autoAlpha: 0, duration: .2, stagger: .02, ease: 'power2.in', onComplete: sai }); else sai();
   }
-  $$('[data-tipo]', net).forEach((b) => b.addEventListener('click', () => {
-    if (b.dataset.tipo === tipo) return;
-    $$('[data-tipo]', net).forEach((x) => x.setAttribute('aria-selected', String(x === b)));
-    trocaNet(() => { tipo = b.dataset.tipo; DY.definirPlanos({ tipo }); }, tipo === 'casa' ? 'Mostrando os planos para empresa (CNPJ)' : 'Mostrando os planos para casa (CPF)');
-  }));
   $$('[data-uf-sel]').forEach((s) => {
     Object.entries(DY.UFS).sort((a, b) => a[1].localeCompare(b[1], 'pt-BR')).forEach(([uf, n]) => s.add(new Option(n, uf)));
     s.addEventListener('change', () => {
@@ -219,7 +277,7 @@
   function combo() {
     const box = $('[data-combo]'); if (!box) return;
     const s = DY.energia.simular(700);
-    const n = DY.catalogo.casa[DY.blocoInternet(DY.uf)].find((p) => p.id === '1000').opcoes[0].preco;
+    const n = DY.catalogo.casa[DY.blocoInternet(DY.uf)].find((p) => p.id === '1000').opcoes[0].preco; // 1000 Mega + NoPing
     const l = (DY.planosCnpj.find((p) => p.id === '30') || DY.planosCnpj[0]).preco;
     const cbN = cb(n, 50), cbL = cb(l, 100);
     $('[data-cb=luz]', box).textContent = DY.brl(s.cashback);
@@ -254,3 +312,14 @@
 })();
 /* atalhos para o campo de CEP do topo */
 document.querySelectorAll('a[href="#cep-topo"]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); const f = document.querySelector('#cep-topo'); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => f.querySelector('input[name=cep]').focus({ preventScroll: true }), 500); }));
+/* carrossel de destaques no menu */
+document.querySelectorAll('[data-slides]').forEach((m) => {
+  const sl = [...m.querySelectorAll('.ms__sl')], pt = m.querySelector('.ms__pontos'); let k = 0, t;
+  pt.innerHTML = sl.map(() => '<i></i>').join('');
+  const vai = (i) => { k = (i + sl.length) % sl.length; sl.forEach((s, j) => s.classList.toggle('is-on', j === k)); [...pt.children].forEach((p, j) => p.classList.toggle('is-on', j === k)); };
+  vai(0);
+  const item = m.closest('.nav__item');
+  const roda = () => { clearInterval(t); t = setInterval(() => vai(k + 1), 2400); };
+  item.addEventListener('mouseenter', () => { vai(0); roda(); }); item.addEventListener('mouseleave', () => clearInterval(t));
+  item.addEventListener('focusin', roda);
+});
