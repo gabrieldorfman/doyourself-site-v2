@@ -302,7 +302,7 @@
     $$('[data-uf-nome]').forEach((n) => (n.textContent = DY.UFS[DY.uf]));
     $$('[data-uf-sel]').forEach((s) => (s.value = DY.uf));
     tNet.desenhou();
-    if (anim) { contar(document, antigos || {}); if (temGsap) gsap.from([...$$('.pc', net), $('[data-mil]'), ...$$('.pc', emp_)], { y: 20, autoAlpha: 0, duration: .5, stagger: .05, ease: 'power3.out', clearProps: 'all' }); }
+    if (anim) { contar(document, antigos || {}); if (temGsap) gsap.fromTo([...$$('.pc', net), $('[data-mil]'), ...$$('.pc', emp_)], { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .5, stagger: .05, ease: 'power3.out', clearProps: 'transform' }); }
     const p2 = (todos.find((p) => p.id === '2000') || {}).opcoes;
     if (p2) { $$('[data-2000]').forEach((e) => (e.textContent = brl(p2[0].preco))); }
     const min = Math.min(...todos.map((p) => p.opcoes[0].preco));
@@ -406,3 +406,41 @@ document.querySelectorAll('[data-slides]').forEach((m) => {
   item.addEventListener('mouseenter', () => { vai(0); roda(); }); item.addEventListener('mouseleave', () => clearInterval(t));
   item.addEventListener('focusin', roda);
 });
+
+/* "Como funciona a contratação": a rolagem avança os 5 passos; clicar num passo leva até ele */
+(() => {
+  const raiz = document.querySelector('[data-jornada]'); if (!raiz) return;
+  const pista = raiz.querySelector('.jo__pista');
+  const passos = [...raiz.querySelectorAll('.jo__p')];
+  const cenas = [...raiz.querySelectorAll('.jo__cena')];
+  const selo = raiz.querySelector('[data-jo-selo]');
+  const N = cenas.length; let atual = 0;
+  const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const gs = window.gsap && !calmo;
+  function ir(i) {
+    if (i === atual) return; const ant = cenas[atual]; const nova = cenas[i]; const desce = i > atual; atual = i;
+    passos.forEach((p, k) => { p.classList.toggle('is-on', k === i); p.classList.toggle('is-feito', k < i); });
+    selo.textContent = `Passo ${i + 1} de ${N}`;
+    cenas.forEach((c) => c !== ant && c !== nova && c.classList.remove('is-on'));
+    nova.classList.add('is-on');
+    if (gs) {
+      gsap.killTweensOf([ant, nova, ...nova.querySelectorAll('.jo__obj, .jo__trio, .jo__ui')]);
+      gsap.to(ant, { autoAlpha: 0, scale: .97, duration: .35, ease: 'power2.in', onComplete: () => { if (ant !== cenas[atual]) ant.classList.remove('is-on'); gsap.set(ant, { clearProps: 'all' }); } });
+      gsap.fromTo(nova, { autoAlpha: 0, scale: 1.02 }, { autoAlpha: 1, scale: 1, duration: .45, ease: 'power2.out' });
+      gsap.fromTo(nova.querySelectorAll('.jo__obj, .jo__trio'), { y: desce ? 40 : -40, rotate: desce ? -8 : 8, autoAlpha: 0 }, { y: 0, rotate: 0, autoAlpha: 1, duration: .7, ease: 'back.out(1.6)', delay: .1 });
+      gsap.fromTo(nova.querySelector('.jo__ui'), { y: 26, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .55, ease: 'power3.out', delay: .18 });
+      gsap.fromTo(selo, { scale: .85 }, { scale: 1, duration: .4, ease: 'back.out(3)' });
+    } else ant.classList.remove('is-on');
+  }
+  function noScroll() {
+    const r = pista.getBoundingClientRect(); const curso = r.height - innerHeight;
+    const prog = Math.min(1, Math.max(0, -r.top / Math.max(1, curso)));
+    ir(Math.min(N - 1, Math.floor(prog * N * 0.999)));
+  }
+  addEventListener('scroll', noScroll, { passive: true }); addEventListener('resize', noScroll); noScroll();
+  passos.forEach((p, k) => p.querySelector('button').addEventListener('click', () => {
+    const topo = pista.getBoundingClientRect().top + scrollY; const curso = pista.offsetHeight - innerHeight;
+    scrollTo({ top: topo + curso * ((k + .5) / N), behavior: calmo ? 'auto' : 'smooth' });
+  }));
+})();
+

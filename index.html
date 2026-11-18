@@ -38,7 +38,6 @@
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
 <link rel="modulepreload" href="/kit/moments/lib.js">
-<link rel="modulepreload" href="/kit/moments/photo-chapters/moment.js">
 <script>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('gs');setTimeout(()=>{if(!window.gsap)document.documentElement.classList.remove('gs')},2500)}</script>
 <script src="/js/config.js"></script>
 </head>
@@ -138,7 +137,7 @@
     <div class="cx">
       <div class="abre" data-sobe>
         <div>
-          <span class="eyebrow"><i>01</i>Energia solar por assinatura</span>
+          <span class="etq etq--luz">Desconto na luz</span>
           <h2 class="h-sec" id="energia-h">A sua conta de luz até 20% menor</h2>
           <p class="lede">Uma usina solar parceira gera a energia, e os créditos entram na sua conta. Você continua com a mesma distribuidora.</p>
           <ul class="checks">
@@ -180,7 +179,7 @@
     <div class="cx">
       <div class="abre" data-sobe>
         <div>
-          <span class="eyebrow"><i>02</i>Internet fibra para casa</span>
+          <span class="etq etq--net">Internet para casa</span>
           <h2 class="h-sec" id="internet-h">Fibra até dentro de casa, instalada em até 48 horas</h2>
           <p class="lede">Planos no CPF com o modem Wi-Fi incluso, streaming em alguns planos e metade de uma mensalidade de volta no PIX.</p>
           <ul class="checks">
@@ -199,17 +198,20 @@
   </section>
 
   <section class="dy net-exp" aria-labelledby="exp-casa-h">
-    <div class="cx exp">
-      <div class="exp__txt" data-sobe>
-        <span class="eyebrow eyebrow--net">Como a fibra chega até você</span>
-        <h2 class="h-sec h-sec--m" id="exp-casa-h">A fibra vai do poste até o modem, sem trecho de cobre</h2>
-        <p class="lede">Em muitas internets, a fibra para no armário da rua e o resto do caminho é feito por cabo de cobre, que perde qualidade com a distância. Aqui a fibra entra na sua casa. Por isso a velocidade contratada é testada na instalação e o upload é metade dela.</p>
-      </div>
-      <ol class="exp__passos" data-sobe>
-        <li><span>1</span><img src="/img/3d/casa.webp" alt=""><div><b>Você consulta o CEP</b><p>O site mostra os planos do seu endereço e o preço da sua região.</p></div></li>
-        <li><span>2</span><img src="/img/3d/instalacao.webp" alt=""><div><b>Um técnico instala em até 48 horas</b><p>A fibra e o modem Wi-Fi, sem custo e sem obra.</p></div></li>
-        <li><span>3</span><img src="/img/3d/wifi.webp" alt=""><div><b>Você testa a velocidade na hora</b><p>No cabo, com o técnico ainda na sua casa.</p></div></li>
-      </ol>
+    <div class="cx">
+      <article class="feat feat--net" data-sobe>
+        <div class="feat__painel">
+          <div class="feat__jan">
+            <div class="feat__jan-topo"><span>Do CEP à internet funcionando</span><span class="feat__chip">3 passos</span></div>
+            <ol class="feat__lista"><li><span class="feat__n">1</span><img src="/img/3d-g/pino.webp" alt=""><div><b>Você consulta o CEP</b><p>O site mostra os planos e o preço da sua região.</p></div></li><li><span class="feat__n">2</span><img src="/img/3d-g/instalacao.webp" alt=""><div><b>Um técnico instala em até 48 horas</b><p>A fibra e o modem Wi-Fi, sem custo e sem obra.</p></div></li><li><span class="feat__n">3</span><img src="/img/3d-g/wifi.webp" alt=""><div><b>Você testa a velocidade na hora</b><p>No cabo, com o técnico ainda na sua casa.</p></div></li></ol>
+          </div>
+        </div>
+        <div class="feat__txt">
+          <span class="feat__eyebrow">Como a fibra chega até você</span>
+          <h2 class="feat__h" id="exp-casa-h">A fibra vai do poste até o modem, sem cabo de cobre</h2>
+          <p class="feat__lede">Em muitas internets, a fibra para no armário da rua e o resto do caminho é feito por cabo de cobre, que perde qualidade com a distância. Aqui a fibra entra na sua casa. Por isso a velocidade contratada é testada na instalação, e o upload é metade dela.</p>
+        </div>
+      </article>
     </div>
   </section>
 
@@ -253,10 +255,14 @@
         </div>
 
         <a class="mais" id="mais-velocidade" href="/contratar?origem=internet&amp;para=casa&amp;plano=2000" data-sobe>
-          <span class="mais__ic" aria-hidden="true"><img src="/img/3d/tv.webp" alt=""></span>
-          <span class="mais__txt"><b>Precisa de ainda mais?</b> 2.000 Mega com Wi-Fi 7 e quatro streamings, para quem faz lives ou tem muitos aparelhos ligados.</span>
-          <span class="mais__preco" data-2000>R$ 369,99</span>
-          <span class="mais__seta" aria-hidden="true">→</span>
+          <span class="mais__obj" aria-hidden="true"><img src="/img/3d-g/tv.webp" alt=""></span>
+          <span class="mais__esq">
+            <span class="etq etq--ouro">Para quem quer o máximo</span>
+            <span class="mais__vel"><b>2.000</b> Mega</span>
+            <span class="mais__txt">Para quem faz lives, trabalha com arquivos pesados ou tem muitos aparelhos ligados ao mesmo tempo.</span>
+          </span>
+          <span class="mais__chips"><span>Wi-Fi 7</span><span>1.000 Mega de upload</span><span>4 streamings inclusos</span></span>
+          <span class="mais__dir"><span class="mais__de">a partir de</span><span class="mais__preco"><span data-2000>R$ 369,99</span><small>/mês</small></span><span class="bt-mini bt-mini--claro">Ver o 2.000 Mega <span aria-hidden="true">→</span></span></span>
         </a>
       </div>
     </div>
@@ -267,7 +273,7 @@
       <div class="porque__topo" data-sobe>
         <span class="eyebrow eyebrow--net">Por que contratar com a gente</span>
         <h2 class="h-sec h-sec--m" id="porque-casa-h">Internet que não trava, não cai e não fica oscilando</h2>
-        <p class="lede">A fibra vai do poste até o modem, sem trecho de cobre. Por isso a velocidade fica estável a qualquer hora, com a casa toda conectada. E tem um plano certo para o jeito que você usa:</p>
+        <p class="lede">A fibra vai do poste até o modem, sem cabo de cobre. Por isso a velocidade fica estável a qualquer hora, com a casa toda conectada. E tem um plano certo para o jeito que você usa:</p>
       </div>
       <div class="perfis" data-sobe>
         <a class="perfil" href="#planos-internet"><img src="/img/3d/controle.webp" alt=""><span class="perfil__t">Para quem joga</span><b>1.000 Mega com NoPing</b><p>Menos atraso nas partidas online, com 6 meses de NoPing grátis.</p></a>
@@ -290,7 +296,7 @@
     <div class="cx">
       <div class="abre" data-sobe>
         <div>
-          <span class="eyebrow"><i>CNPJ</i>Internet fibra para empresas</span>
+          <span class="etq etq--net">Internet para empresas</span>
           <h2 class="h-sec" id="empresa-h">Internet no CNPJ para o seu negócio não parar</h2>
           <p class="lede">Para comércio, escritório e quem trabalha com MEI em casa, com antivírus incluso e metade de uma mensalidade de volta no PIX.</p>
           <ul class="checks">
@@ -309,19 +315,20 @@
   </section>
 
   <section class="dy emp-exp" aria-labelledby="exp-emp-h">
-    <div class="cx exp">
-      <div class="exp__txt" data-sobe>
-        <span class="eyebrow eyebrow--emp">O que muda no plano para empresa</span>
-        <h2 class="h-sec h-sec--m" id="exp-emp-h">Feito para quem vende, atende e trabalha conectado</h2>
-        <p class="lede">O plano é contratado no CNPJ e troca o streaming por ferramentas para o negócio. A conexão funciona com maquininha de cartão, sistema de vendas na nuvem, WhatsApp Business e a VPN da empresa, sem configurar nada.</p>
-      </div>
-      <ul class="exp__cmp" data-sobe>
-        <li><span>Contrato</span><b>No CNPJ, inclusive MEI</b></li>
-        <li><span>Endereço</span><b>Pode ser diferente do cadastro</b></li>
-        <li><span>Inclui</span><b>Antivírus e apps para a equipe</b></li>
-        <li><span>Fidelidade</span><b>24 meses</b></li>
-        <li><span>Streaming</span><b>Não incluso</b></li>
-      </ul>
+    <div class="cx">
+      <article class="feat feat--emp feat--inv" data-sobe>
+        <div class="feat__painel">
+          <div class="feat__jan">
+            <div class="feat__jan-topo"><span>O que vem no plano para empresa</span><span class="feat__chip">No CNPJ</span></div>
+            <ul class="feat__lista"><li><img src="/img/3d-g/predio.webp" alt=""><div><b>No CNPJ, inclusive MEI</b><p>Contrato no nome da empresa, no endereço que você quiser.</p></div></li><li><img src="/img/3d-g/instalacao.webp" alt=""><div><b>Antivírus e apps para a equipe</b><p>Ferramentas para o negócio no lugar do streaming.</p></div></li><li><img src="/img/3d-g/calendario.webp" alt=""><div><b>Fidelidade de 24 meses</b><p>A taxa de habilitação de R$ 960 fica isenta.</p></div></li><li><img src="/img/3d-g/wifi.webp" alt=""><div><b>Funciona com tudo da empresa</b><p>Maquininha, sistema na nuvem, WhatsApp Business e VPN.</p></div></li></ul>
+          </div>
+        </div>
+        <div class="feat__txt">
+          <span class="feat__eyebrow">O que muda no plano para empresa</span>
+          <h2 class="feat__h" id="exp-emp-h">Feito para quem vende, atende e trabalha conectado</h2>
+          <p class="feat__lede">O plano é contratado no CNPJ e troca o streaming por ferramentas para o negócio. A conexão funciona com os sistemas da sua empresa sem você configurar nada.</p>
+        </div>
+      </article>
     </div>
   </section>
 
@@ -367,7 +374,7 @@
     <div class="cx">
       <div class="abre" data-sobe>
         <div>
-          <span class="eyebrow"><i>03</i>Planos de celular para empresas</span>
+          <span class="etq etq--cel">Plano de celular para empresas</span>
           <h2 class="h-sec" id="celular-h">Celular no CNPJ, com ligações ilimitadas</h2>
           <p class="lede">Planos empresariais para quem tem CNPJ ou MEI, com 100% de uma mensalidade de volta no PIX, por linha.</p>
           <ul class="checks">
@@ -386,21 +393,20 @@
   </section>
 
   <section class="dy cel-exp" aria-labelledby="exp-cel-h">
-    <div class="cx exp">
-      <div class="exp__txt" data-sobe>
-        <span class="eyebrow eyebrow--cel">Como funciona a linha no CNPJ</span>
-        <h2 class="h-sec h-sec--m" id="exp-cel-h">Uma linha para cada pessoa da equipe, tudo no mesmo CNPJ</h2>
-        <p class="lede">Você escolhe o plano e quantas linhas quer. Cada pessoa usa a sua no próprio celular, e a conta vem junta, no nome da empresa. Quem tem MEI pode usar a linha no celular pessoal.</p>
-      </div>
-      <ul class="exp__cmp" data-sobe>
-        <li><span>Contrato</span><b>No CNPJ, inclusive MEI</b></li>
-        <li><span>Ligações</span><b>Ilimitadas para todo o Brasil</b></li>
-        <li><span>SMS</span><b>800 por mês</b></li>
-        <li><span>Apps sem gastar a internet</span><b>WhatsApp, Waze e redes sociais</b></li>
-        <li><span>Roaming nacional</span><b>Sem custo extra</b></li>
-        <li><span>Portabilidade</span><b>Grátis</b></li>
-        <li><span>Cashback</span><b>100% de uma mensalidade por linha</b></li>
-      </ul>
+    <div class="cx">
+      <article class="feat feat--cel" data-sobe>
+        <div class="feat__painel">
+          <div class="feat__jan">
+            <div class="feat__jan-topo"><span>O que vem em cada linha</span><span class="feat__chip">No CNPJ</span></div>
+            <ul class="feat__lista"><li><img src="/img/3d-g/predio.webp" alt=""><div><b>Uma linha por pessoa da equipe</b><p>Todas no mesmo CNPJ, inclusive MEI, com uma conta só.</p></div></li><li><img src="/img/3d-g/celular.webp" alt=""><div><b>Ligações ilimitadas e 800 SMS</b><p>Para todo o Brasil, com roaming nacional sem custo extra.</p></div></li><li><img src="/img/3d-g/conversa.webp" alt=""><div><b>Apps sem gastar a internet</b><p class="feat__apps"><img src="/img/apps/whatsapp.svg" alt="WhatsApp"><img src="/img/apps/waze.svg" alt="Waze"><img src="/img/apps/facebook.svg" alt="Facebook"><img src="/img/apps/instagram.svg" alt="Instagram"><span>conforme o plano</span></p></div></li><li><img src="/img/3d-g/cashback.webp" alt=""><div><b>100% de volta por linha</b><p>Uma mensalidade inteira no PIX, para cada linha contratada.</p></div></li></ul>
+          </div>
+        </div>
+        <div class="feat__txt">
+          <span class="feat__eyebrow">Como funciona a linha no CNPJ</span>
+          <h2 class="feat__h" id="exp-cel-h">Uma linha para cada pessoa da equipe, tudo no mesmo CNPJ</h2>
+          <p class="feat__lede">Você escolhe o plano e quantas linhas quer. Cada pessoa usa a sua no próprio celular, e a conta vem junta, no nome da empresa. A portabilidade é grátis: traga o número que já está no seu CNPJ.</p>
+        </div>
+      </article>
     </div>
   </section>
 
@@ -465,26 +471,71 @@
     </div>
   </section>
 
-  <section class="section dy-como" id="como-funciona" data-moment="photo-chapters" aria-labelledby="como-h">
-    <div class="wrap mo-ph">
-      <div class="mo-ph__head"><h2 id="como-h">Como funciona a contratação</h2><p>Tudo pelo celular. Você fala com a gente no WhatsApp só se quiser.</p></div>
-      <ol class="mo-ph__list">
-        <li class="mo-ph__ch">
-          <figure class="mo-ph__pic"><img src="/img/fotos/passo-consulta.webp" alt="Rapaz na rede da varanda consultando os planos no celular" width="1024" height="572"></figure>
-          <h3>Consulte o seu CEP</h3>
-          <p>Digite o CEP e o número da casa. O site mostra os planos que chegam no seu endereço, com o preço da sua região.</p>
-        </li>
-        <li class="mo-ph__ch">
-          <figure class="mo-ph__pic"><img src="/img/fotos/passo-instalacao.webp" alt="Técnico com o rolo de cabo de fibra sendo recebido pela cliente na porta de casa" width="1024" height="572"></figure>
-          <h3>Instalação grátis em até 48 horas</h3>
-          <p>Um técnico liga a fibra e o modem Wi-Fi sem custo. Os streamings do plano podem ser ativados no mesmo dia.</p>
-        </li>
-        <li class="mo-ph__ch">
-          <figure class="mo-ph__pic"><img src="/img/fotos/passo-cashback.webp" alt="Mulher sorrindo para o celular na varanda do apartamento, no fim da tarde" width="1024" height="572"></figure>
-          <h3>Cashback no seu PIX</h3>
-          <p>Com o contrato concluído, mandamos a sua parte em até 7 dias, uma única vez. Na internet, é metade de uma mensalidade.</p>
-        </li>
-      </ol>
+  <section class="jornada" id="como-funciona" aria-labelledby="como-h" data-jornada>
+    <div class="jo__pista">
+      <div class="jo__fixo">
+        <div class="cx jo__grade">
+          <div class="jo__esq">
+            <span class="etq etq--marca">Como funciona a contratação</span>
+            <h2 class="jo__h" id="como-h">Do CEP ao cashback,<br>em 5 passos</h2>
+            <ol class="jo__passos">
+            <li class="jo__p is-on" data-i="0"><button type="button" aria-controls="jo-palco"><span class="jo__n">1</span><span class="jo__t">Consulte seu CEP</span></button><p>Digite o CEP e o número da casa. O site mostra o que chega no seu endereço, com o preço da sua região.</p></li>
+            <li class="jo__p" data-i="1"><button type="button" aria-controls="jo-palco"><span class="jo__n">2</span><span class="jo__t">Escolha seus serviços</span></button><p>Desconto na luz, internet, celular ou tudo junto num combo. Você monta do seu jeito.</p></li>
+            <li class="jo__p" data-i="2"><button type="button" aria-controls="jo-palco"><span class="jo__n">3</span><span class="jo__t">Finalize no WhatsApp</span></button><p>A gente confere os seus dados numa conversa só, sem fila e sem central.</p></li>
+            <li class="jo__p" data-i="3"><button type="button" aria-controls="jo-palco"><span class="jo__n">4</span><span class="jo__t">Agende a instalação</span></button><p>Na internet, um técnico instala em até 48 horas, no horário combinado. O desconto na luz não precisa de instalação.</p></li>
+            <li class="jo__p" data-i="4"><button type="button" aria-controls="jo-palco"><span class="jo__n">5</span><span class="jo__t">Receba seu cashback via PIX</span></button><p>Com o contrato concluído, a sua parte cai no PIX em até 7 dias, uma única vez.</p></li>
+            </ol>
+          </div>
+          <div class="jo__palco" id="jo-palco" aria-live="polite">
+            <div class="jo__cena jo__cena--1 is-on" data-c="0">
+              <img class="jo__obj" src="/img/3d-g/pino.webp" alt="">
+              <div class="jo__ui jo__ui--cep">
+                <p class="jo__rot">Veja as ofertas do seu endereço</p>
+                <div class="jo__campos"><span><small>CEP</small>80250-000</span><span><small>Número</small>120</span></div>
+                <span class="jo__bt">Ver ofertas →</span>
+                <p class="jo__ok"><i></i>Fibra disponível no seu endereço</p>
+              </div>
+            </div>
+            <div class="jo__cena jo__cena--2" data-c="1">
+              <div class="jo__trio"><img src="/img/3d-g/lampada.webp" alt=""><img src="/img/3d-g/wifi.webp" alt=""><img src="/img/3d-g/celular.webp" alt=""></div>
+              <div class="jo__ui jo__ui--itens">
+                <p class="jo__rot">Monte o seu pedido</p>
+                <span class="jo__item is-sel"><i class="luz"></i>Desconto na luz<b>✓</b></span>
+                <span class="jo__item is-sel"><i class="net"></i>Internet 1.000 Mega<b>✓</b></span>
+                <span class="jo__item"><i class="cel"></i>Celular 30 GB<b>+</b></span>
+                <p class="jo__ok"><i></i>Combo: tudo num contato só</p>
+              </div>
+            </div>
+            <div class="jo__cena jo__cena--3" data-c="2">
+              <img class="jo__obj" src="/img/3d-g/conversa.webp" alt="">
+              <div class="jo__ui jo__ui--chat">
+                <p class="jo__rot"><i class="jo__dot"></i>Do Yourself <small>online agora</small></p>
+                <span class="jo__msg jo__msg--eu">Oi! Quero o 1.000 Mega com NoPing.</span>
+                <span class="jo__msg">Perfeito! Já separei o seu pedido. É só confirmar os seus dados por aqui.</span>
+                <span class="jo__msg jo__msg--eu">Confirmado ✅</span>
+              </div>
+            </div>
+            <div class="jo__cena jo__cena--4" data-c="3">
+              <img class="jo__obj" src="/img/3d-g/calendario.webp" alt="">
+              <div class="jo__ui jo__ui--agenda">
+                <p class="jo__rot">Escolha o melhor horário</p>
+                <div class="jo__dias"><span><small>Qua</small>19</span><span class="is-sel"><small>Qui</small>20</span><span><small>Sex</small>21</span></div>
+                <div class="jo__horas"><span class="is-sel">Manhã</span><span>Tarde</span></div>
+                <p class="jo__ok"><i></i>Técnico confirmado para quinta</p>
+              </div>
+            </div>
+            <div class="jo__cena jo__cena--5" data-c="4">
+              <img class="jo__obj" src="/img/3d-g/cashback.webp" alt="">
+              <div class="jo__ui jo__ui--pix">
+                <p class="jo__rot">Notificação do banco</p>
+                <div class="jo__notif"><span class="jo__pix">PIX</span><div><b>PIX recebido</b><small>Cashback Do Yourself</small></div><strong>R$ 49,99</strong></div>
+                <p class="jo__ok"><i></i>Em até 7 dias depois do contrato</p>
+              </div>
+            </div>
+            <span class="jo__selo" data-jo-selo>Passo 1 de 5</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
