@@ -96,21 +96,29 @@
     <div class="cx topo__cep" id="cep-topo">
       <form class="cep" data-cep="home" novalidate>
         <p class="cep__t">Veja as ofertas do seu endereço</p>
-        <div class="cep__campos">
-          <label class="cep__f"><span>CEP</span><input name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-label="CEP"></label>
-          <label class="cep__f"><span>Número</span><input name="numero" autocomplete="address-line2" placeholder="Nº do imóvel" aria-label="Número do imóvel"></label>
-          <button class="cep__btn" type="submit">Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        <div class="cep__modo" data-modo="cep">
+          <div class="cep__linha">
+            <label class="cep__f cep__f--cep"><span>CEP</span><input name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-label="CEP"></label>
+            <label class="cep__f cep__f--num"><span>Número</span><input name="numero" inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 315" aria-label="Número do imóvel"></label>
+            <button class="cep__btn" type="submit">Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+          </div>
         </div>
-        <div class="cep__busca" hidden>
-          <label class="cep__f"><span>Estado</span><select data-uf aria-label="Estado"></select></label>
-          <label class="cep__f"><span>Cidade</span><input data-cidade list="cidades-topo" autocomplete="address-level2" aria-label="Cidade"></label>
-          <label class="cep__f"><span>Rua</span><input data-rua autocomplete="address-line1" placeholder="Nome da rua" aria-label="Rua"></label>
-          <button class="cep__btn" type="button" data-buscar>Buscar</button>
-          <datalist id="cidades-topo"></datalist>
+        <div class="cep__modo" data-modo="rua" hidden>
+          <div class="cep__linha">
+            <label class="cep__f cep__f--uf"><span>Estado</span><select data-uf aria-label="Estado"></select></label>
+            <label class="cep__f cep__f--cid"><span>Cidade</span><input data-cidade list="cidades-topo" autocomplete="address-level2" placeholder="Ex.: Curitiba" aria-label="Cidade"></label>
+            <datalist id="cidades-topo"></datalist>
+          </div>
+          <div class="cep__linha">
+            <div class="cep__f cep__f--rua"><span>Rua</span><input data-rua role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug-topo" autocomplete="off" placeholder="Ex.: Rua Paulo Setúbal" aria-label="Nome da rua"><ul class="cep__sug" id="sug-topo" role="listbox" hidden></ul></div>
+            <label class="cep__f cep__f--num"><span>Número</span><input data-num-rua inputmode="numeric" placeholder="Ex.: 315" aria-label="Número do imóvel"></label>
+            <button class="cep__btn" type="button" data-buscar>Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+          </div>
           <ul class="cep__res"></ul>
         </div>
         <p class="cep__erro" role="status" aria-live="polite"></p>
-        <div class="cep__rodape"><button class="cep__nao" type="button">Não sei meu CEP</button><span class="cep__zap">Prefere conversar? <a data-zap="Olá! Vim pelo site da Do Yourself e quero saber das ofertas." href="https://wa.me/5541995701636">Fale no WhatsApp</a></span></div>
+        <button class="cep__nao" type="button" aria-expanded="false">Não sei meu CEP</button>
+        <div class="cep__zap"><span>Prefiro falar com um atendente</span><a class="cep__zapbt" data-zap="Olá! Vim pelo site da Do Yourself e quero falar com um atendente." href="https://wa.me/5541995701636"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.3-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.5-.6-2.7-1.2-4.4-3.9-4.6-4.1-.1-.2-1.1-1.4-1.1-2.7s.7-1.9.9-2.2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.1 1.4 1.8 1 .9 1.8 1.2 2.1 1.3.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.1.1.6-.1 1.2z"/></svg>Conversar no WhatsApp</a></div>
       </form>
     </div>
   </section>
@@ -118,16 +126,16 @@
   <section class="dy atalhos-sec" aria-labelledby="atalhos-h">
     <div class="cx">
       <p class="atalhos__t" id="atalhos-h" data-sobe>Atalhos rápidos</p>
-      <nav class="atalhos" aria-labelledby="atalhos-h" data-sobe>
-        <a href="#combo"><span class="at__ic at--marca at__ic--combo"><img src="/img/3d/lampada.webp" alt=""><img src="/img/3d/wifi.webp" alt=""><img src="/img/3d-g/celular.webp" alt=""></span><span class="at__tx"><b>Combo</b><small>Luz, internet e celular juntos</small></span></a>
-        <a href="#energia"><span class="at__ic at--luz"><img src="/img/3d/solar.webp" alt=""></span><span class="at__tx"><b>Energia solar</b><small>Simule a sua conta de luz</small></span></a>
-        <a href="#internet"><span class="at__ic at--net"><img src="/img/3d/wifi.webp" alt=""></span><span class="at__tx"><b>Internet para casa</b><small>Fibra com planos no CPF</small></span></a>
-        <a href="#empresa"><span class="at__ic at--emp"><img src="/img/3d/predio.webp" alt=""></span><span class="at__tx"><b>Internet para empresa</b><small>Planos no CNPJ e MEI</small></span></a>
-        <a href="#celular"><span class="at__ic at--cel"><img src="/img/3d-g/celular.webp" alt=""></span><span class="at__tx"><b>Planos de celular</b><small>Linhas para CNPJ e MEI</small></span></a>
-        <a href="#duvidas"><span class="at__ic at--marca"><img src="/img/3d/cashback.webp" alt=""></span><span class="at__tx"><b>Como funciona o cashback</b><small>Dinheiro de volta no PIX</small></span></a>
-        <a href="#como-funciona"><span class="at__ic at--net"><img src="/img/3d/instalacao.webp" alt=""></span><span class="at__tx"><b>Como contratar</b><small>Tudo pelo site, em 3 passos</small></span></a>
-        <a href="https://doyourself-site.vercel.app/sobre"><span class="at__ic at--marca"><img src="/img/3d/casa.webp" alt=""></span><span class="at__tx"><b>Sobre a Do Yourself</b><small>Quem somos</small></span></a>
-        <a class="at--so-cel" data-zap="Olá! Vim pelo site da Do Yourself e quero tirar uma dúvida." href="https://wa.me/5541995701636"><span class="at__ic at--marca"><img src="/img/3d/conversa.webp" alt=""></span><span class="at__tx"><b>Fale no WhatsApp</b><small>Atendimento 24 horas</small></span></a>
+      <nav class="atalhos2" aria-labelledby="atalhos-h" data-sobe>
+        <a class="ata ata--luz" href="#energia"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/solar.webp" alt=""></span><span class="ata__tx"><b>Energia solar</b><small>Simule a sua conta de luz</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--net" href="#internet"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/wifi.webp" alt=""></span><span class="ata__tx"><b>Internet para casa</b><small>Fibra com planos no CPF</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--emp" href="#empresa"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/predio.webp" alt=""></span><span class="ata__tx"><b>Internet para empresa</b><small>Planos no CNPJ e MEI</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--cel" href="#celular"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/celular.webp" alt=""></span><span class="ata__tx"><b>Planos de celular</b><small>Linhas para CNPJ e MEI</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--combo" href="#combo"><span class="ata__painel" aria-hidden="true"><span class="ata__trio"><img src="/img/3d-g/lampada.webp" alt=""><img src="/img/3d-g/wifi.webp" alt=""><img src="/img/3d-g/celular.webp" alt=""></span></span><span class="ata__tx"><b>Combo</b><small>Luz, internet e celular juntos</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--ouro" href="#duvidas"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/cashback.webp" alt=""></span><span class="ata__tx"><b>Como funciona o cashback</b><small>Dinheiro de volta no PIX</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--marca" href="#como-funciona"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/pino.webp" alt=""></span><span class="ata__tx"><b>Como contratar</b><small>Do CEP ao cashback, em 5 passos</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--neutro" href="https://doyourself-site.vercel.app/sobre"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/casa.webp" alt=""></span><span class="ata__tx"><b>Sobre a Do Yourself</b><small>Quem somos</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--zap ata--so-cel" data-zap="Olá! Vim pelo site da Do Yourself e quero tirar uma dúvida." href="https://wa.me/5541995701636"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/conversa.webp" alt=""></span><span class="ata__tx"><b>Fale no WhatsApp</b><small>Atendimento 24 horas</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
       </nav>
     </div>
   </section>
@@ -565,22 +573,30 @@
   <div class="wrap">
     <div class="rod__cta">
       <div><h2>Veja os planos do seu endereço</h2><p>Você só precisa do CEP e do número da casa.</p></div>
-      <form class="cep" data-cep="home" novalidate style="flex:1 1 520px;max-width:640px">
-        <div class="cep__campos">
-          <label class="cep__f"><span>CEP</span><input name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-label="CEP"></label>
-          <label class="cep__f"><span>Número</span><input name="numero" placeholder="Nº do imóvel" aria-label="Número do imóvel"></label>
-          <button class="cep__btn" type="submit">Ver ofertas</button>
+      <form class="cep cep--rod" data-cep="home" novalidate>
+        
+        <div class="cep__modo" data-modo="cep">
+          <div class="cep__linha">
+            <label class="cep__f cep__f--cep"><span>CEP</span><input name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-label="CEP"></label>
+            <label class="cep__f cep__f--num"><span>Número</span><input name="numero" inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 315" aria-label="Número do imóvel"></label>
+            <button class="cep__btn" type="submit">Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+          </div>
         </div>
-        <div class="cep__busca" hidden>
-          <label class="cep__f"><span>Estado</span><select data-uf aria-label="Estado"></select></label>
-          <label class="cep__f"><span>Cidade</span><input data-cidade list="cidades-rod" aria-label="Cidade"></label>
-          <label class="cep__f"><span>Rua</span><input data-rua placeholder="Nome da rua" aria-label="Rua"></label>
-          <button class="cep__btn" type="button" data-buscar>Buscar</button>
-          <datalist id="cidades-rod"></datalist>
+        <div class="cep__modo" data-modo="rua" hidden>
+          <div class="cep__linha">
+            <label class="cep__f cep__f--uf"><span>Estado</span><select data-uf aria-label="Estado"></select></label>
+            <label class="cep__f cep__f--cid"><span>Cidade</span><input data-cidade list="cidades-rod" autocomplete="address-level2" placeholder="Ex.: Curitiba" aria-label="Cidade"></label>
+            <datalist id="cidades-rod"></datalist>
+          </div>
+          <div class="cep__linha">
+            <div class="cep__f cep__f--rua"><span>Rua</span><input data-rua role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug-rod" autocomplete="off" placeholder="Ex.: Rua Paulo Setúbal" aria-label="Nome da rua"><ul class="cep__sug" id="sug-rod" role="listbox" hidden></ul></div>
+            <label class="cep__f cep__f--num"><span>Número</span><input data-num-rua inputmode="numeric" placeholder="Ex.: 315" aria-label="Número do imóvel"></label>
+            <button class="cep__btn" type="button" data-buscar>Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+          </div>
           <ul class="cep__res"></ul>
         </div>
         <p class="cep__erro" role="status" aria-live="polite"></p>
-        <div class="cep__rodape"><button class="cep__nao" type="button">Não sei meu CEP</button></div>
+        <button class="cep__nao" type="button" aria-expanded="false">Não sei meu CEP</button>
       </form>
     </div>
     <div class="rod__barra">

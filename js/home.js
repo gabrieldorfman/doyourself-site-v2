@@ -25,40 +25,124 @@
   if (!matchMedia('(min-width: 768px)').matches) cols.forEach((d) => (d.open = false));
   addEventListener('resize', ajustaCols);
 
-  /* ---------- Campo de CEP (com "Não sei meu CEP": estado, cidade e rua) ---------- */
+  /* ---------- Campo de CEP ----------
+     Modo CEP: CEP + número. Modo "Não sei meu CEP": estado, cidade, rua (com sugestões) e número;
+     o CEP certo sai da faixa de numeração da rua ("até 1239/1240", "de 1241/1242 a 3519/3520", "lado par"...). */
   const mascara = (v) => v.replace(/\D/g, '').slice(0, 8).replace(/^(\d{5})(\d)/, '$1-$2');
+  const semAcento = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const viacep = async (uf, cid, rua) => {
+    const r = await fetch(`https://viacep.com.br/ws/${uf}/${encodeURIComponent(cid)}/${encodeURIComponent(rua)}/json/`);
+    const l = await r.json(); return Array.isArray(l) ? l : [];
+  };
+  // a faixa de números de um CEP, a partir do complemento
+  function faixa(comp) {
+    const c = semAcento(comp || '').trim();
+    const par = /lado par/.test(c) ? 0 : /lado impar/.test(c) ? 1 : null;
+    const nums = (t) => (t.match(/\d+/g) || []).map(Number);
+    let m;
+    if (/^\d+$/.test(c)) return { exato: +c };
+    if ((m = c.match(/^ate ([\d/]+)/))) return { de: 0, ate: Math.max(...nums(m[1])), par };
+    if ((m = c.match(/^de ([\d/]+) a ([\d/]+)/))) return { de: Math.min(...nums(m[1])), ate: Math.max(...nums(m[2])), par };
+    if ((m = c.match(/^de ([\d/]+) ao fim/))) return { de: Math.min(...nums(m[1])), ate: Infinity, par };
+    return c ? null : { de: 0, ate: Infinity, par: null };
+  }
+  // dos CEPs da rua, os que valem para o número da casa
+  function cepsDoNumero(lista, num) {
+    const n = parseInt(String(num).replace(/\D/g, ''), 10);
+    if (Number.isNaN(n)) { const r = lista.filter((e) => { const f = faixa(e.complemento); return f && f.exato == null && f.de === 0; }); return r.length ? r : lista.filter((e) => !(faixa(e.complemento) || {}).exato); }
+    const exatos = lista.filter((e) => (faixa(e.complemento) || {}).exato === n);
+    if (exatos.length) return exatos;
+    return lista.filter((e) => { const f = faixa(e.complemento); return f && f.exato == null && n >= f.de && n <= f.ate && (f.par == null || n % 2 === f.par); });
+  }
+  const tiraTipo = (q) => q.replace(/^(rua|r\.|avenida|av\.?|travessa|tv\.|alameda|al\.|rodovia|estrada)\s+/i, '').trim() || q;
+  const irContratar = (f, cep, num) => { location.href = `/contratar?origem=${f.dataset.cep || 'home'}&cep=${cep.replace(/\D/g, '').replace(/^(\d{5})/, '$1-')}&numero=${encodeURIComponent(num)}`; };
+
   $$('[data-cep]').forEach((f) => {
     const inCep = $('[name=cep]', f), inNum = $('[name=numero]', f), erro = $('.cep__erro', f);
-    const busca = $('.cep__busca', f), selUf = $('[data-uf]', f), inCid = $('[data-cidade]', f), lista = $(`#${inCid.getAttribute('list')}`), inRua = $('[data-rua]', f), res = $('.cep__res', f);
+    const modoCep = $('[data-modo=cep]', f), modoRua = $('[data-modo=rua]', f), btNao = $('.cep__nao', f);
+    const selUf = $('[data-uf]', f), inCid = $('[data-cidade]', f), lista = $(`#${inCid.getAttribute('list')}`);
+    const inRua = $('[data-rua]', f), sug = $('.cep__sug', f), inNumRua = $('[data-num-rua]', f), res = $('.cep__res', f);
+    const msg = (t) => { erro.textContent = t; };
     inCep.addEventListener('input', () => { inCep.value = mascara(inCep.value); });
     Object.entries(DY.UFS).sort((a, b) => a[1].localeCompare(b[1], 'pt-BR')).forEach(([uf, n]) => selUf.add(new Option(n, uf)));
     selUf.value = DY.uf;
-    $('.cep__nao', f).addEventListener('click', () => { busca.hidden = !busca.hidden; if (!busca.hidden) { carregaCidades(); inCid.focus(); } });
+
+    // troca de modo, com o número já digitado passando de um lado para o outro
+    btNao.addEventListener('click', () => {
+      const paraRua = modoRua.hidden; msg(''); res.innerHTML = '';
+      modoCep.hidden = paraRua; modoRua.hidden = !paraRua;
+      btNao.textContent = paraRua ? 'Sei meu CEP' : 'Não sei meu CEP'; btNao.setAttribute('aria-expanded', String(paraRua));
+      if (paraRua) { inNumRua.value = inNum.value; carregaCidades(); (inCid.value ? inRua : inCid).focus(); } else { inNum.value = inNumRua.value || inNum.value; inCep.focus(); }
+      if (window.gsap) gsap.from(paraRua ? modoRua : modoCep, { autoAlpha: 0, y: 8, duration: .3, ease: 'power2.out' });
+    });
+
     let cidadesUf = '';
     async function carregaCidades() {
       if (cidadesUf === selUf.value) return; cidadesUf = selUf.value; lista.innerHTML = '';
       try { const r = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selUf.value}/municipios?orderBy=nome`); (await r.json()).forEach((m) => lista.append(new Option(m.nome))); } catch (e) { /* sem rede: digita livre */ }
     }
-    selUf.addEventListener('change', () => { inCid.value = ''; carregaCidades(); });
-    $('[data-buscar]', f).addEventListener('click', async () => {
-      erro.textContent = ''; res.innerHTML = '';
-      const cid = inCid.value.trim(), rua = inRua.value.trim();
-      if (!cid || rua.length < 3) { erro.textContent = 'Escreva a cidade e pelo menos 3 letras do nome da rua.'; return; }
-      res.innerHTML = '<li><small>Procurando…</small></li>';
-      try {
-        const l = await (await fetch(`https://viacep.com.br/ws/${selUf.value}/${encodeURIComponent(cid)}/${encodeURIComponent(rua)}/json/`)).json();
-        if (!Array.isArray(l) || !l.length) { res.innerHTML = ''; erro.textContent = 'Não achamos essa rua. Confira a cidade e o nome da rua.'; return; }
-        res.innerHTML = '';
-        l.slice(0, 12).forEach((e) => { const li = document.createElement('li'); const b = document.createElement('button'); b.type = 'button'; b.innerHTML = `${e.logradouro}<small>${[e.complemento, e.bairro].filter(Boolean).join(' · ')} · CEP ${e.cep}</small>`;
-          b.addEventListener('click', () => { inCep.value = e.cep; busca.hidden = true; res.innerHTML = ''; inNum.focus(); }); li.append(b); res.append(li); });
-      } catch (e) { res.innerHTML = ''; erro.textContent = 'Não foi possível buscar agora. Tente de novo ou fale no WhatsApp.'; }
+    selUf.addEventListener('change', () => { inCid.value = ''; fechaSug(); carregaCidades(); });
+    inCid.addEventListener('change', fechaSug);
+
+    // sugestões de rua: nomes únicos, conforme digita
+    let tempo, pedido = 0, opcoes = [], ativo = -1;
+    function fechaSug() { sug.hidden = true; sug.innerHTML = ''; inRua.setAttribute('aria-expanded', 'false'); ativo = -1; }
+    function marca(i) { ativo = i; $$('li', sug).forEach((li, k) => li.setAttribute('aria-selected', String(k === i))); }
+    function escolhe(nome) { inRua.value = nome; fechaSug(); inNumRua.focus(); }
+    inRua.addEventListener('input', () => {
+      clearTimeout(tempo); const q = inRua.value.trim(); const cid = inCid.value.trim();
+      if (q.length < 3 || !cid) { fechaSug(); return; }
+      tempo = setTimeout(async () => {
+        const meu = ++pedido;
+        try {
+          const l = await viacep(selUf.value, cid, tiraTipo(q));
+          if (meu !== pedido) return;
+          opcoes = [...new Set(l.map((e) => e.logradouro))].slice(0, 8);
+          if (!opcoes.length) { fechaSug(); return; }
+          sug.innerHTML = opcoes.map((n, k) => `<li role="option" id="${sug.id}-${k}" aria-selected="false" data-k="${k}">${n}</li>`).join('');
+          sug.hidden = false; inRua.setAttribute('aria-expanded', 'true'); ativo = -1;
+        } catch (e) { fechaSug(); }
+      }, 280);
     });
+    inRua.addEventListener('keydown', (e) => {
+      if (sug.hidden) return; const n = opcoes.length;
+      if (e.key === 'ArrowDown') { e.preventDefault(); marca((ativo + 1) % n); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); marca((ativo - 1 + n) % n); }
+      else if (e.key === 'Enter' && ativo >= 0) { e.preventDefault(); escolhe(opcoes[ativo]); }
+      else if (e.key === 'Escape') fechaSug();
+    });
+    sug.addEventListener('mousedown', (e) => { const li = e.target.closest('li'); if (li) { e.preventDefault(); escolhe(opcoes[+li.dataset.k]); } });
+    inRua.addEventListener('blur', () => setTimeout(fechaSug, 150));
+
+    // ver ofertas pela rua: acha o CEP do número e segue para a contratação
+    $('[data-buscar]', f).addEventListener('click', async () => {
+      msg(''); res.innerHTML = '';
+      const cid = inCid.value.trim(), rua = inRua.value.trim(), num = inNumRua.value.trim();
+      if (!cid) { msg('Escreva a cidade.'); inCid.focus(); return; }
+      if (rua.length < 3) { msg('Escreva pelo menos 3 letras do nome da rua.'); inRua.focus(); return; }
+      if (!num) { msg('Escreva o número do imóvel (ou S/N se não tiver).'); inNumRua.focus(); return; }
+      const bt = $('[data-buscar]', f); bt.disabled = true;
+      try {
+        let l = await viacep(selUf.value, cid, tiraTipo(rua));
+        if (!l.length) { msg('Não achamos essa rua. Confira a cidade e o nome da rua.'); return; }
+        const iguais = l.filter((e) => semAcento(e.logradouro) === semAcento(rua) || semAcento(tiraTipo(e.logradouro)) === semAcento(tiraTipo(rua))); if (iguais.length) l = iguais;
+        const ceps = [...new Map(cepsDoNumero(l, num).map((e) => [e.cep, e])).values()];
+        if (ceps.length === 1) { irContratar(f, ceps[0].cep, num); return; }
+        const opc = ceps.length ? ceps : l;
+        msg(ceps.length ? 'Essa rua passa por mais de um bairro. Escolha o seu:' : 'Não achamos a faixa desse número. Escolha o CEP do seu trecho:');
+        opc.slice(0, 10).forEach((e) => { const li = document.createElement('li'); const b = document.createElement('button'); b.type = 'button';
+          b.innerHTML = `${e.logradouro}<small>${[e.bairro, e.complemento].filter(Boolean).join(' · ')} · CEP ${e.cep}</small>`;
+          b.addEventListener('click', () => irContratar(f, e.cep, num)); li.append(b); res.append(li); });
+      } catch (e) { msg('Não foi possível buscar agora. Tente de novo ou fale no WhatsApp.'); } finally { bt.disabled = false; }
+    });
+
     f.addEventListener('submit', (e) => {
-      e.preventDefault(); erro.textContent = '';
+      e.preventDefault(); msg('');
+      if (!modoRua.hidden) { $('[data-buscar]', f).click(); return; }
       const cep = inCep.value.replace(/\D/g, ''), num = inNum.value.trim();
-      if (cep.length !== 8) { erro.textContent = 'Escreva o CEP com 8 números, por exemplo 80000-000.'; inCep.focus(); return; }
-      if (!num) { erro.textContent = 'Escreva o número do imóvel (ou S/N se não tiver).'; inNum.focus(); return; }
-      location.href = `/contratar?origem=${f.dataset.cep || 'home'}&cep=${cep.replace(/^(\d{5})/, '$1-')}&numero=${encodeURIComponent(num)}`;
+      if (cep.length !== 8) { msg('Escreva o CEP com 8 números, por exemplo 80000-000.'); inCep.focus(); return; }
+      if (!num) { msg('Escreva o número do imóvel (ou S/N se não tiver).'); inNum.focus(); return; }
+      irContratar(f, cep, num);
     });
   });
 
@@ -442,5 +526,19 @@ document.querySelectorAll('[data-slides]').forEach((m) => {
     const topo = pista.getBoundingClientRect().top + scrollY; const curso = pista.offsetHeight - innerHeight;
     scrollTo({ top: topo + curso * ((k + .5) / N), behavior: calmo ? 'auto' : 'smooth' });
   }));
+})();
+
+/* menu: some ao rolar para baixo e volta ao rolar para cima (fica sempre visível no topo da página) */
+(() => {
+  const nav = document.querySelector('header.nav'); if (!nav) return;
+  let ultimo = scrollY, acumulado = 0;
+  const mostra = (v) => { nav.classList.toggle('nav--some', !v); document.documentElement.classList.toggle('nav-oculto', !v); };
+  addEventListener('scroll', () => {
+    const y = scrollY, d = y - ultimo; ultimo = y;
+    if (nav.classList.contains('is-open') || nav.matches(':focus-within') && d > 0 && nav.querySelector('.nav__item:hover')) return;
+    if (y < 140) { acumulado = 0; mostra(true); return; }
+    acumulado = Math.sign(d) === Math.sign(acumulado) ? acumulado + d : d;
+    if (acumulado > 12) mostra(false); else if (acumulado < -8) mostra(true);
+  }, { passive: true });
 })();
 
