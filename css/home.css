@@ -1439,3 +1439,41 @@ main > section.topo { height: auto !important; min-height: 100svh; }
   .mil[data-mil] .mil__val { margin-top: auto; padding-top: 18px; }
   .mil[data-mil] .mil__bts { margin-top: auto; padding-top: 18px; }
 }
+
+/* ===== CEP no estilo de campo de app: rótulo que sobe, "Sem número", check do CEP, botões lado a lado ===== */
+.cep__f { position: relative; }
+.cep__f > span { top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 500; color: #8a8d86; transition: top .18s ease, transform .18s ease, font-size .18s ease, color .18s; }
+.cep__f:focus-within > span, .cep__f.is-cheio > span { top: 9px; transform: none; font-size: 12px; font-weight: 600; color: var(--cinza); }
+.cep__f:focus-within > span { color: var(--marca); }
+.cep__f input::placeholder { color: transparent; transition: color .18s; }
+.cep__f:focus-within input::placeholder { color: #a6a8a2; }
+.cep__f input, .cep__f select { padding-top: 22px; }
+.cep__f select { color: var(--tinta); }
+/* check verde quando o CEP é encontrado */
+.cep__ok { position: absolute; right: 14px; top: 50%; width: 24px; height: 24px; margin-top: -12px; border-radius: 50%; background: var(--marca) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3L15 6.5' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat; transform: scale(0); transition: transform .3s cubic-bezier(.3, 1.6, .5, 1); pointer-events: none; }
+.cep__f--cep.is-ok .cep__ok { transform: scale(1); }
+.cep__f--cep.is-ok input { border-color: var(--marca); }
+.cep__f--cep.is-erro input { border-color: #d9534f; }
+.cep__end { margin: 2px 0 0; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--marca); text-align: center; }
+.cep__end.is-erro { color: #b42318; font-weight: 500; }
+/* número com "Sem número" dentro do campo */
+.cep__f--num input:not([type=checkbox]) { padding-right: 112px; }
+.cep__sn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--cinza); cursor: pointer; user-select: none; white-space: nowrap; }
+.cep__sn input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.cep__sn i { width: 18px; height: 18px; border-radius: 50%; border: 1.8px solid var(--marca); transition: background .2s; }
+.cep__sn input:checked + i { background: var(--marca) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3L15 6.5' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat; }
+.cep__sn input:focus-visible + i { box-shadow: 0 0 0 3px rgb(64 116 92 / .3); }
+/* modo CEP: os dois campos dividem a linha */
+.cep__modo[data-modo="cep"] .cep__linha { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cep__modo[data-modo="cep"] .cep__f { flex: none; width: 100%; }
+/* "Não sei meu CEP" e "Ver ofertas" lado a lado */
+.cep__acoes { width: 100%; display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 14px; }
+.cep__acoes .cep__nao { margin: 0; height: 54px; padding: 0 22px; font-size: 13px; }
+.cep__acoes .cep__btn { height: 54px; min-width: 200px; justify-content: center; }
+.cep__modo[data-modo="rua"] .cep__btn { display: none; }
+@media (max-width: 619px) {
+  .cep__modo[data-modo="cep"] .cep__linha { grid-template-columns: 1fr; }
+  .cep__acoes { flex-direction: column-reverse; align-items: stretch; gap: 10px; }
+  .cep__acoes .cep__nao { height: 44px; align-self: center; }
+  .cep__acoes .cep__btn { width: 100%; }
+}

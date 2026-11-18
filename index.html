@@ -98,10 +98,10 @@
         <p class="cep__t">Veja as ofertas do seu endereço</p>
         <div class="cep__modo" data-modo="cep">
           <div class="cep__linha">
-            <label class="cep__f cep__f--cep"><span>CEP</span><input name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-label="CEP"></label>
-            <label class="cep__f cep__f--num"><span>Número</span><input name="numero" inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 315" aria-label="Número do imóvel"></label>
-            <button class="cep__btn" type="submit">Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+            <label class="cep__f cep__f--cep"><span>CEP</span><input name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-label="CEP"><i class="cep__ok" aria-hidden="true"></i></label>
+            <div class="cep__f cep__f--num"><span>Número</span><input name="numero" inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 120" aria-label="Número do imóvel"><label class="cep__sn"><input type="checkbox" data-sn><i aria-hidden="true"></i>Sem número</label></div>
           </div>
+          <p class="cep__end" aria-live="polite" hidden></p>
         </div>
         <div class="cep__modo" data-modo="rua" hidden>
           <div class="cep__linha">
@@ -110,14 +110,17 @@
             <datalist id="cidades-topo"></datalist>
           </div>
           <div class="cep__linha">
-            <div class="cep__f cep__f--rua"><span>Rua</span><input data-rua role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug-topo" autocomplete="off" placeholder="Ex.: Rua Paulo Setúbal" aria-label="Nome da rua"><ul class="cep__sug" id="sug-topo" role="listbox" hidden></ul></div>
-            <label class="cep__f cep__f--num"><span>Número</span><input data-num-rua inputmode="numeric" placeholder="Ex.: 315" aria-label="Número do imóvel"></label>
-            <button class="cep__btn" type="button" data-buscar>Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+            <div class="cep__f cep__f--rua"><span>Rua</span><input data-rua role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug-topo" autocomplete="off" placeholder="Ex.: Rua das Palmeiras" aria-label="Nome da rua"><ul class="cep__sug" id="sug-topo" role="listbox" hidden></ul></div>
+            <div class="cep__f cep__f--num"><span>Número</span><input data-num-rua inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 120" aria-label="Número do imóvel"><label class="cep__sn"><input type="checkbox" data-sn><i aria-hidden="true"></i>Sem número</label></div>
           </div>
+          <button type="button" data-buscar hidden></button>
           <ul class="cep__res"></ul>
         </div>
         <p class="cep__erro" role="status" aria-live="polite"></p>
-        <button class="cep__nao" type="button" aria-expanded="false">Não sei meu CEP</button>
+        <div class="cep__acoes">
+          <button class="cep__nao" type="button" aria-expanded="false">Não sei meu CEP</button>
+          <button class="cep__btn" type="submit">Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        </div>
         <div class="cep__zap"><span>Prefiro falar com um atendente</span><a class="cep__zapbt" data-zap="Olá! Vim pelo site da Do Yourself e quero falar com um atendente." href="https://wa.me/5541995701636"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.3-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.5-.6-2.7-1.2-4.4-3.9-4.6-4.1-.1-.2-1.1-1.4-1.1-2.7s.7-1.9.9-2.2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.1 1.4 1.8 1 .9 1.8 1.2 2.1 1.3.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.1.1.6-.1 1.2z"/></svg>Conversar no WhatsApp</a></div>
       </form>
     </div>
@@ -579,10 +582,10 @@
         
         <div class="cep__modo" data-modo="cep">
           <div class="cep__linha">
-            <label class="cep__f cep__f--cep"><span>CEP</span><input name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-label="CEP"></label>
-            <label class="cep__f cep__f--num"><span>Número</span><input name="numero" inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 315" aria-label="Número do imóvel"></label>
-            <button class="cep__btn" type="submit">Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+            <label class="cep__f cep__f--cep"><span>CEP</span><input name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-label="CEP"><i class="cep__ok" aria-hidden="true"></i></label>
+            <div class="cep__f cep__f--num"><span>Número</span><input name="numero" inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 120" aria-label="Número do imóvel"><label class="cep__sn"><input type="checkbox" data-sn><i aria-hidden="true"></i>Sem número</label></div>
           </div>
+          <p class="cep__end" aria-live="polite" hidden></p>
         </div>
         <div class="cep__modo" data-modo="rua" hidden>
           <div class="cep__linha">
@@ -591,14 +594,17 @@
             <datalist id="cidades-rod"></datalist>
           </div>
           <div class="cep__linha">
-            <div class="cep__f cep__f--rua"><span>Rua</span><input data-rua role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug-rod" autocomplete="off" placeholder="Ex.: Rua Paulo Setúbal" aria-label="Nome da rua"><ul class="cep__sug" id="sug-rod" role="listbox" hidden></ul></div>
-            <label class="cep__f cep__f--num"><span>Número</span><input data-num-rua inputmode="numeric" placeholder="Ex.: 315" aria-label="Número do imóvel"></label>
-            <button class="cep__btn" type="button" data-buscar>Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+            <div class="cep__f cep__f--rua"><span>Rua</span><input data-rua role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug-rod" autocomplete="off" placeholder="Ex.: Rua das Palmeiras" aria-label="Nome da rua"><ul class="cep__sug" id="sug-rod" role="listbox" hidden></ul></div>
+            <div class="cep__f cep__f--num"><span>Número</span><input data-num-rua inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 120" aria-label="Número do imóvel"><label class="cep__sn"><input type="checkbox" data-sn><i aria-hidden="true"></i>Sem número</label></div>
           </div>
+          <button type="button" data-buscar hidden></button>
           <ul class="cep__res"></ul>
         </div>
         <p class="cep__erro" role="status" aria-live="polite"></p>
-        <button class="cep__nao" type="button" aria-expanded="false">Não sei meu CEP</button>
+        <div class="cep__acoes">
+          <button class="cep__nao" type="button" aria-expanded="false">Não sei meu CEP</button>
+          <button class="cep__btn" type="submit">Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        </div>
       </form>
     </div>
     <div class="rod__barra">

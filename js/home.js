@@ -67,12 +67,50 @@
     Object.entries(DY.UFS).sort((a, b) => a[1].localeCompare(b[1], 'pt-BR')).forEach(([uf, n]) => selUf.add(new Option(n, uf)));
     selUf.value = DY.uf;
 
+    // rótulo que sobe quando o campo tem foco ou valor (como um campo de app)
+    const cheio = (el) => { const c = el.closest('.cep__f'); if (c) c.classList.toggle('is-cheio', !!el.value || el.tagName === 'SELECT'); };
+    $$('.cep__f input:not([type=checkbox]), .cep__f select', f).forEach((el) => { cheio(el); ['input', 'change', 'blur'].forEach((ev) => el.addEventListener(ev, () => cheio(el))); });
+    // "Sem número": preenche S/N e trava o campo
+    $$('[data-sn]', f).forEach((cx) => cx.addEventListener('change', () => {
+      const campo = cx.closest('.cep__f').querySelector('input:not([type=checkbox])');
+      campo.value = cx.checked ? 'S/N' : ''; campo.readOnly = cx.checked; cheio(campo); if (!cx.checked) campo.focus();
+    }));
+    // CEP completo: confere e mostra a rua encontrada, com um check no campo
+    const fCep = inCep.closest('.cep__f'), end = $('.cep__end', f); let ultimoCep = '';
+    inCep.addEventListener('input', async () => {
+      const n = inCep.value.replace(/\D/g, ''); fCep.classList.remove('is-ok', 'is-erro');
+      if (n.length < 8) { end.hidden = true; ultimoCep = ''; return; }
+      if (n === ultimoCep) return; ultimoCep = n;
+      try {
+        const r = await (await fetch(`https://viacep.com.br/ws/${n}/json/`)).json();
+        if (n !== inCep.value.replace(/\D/g, '')) return;
+        if (r.erro) { fCep.classList.add('is-erro'); end.hidden = false; end.className = 'cep__end is-erro'; end.textContent = 'Não encontramos esse CEP. Confira os números ou use "Não sei meu CEP".'; return; }
+        fCep.classList.add('is-ok'); end.hidden = false; end.className = 'cep__end';
+        end.textContent = [r.logradouro, r.bairro, `${r.localidade}/${r.uf}`].filter(Boolean).join(' · ');
+        if (document.activeElement === inCep) inNum.focus();
+      } catch (e) { end.hidden = true; }
+    });
+    // "Não sei meu CEP": estado e cidade aproximados pela conexão (a pessoa pode trocar)
+    let jaLocalizou = false;
+    async function localizar() {
+      if (jaLocalizou || inCid.value) return; jaLocalizou = true;
+      try {
+        const g = await (await fetch('https://get.geojs.io/v1/ip/geo.json')).json();
+        if (g.country_code !== 'BR' || inCid.value) return;
+        const uf = Object.entries(DY.UFS).find(([, nome]) => semAcento(nome) === semAcento(g.region || ''));
+        if (uf) { selUf.value = uf[0]; cidadesUf = ''; carregaCidades(); cheio(selUf); }
+        if (g.city) { inCid.value = g.city; cheio(inCid); }
+      } catch (e) { /* sem localização: a pessoa escolhe */ }
+    }
+
     // troca de modo, com o número já digitado passando de um lado para o outro
     btNao.addEventListener('click', () => {
       const paraRua = modoRua.hidden; msg(''); res.innerHTML = '';
       modoCep.hidden = paraRua; modoRua.hidden = !paraRua;
       btNao.textContent = paraRua ? 'Sei meu CEP' : 'Não sei meu CEP'; btNao.setAttribute('aria-expanded', String(paraRua));
-      if (paraRua) { inNumRua.value = inNum.value; carregaCidades(); (inCid.value ? inRua : inCid).focus(); } else { inNum.value = inNumRua.value || inNum.value; inCep.focus(); }
+      if (paraRua) { inNumRua.value = inNum.value; localizar(); carregaCidades(); (inCid.value ? inRua : inCid).focus(); } else { inNum.value = inNumRua.value || inNum.value; inCep.focus(); }
+      $$('.cep__f input, .cep__f select', f).forEach((el) => el.type !== 'checkbox' && cheio(el));
+      [inNum, inNumRua].forEach((el) => { const sn = el.value === 'S/N'; el.readOnly = sn; const cx = el.closest('.cep__f').querySelector('[data-sn]'); if (cx) cx.checked = sn; cheio(el); });
       if (window.gsap) gsap.from(paraRua ? modoRua : modoCep, { autoAlpha: 0, y: 8, duration: .3, ease: 'power2.out' });
     });
 
