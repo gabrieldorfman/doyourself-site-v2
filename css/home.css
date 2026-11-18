@@ -1118,3 +1118,11 @@ header.nav.is-open { background: var(--creme); transform: none; }
 /* o topo cresce quando o formulário abre o modo "Não sei meu CEP" */
 main > section.topo { height: auto !important; min-height: 100svh; }
 @media (max-width: 1123px) { main > section.topo { min-height: 0; } }
+/* nomes mais longos: "Rio Grande do Norte" e "Vila Bela da Santíssima Trindade" (desktop e tablet) */
+@media (min-width: 620px) {
+  .cep { transition: max-width .3s ease; }
+  .cep:has([data-modo="rua"]:not([hidden])) { max-width: 720px; }
+  .cep__f--uf select { max-width: 270px; }
+  .cep__f--cid input { max-width: 360px; }
+  @supports not (field-sizing: content) { .cep__f--uf select { width: 250px; } .cep__f--cid input { width: 350px; } }
+}
