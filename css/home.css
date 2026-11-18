@@ -1418,3 +1418,24 @@ main > section.topo { height: auto !important; min-height: 100svh; }
 .cbm__txt .nw { white-space: nowrap; }
 @media (max-width: 619px) { .cbm__caixa { padding: 60px 20px 20px; } .cbm__txt { font-size: 15px; } .cbm h3 { font-size: 23px; } }
 .cbm__nota b { color: var(--tinta); }
+
+/* ===== oferta do mês sem giro: a coluna da direita preenche o card até a base dos quadros ===== */
+@media (min-width: 1124px) {
+  .mil[data-mil] { align-items: stretch; }
+  .mil[data-mil] > .mil__dir { display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; padding-top: 6px; }
+  .mil[data-mil] > .mil__dir .mil__t { align-self: center; }
+  .mil[data-mil] > .mil__dir .ops { width: 100%; }
+  .mil[data-mil] .mil__val { display: grid; justify-items: center; margin-top: 22px; }
+  .mil[data-mil] .mil__de { margin: 0; }
+  .mil[data-mil] .pc__preco { justify-content: center; }
+  .mil[data-mil] [data-mil-cb] { width: 100%; max-width: 400px; margin: 22px auto 0; }
+  .mil[data-mil] .mil__bts { margin-top: auto; padding-top: 26px; justify-content: center; width: 100%; }
+}
+@media (min-width: 1124px) {
+  .mil[data-mil] > .mil__dir { align-self: stretch; }
+  .mil[data-mil] [data-mil-cb] .cb { width: 100%; }
+}
+@media (min-width: 1124px) {
+  .mil[data-mil] .mil__val { margin-top: auto; padding-top: 18px; }
+  .mil[data-mil] .mil__bts { margin-top: auto; padding-top: 18px; }
+}
