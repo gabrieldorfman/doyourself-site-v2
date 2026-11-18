@@ -1417,3 +1417,4 @@ main > section.topo { height: auto !important; min-height: 100svh; }
 .cbm__txt p { margin: 0; }
 .cbm__txt .nw { white-space: nowrap; }
 @media (max-width: 619px) { .cbm__caixa { padding: 60px 20px 20px; } .cbm__txt { font-size: 15px; } .cbm h3 { font-size: 23px; } }
+.cbm__nota b { color: var(--tinta); }

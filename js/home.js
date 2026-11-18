@@ -662,13 +662,13 @@ document.querySelectorAll('[data-slides]').forEach((m) => {
       const cel = d.cbTipo === 'cel';
       const plano = cel ? (n > 1 ? `${n} linhas do plano de ${nb(d.cbPlano)}` : `1 linha do plano de ${nb(d.cbPlano)}`) : `o plano de ${d.cbPlano.replace(/^(\S+) Mega/, (m) => nb(m))}`;
       $j('[data-cbm-txt]').innerHTML = `<p>Se você contratar <b>${plano}</b>, você paga <b class="nw">${preco} por mês</b>, que é o valor da mensalidade.</p>
-        <p>${cel ? 'Com as linhas ativadas e o contrato concluído' : 'Depois da instalação, com o contrato concluído'}, você recebe <b class="cbm__v nw">${valor}</b> em forma de cashback, direto na sua conta, via PIX.</p>`;
+        <p>${cel ? 'Com as linhas ativadas e o contrato concluído' : 'Depois da instalação, com o contrato concluído'}, você recebe <b class="cbm__v nw">${valor}</b> em forma de <b>Cashback</b>, direto na sua conta, via PIX.</p>`;
       $j('[data-cbm-passos]').innerHTML = `<li><b>Você contrata</b><span>Pelo site, em poucos minutos</span></li>
-        <li><b>Paga a mensalidade</b><span>${preco} por mês${cel && n > 1 ? `, ${n} linhas` : ''}</span></li>
-        <li><b>Recebe ${valor} no PIX</b><span>Em até 7 dias depois do contrato concluído</span></li>`;
-      $j('[data-cbm-nota]').textContent = cel
-        ? 'O cashback é pago uma única vez: o valor de uma mensalidade inteira, por linha contratada.'
-        : 'O cashback é pago uma única vez: metade de uma mensalidade do plano escolhido.';
+        ${cel ? `<li><b>${n > 1 ? 'Suas linhas são ativadas' : 'Sua linha é ativada'}</b><span>Com número novo ou com o seu, pela portabilidade</span></li>` : '<li><b>Sua internet é instalada</b><span>Em até 48 horas, sem custo</span></li>'}
+        <li><b>Você recebe ${valor} no PIX</b><span>Em até 7 dias depois do contrato concluído</span></li>`;
+      $j('[data-cbm-nota]').innerHTML = cel
+        ? 'O <b>Cashback</b> é pago uma única vez: o valor de uma mensalidade inteira, por linha contratada.'
+        : 'O <b>Cashback</b> é pago uma única vez: metade de uma mensalidade do plano escolhido.';
       j.showModal();
       if (window.gsap && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
         gsap.fromTo($j('.cbm__caixa'), { y: 30, scale: .96, autoAlpha: 0 }, { y: 0, scale: 1, autoAlpha: 1, duration: .45, ease: 'back.out(1.6)' });
