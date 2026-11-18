@@ -177,7 +177,8 @@
   // k = { plano, preco (centavos/mês), valor (centavos), linhas, tipo: net | emp | cel }
   const cbHtml = (k) => `<button type="button" class="cb" aria-haspopup="dialog" data-dica="Clique e entenda o cashback" data-cb-plano="${k.plano}" data-cb-preco="${k.preco}" data-cb-valor="${k.valor}" data-cb-linhas="${k.linhas || 0}" data-cb-tipo="${k.tipo}">
       <img src="/img/3d/cashback-p.webp" alt="" width="30" height="30"><span class="cb__t">Cashback de <b>${DY.brl(k.valor)}</b></span><span class="cb__q" aria-hidden="true">O que é?</span></button>`;
-  const cbNet = (p, o, tipo = 'net') => cbHtml({ plano: `${String(p.num).replace(/^(\d)(\d{3})$/, '$1.$2')} Mega`, preco: c(o.preco), valor: cb(o.preco, 50), tipo });
+  const appNome = (p, o) => (o.nome === 'Somente Internet' ? (p.id === '1000' ? 'NoPing' : '') : p.opcoes.length === 1 && /,/.test(o.nome) ? '4 streamings' : ((LOGO[o.nome] || [0, o.nome])[1]));
+  const cbNet = (p, o, tipo = 'net') => { const app = tipo === 'net' ? appNome(p, o) : ''; return cbHtml({ plano: `${String(p.num).replace(/^(\d)(\d{3})$/, '$1.$2')} Mega${app ? ' com ' + app : ''}`, preco: c(o.preco), valor: cb(o.preco, 50), tipo }); };
   const totCel = (p) => c(p.preco) * (linhas[p.id] || 1);
   const cbCel = (p) => cbHtml({ plano: `${p.gb} GB`, preco: totCel(p), valor: DY.cashbackCentavos(totCel(p), 100), linhas: linhas[p.id] || 1, tipo: 'cel' });
   const precoCel = (p, g) => { const h = precoHtml(totCel(p) / 100, 'c' + p.id); return g ? h.replace('pc__preco', 'pc__preco pc__preco--g') : h; };
@@ -647,7 +648,7 @@ document.querySelectorAll('[data-slides]').forEach((m) => {
     <img class="cbm__obj" src="/img/3d-g/cashback.webp" alt="">
     <p class="cbm__eyebrow">Cashback, o que é isso?</p>
     <h3 id="cbm-t">Parte do que você paga volta para você no PIX</h3>
-    <p class="cbm__txt" data-cbm-txt></p>
+    <div class="cbm__txt" data-cbm-txt></div>
     <ol class="cbm__passos" data-cbm-passos></ol>
     <p class="cbm__nota" data-cbm-nota></p>
     <button type="button" class="cbm__ok" data-cbm-fechar>Entendi</button>
@@ -656,10 +657,12 @@ document.querySelectorAll('[data-slides]').forEach((m) => {
   const $j = (s) => j.querySelector(s);
   document.addEventListener('click', (e) => {
     const b = e.target.closest('.cb'); if (b) {
-      const d = b.dataset, preco = DY.brl(+d.cbPreco), valor = DY.brl(+d.cbValor), n = +d.cbLinhas;
+      const nb = (t) => String(t).replace(/ /g, '\u00a0');
+      const d = b.dataset, preco = nb(DY.brl(+d.cbPreco)), valor = nb(DY.brl(+d.cbValor)), n = +d.cbLinhas;
       const cel = d.cbTipo === 'cel';
-      const plano = cel ? (n > 1 ? `${n} linhas do plano de ${d.cbPlano}` : `1 linha do plano de ${d.cbPlano}`) : `o plano de ${d.cbPlano}`;
-      $j('[data-cbm-txt]').innerHTML = `Se você contratar ${plano}, você paga <b>${preco} por mês</b>, que é o valor da mensalidade. ${cel ? 'Com as linhas ativadas e o contrato concluído' : 'Depois da instalação, com o contrato concluído'}, você recebe <b class="cbm__v">${valor}</b> de volta no seu PIX.`;
+      const plano = cel ? (n > 1 ? `${n} linhas do plano de ${nb(d.cbPlano)}` : `1 linha do plano de ${nb(d.cbPlano)}`) : `o plano de ${d.cbPlano.replace(/^(\S+) Mega/, (m) => nb(m))}`;
+      $j('[data-cbm-txt]').innerHTML = `<p>Se você contratar <b>${plano}</b>, você paga <b class="nw">${preco} por mês</b>, que é o valor da mensalidade.</p>
+        <p>${cel ? 'Com as linhas ativadas e o contrato concluído' : 'Depois da instalação, com o contrato concluído'}, você recebe <b class="cbm__v nw">${valor}</b> em forma de cashback, direto na sua conta, via PIX.</p>`;
       $j('[data-cbm-passos]').innerHTML = `<li><b>Você contrata</b><span>Pelo site, em poucos minutos</span></li>
         <li><b>Paga a mensalidade</b><span>${preco} por mês${cel && n > 1 ? `, ${n} linhas` : ''}</span></li>
         <li><b>Recebe ${valor} no PIX</b><span>Em até 7 dias depois do contrato concluído</span></li>`;
