@@ -174,14 +174,20 @@
   const APPS = { 'youtube-premium': '/img/apps/youtube-premium-logo.svg', paramount: '/img/apps/paramount-44.svg', 'hbo-max': '/img/apps/hbo-max.png', globoplay: '/img/apps/globoplay.png', whatsapp: '/img/apps/whatsapp.svg' };
   const precoHtml = (v, id) => { const { i, d } = partes(v); return `<p class="pc__preco"><small>R$</small><b data-num data-v="${v}" data-id="${id}">${i}</b><i>,${d}</i><em>/mês</em></p>`; };
   // cashback em destaque nos cards: o mesmo cifrão 3D do site, em miniatura
-  const cbHtml = (v, extra = '') => `<img src="/img/3d/cashback-p.webp" alt="" width="34" height="34"><span class="cb__t">Você recebe de cashback no PIX${extra}</span><b class="cb__v">${v}</b>`;
+  // k = { plano, preco (centavos/mês), valor (centavos), linhas, tipo: net | emp | cel }
+  const cbHtml = (k) => `<button type="button" class="cb" aria-haspopup="dialog" data-dica="Clique e entenda o cashback" data-cb-plano="${k.plano}" data-cb-preco="${k.preco}" data-cb-valor="${k.valor}" data-cb-linhas="${k.linhas || 0}" data-cb-tipo="${k.tipo}">
+      <img src="/img/3d/cashback-p.webp" alt="" width="30" height="30"><span class="cb__t">Cashback de <b>${DY.brl(k.valor)}</b></span><span class="cb__q" aria-hidden="true">O que é?</span></button>`;
+  const cbNet = (p, o, tipo = 'net') => cbHtml({ plano: `${String(p.num).replace(/^(\d)(\d{3})$/, '$1.$2')} Mega`, preco: c(o.preco), valor: cb(o.preco, 50), tipo });
+  const totCel = (p) => c(p.preco) * (linhas[p.id] || 1);
+  const cbCel = (p) => cbHtml({ plano: `${p.gb} GB`, preco: totCel(p), valor: DY.cashbackCentavos(totCel(p), 100), linhas: linhas[p.id] || 1, tipo: 'cel' });
+  const precoCel = (p, g) => { const h = precoHtml(totCel(p) / 100, 'c' + p.id); return g ? h.replace('pc__preco', 'pc__preco pc__preco--g') : h; };
   // celular: os apps que não gastam a internet viram ícones, e cada card escolhe quantas linhas
   const APP = { whatsapp: 'WhatsApp', messenger: 'Messenger', waze: 'Waze', facebook: 'Facebook', instagram: 'Instagram' };
-  const linhas = {}; const MAX_L = 9;
+  const linhas = {}; const MAX_L = 20;
   const linkCel = (p) => `/contratar?origem=celular&para=cnpj&plano=${encodeURIComponent(p.id)}&linhas=${linhas[p.id] || 1}`;
   function totalCel(p) {
-    const n = linhas[p.id] || 1; const tot = c(p.preco) * n;
-    return n === 1 ? 'Valor de 1 linha' : `${n} linhas: <b>${DY.brl(tot)}/mês</b> · ${DY.brl(DY.cashbackCentavos(tot, 100))} de volta`;
+    const n = linhas[p.id] || 1;
+    return n === 1 ? 'Valor de 1 linha' : `Valor de ${n} linhas · ${brl(p.preco)} cada`;
   }
   function cardCel(p) {
     const dest = p.selo === 'OFERTA DO MÊS'; const n = linhas[p.id] || 1;
@@ -192,10 +198,10 @@
       <p class="pc__vel"><b>${p.gb}</b><span>GB</span></p>
       <p class="pc__sub">${p.plano} GB do plano + ${p.bonus} GB de bônus</p>
       <div class="pc__op"><p class="pc__op-t">Sem gastar a internet</p><ul class="apps apps--${apps.length}">${apps.map((k) => `<li title="${APP[k]}"><img src="/img/apps/${k}.svg" alt="${APP[k]}"></li>`).join('')}</ul></div>
-      <div class="pc__pe">${precoHtml(p.preco, 'c' + p.id).replace('/mês', '/mês por linha')}
-      <div class="pc__cb">${cbHtml(DY.brl(cb(p.preco, 100)), ', por linha')}</div>
-      <div class="qtd"><span class="qtd__l" id="ql-${p.id}">Linhas</span><div class="qtd__ctrl" role="group" aria-labelledby="ql-${p.id}"><button type="button" data-l="-1" aria-label="Tirar uma linha"${n <= 1 ? ' disabled' : ''}>−</button><output aria-live="polite">${n}</output><button type="button" data-l="1" aria-label="Adicionar uma linha"${n >= MAX_L ? ' disabled' : ''}>+</button></div></div>
+      <div class="pc__pe"><div class="cel__preco">${precoCel(p)}</div>
       <p class="qtd__tot">${totalCel(p)}</p>
+      <div class="cbw">${cbCel(p)}</div>
+      <div class="qtd"><span class="qtd__l" id="ql-${p.id}">Linhas</span><div class="qtd__ctrl" role="group" aria-labelledby="ql-${p.id}"><button type="button" data-l="-1" aria-label="Tirar uma linha"${n <= 1 ? ' disabled' : ''}>−</button><output aria-live="polite">${n}</output><button type="button" data-l="1" aria-label="Adicionar uma linha"${n >= MAX_L ? ' disabled' : ''}>+</button></div></div>
       <a class="pc__btn" data-ir-cel href="${linkCel(p)}">Quero este plano</a>
       ${btDet}</div>
       ${painelDet(`${p.gb} GB por mês`, [...(p.detalhes || []).map((d) => [d[1], d[2]]), ['Também vem no plano', (p.servicos || []).join(' · ')]], '')}</article>`;
@@ -204,9 +210,12 @@
     const bt = e.target.closest('.pc--cel [data-l]'); if (bt) {
       const card = bt.closest('.pc, [data-cel-dest]'); const p = DY.planosCnpj.find((x) => x.id === card.dataset.id); if (!p) return;
       const n = Math.max(1, Math.min(MAX_L, (linhas[p.id] || 1) + +bt.dataset.l)); linhas[p.id] = n;
+      const antes = { ['c' + p.id]: +$('[data-num]', card).dataset.v };
       $('output', card).textContent = n; $('.qtd__tot', card).innerHTML = totalCel(p); $('[data-ir-cel]', card).href = linkCel(p);
+      $('.cel__preco', card).innerHTML = precoCel(p, card.matches('[data-cel-dest]')); $('.cbw', card).innerHTML = cbCel(p);
+      contar(card, antes);
       const [menos, mais] = $$('[data-l]', card); menos.disabled = n <= 1; mais.disabled = n >= MAX_L;
-      if (n === MAX_L) avisar('Para 10 linhas ou mais, fale com a gente no WhatsApp: tem condição especial.');
+      if (n === MAX_L) avisar('Para mais de 20 linhas, fale com a gente no WhatsApp.');
       if (temGsap) gsap.fromTo($('output', card), { scale: 1.35 }, { scale: 1, duration: .4, ease: 'back.out(3)' });
       return;
     }
@@ -296,9 +305,9 @@
   const milhar = (n) => String(n).replace(/^(\d)(\d{3})$/, '$1.$2'); // 1000 → 1.000
   // detalhes rápidos: o card vira uma lista curta do que importa, com a página completa do plano e a volta
   const val = (p, k) => ((p.detalhes || []).find((d) => d[1].startsWith(k)) || [])[2] || '';
-  function painelDet(titulo, linhas, pagina) {
+  function painelDet(titulo, linhas, pagina, extra = '') {
     return `<div class="pc__mais" hidden tabindex="-1"><p class="pc__mais-t">${titulo}</p>
-      <ul class="pc__lista">${linhas.filter((l) => l[1]).map(([a, b]) => `<li><span>${a}</span><b>${b}</b></li>`).join('')}</ul>
+      <ul class="pc__lista">${linhas.filter((l) => l[1]).map(([a, b]) => `<li><span>${a}</span><b>${b}</b></li>`).join('')}</ul>${extra}
       <div class="pc__mais-bts">${pagina ? `<a class="bt-mini bt-mini--cheio" href="${pagina}">Página do plano</a>` : ''}<button type="button" class="bt-mini" data-det-fechar>Voltar</button></div></div>`;
   }
   const btDet = '<button type="button" class="bt-mini pc__det" data-det aria-expanded="false">Ver detalhes do plano</button>';
@@ -307,7 +316,15 @@
     if (!nomes.length) return 'Só internet, sem streaming';
     return nomes.length === 1 ? nomes[0] + ' incluso' : nomes.join(', ').replace(/, ([^,]*)$/, ' ou $1') + ', à sua escolha';
   }
-  const detNet = (p) => painelDet(`${milhar(p.num)} Mega`, [['Download', val(p, 'Download')], ['Upload', val(p, 'Upload')], ['Modem', val(p, 'Modem')], ['Aplicativos inclusos', appsNet(p)], ['Instalação', 'Grátis, em até 48 horas']], DET[p.id] ? V1 + DET[p.id] : '');
+  // aplicativos do plano em logos: um incluso, ou as opções para escolher
+  const ICONE = { 'YouTube Premium': '/img/apps/youtube.png' };
+  function appsLogos(p) {
+    const it = p.opcoes.map((o) => (o.nome === 'Somente Internet' ? (p.id === '1000' ? ['/img/apps/noping.svg', 'NoPing'] : null) : [ICONE[o.nome] || (LOGO[o.nome] || [])[0], (LOGO[o.nome] || [0, o.nome])[1]])).filter((x) => x && x[0]);
+    if (!it.length) return '';
+    const t = it.length === 1 ? 'Aplicativo incluso' : 'Opções de aplicativo: você escolhe um';
+    return `<div class="apl"><p class="apl__t">${t}</p><ul>${it.map(([src, n]) => `<li><span class="apl__ic${src.includes('noping') ? ' apl__ic--preto' : ''}"><img src="${src}" alt=""></span>${n}</li>`).join('')}</ul></div>`;
+  }
+  const detNet = (p) => painelDet(`${milhar(p.num)} Mega`, [['Download', val(p, 'Download')], ['Upload', val(p, 'Upload')], ['Modem', val(p, 'Modem')], ['Instalação', 'Grátis, em até 48 horas']], DET[p.id] ? V1 + DET[p.id] : '', appsLogos(p));
   function cardNet(p) {
     const o = p.opcoes[opIdx(p)];
     const up = (p.detalhes.find((d) => d[1] === 'Upload') || [])[2];
@@ -317,7 +334,7 @@
       <p class="pc__sub">Upload de ${up}</p>
       ${areaOpcoes(p)}
       <div class="pc__pe"><p class="pc__de">De ${brl(o.de || p.de)}</p>${precoHtml(o.preco, p.id)}
-      <div class="pc__cb" data-cb-id="${p.id}">${cbHtml(DY.brl(cb(o.preco, 50)))}</div>
+      <div class="cbw" data-cb-id="${p.id}">${cbNet(p, o)}</div>
       <a class="pc__btn" data-ir="${p.id}" href="${linkContratar(p, 'casa')}">Quero este plano</a>
       ${btDet}</div>${detNet(p)}</article>`;
   }
@@ -335,14 +352,20 @@
     const o = p.opcoes[opIdx(p)];
     const spec = [['Download', val(p, 'Download')], ['Upload', val(p, 'Upload')], ['Modem', val(p, 'Modem')], ['Aplicativos', appsNet(p)], ['Instalação', 'Grátis, em até 48 horas'], ['Fidelidade', '12 meses']];
     v.innerHTML = `
-      <div class="mil__v-topo"><span class="mil__selo">OFERTA DO MÊS</span><p class="mil__v-t"><b>${milhar(p.num)} Mega</b> em detalhes</p></div>
-      <ul class="mil__spec">${spec.map(([a, b]) => `<li><span>${a}</span><b>${b}</b></li>`).join('')}</ul>
-      <div class="mil__v-oferta">
-        <p class="mil__v-preco">De <s>${brl(o.de || p.de)}</s> por <b>${brl(o.preco)}/mês</b> no débito em conta. No boleto ou PIX, ${brl(DY.boletoPix || 10)} a mais por mês.</p>
-        <div class="pc__cb">${cbHtml(DY.brl(cb(o.preco, 50)))}</div>
-        <p class="mil__v-val">Oferta válida até ${DY.validadeOferta || '01/12/2026'}.</p>
+      <div class="mil__v-esq">
+        <span class="mil__selo">OFERTA DO MÊS</span>
+        <p class="mil__v-t"><b>${milhar(p.num)} Mega</b><span>em detalhes</span></p>
+        <ul class="mil__spec">${[['Download', val(p, 'Download')], ['Upload', val(p, 'Upload')], ['Modem', val(p, 'Modem')], ['Instalação', 'Grátis, em até 48 h'], ['Fidelidade', '12 meses'], ['Franquia', 'Sem limite de uso']].map(([a, b]) => `<li><span>${a}</span><b>${b}</b></li>`).join('')}</ul>
+        ${appsLogos(p)}
       </div>
-      <div class="mil__bts"><a class="bt bt--ouro" href="${linkContratar(p, 'casa')}">Quero este plano</a>${DET[p.id] ? `<a class="bt-mini bt-mini--claro" href="${V1 + DET[p.id]}">Página do plano</a>` : ''}<button type="button" class="bt-mini bt-mini--claro" data-mil-voltar>Voltar</button></div>`;
+      <div class="mil__v-dir">
+        <p class="mil__v-de">De <s>${brl(o.de || p.de)}</s> por</p>
+        ${precoHtml(o.preco, 'v' + p.id).replace('pc__preco', 'pc__preco pc__preco--g')}
+        <p class="mil__v-nota">No débito em conta. No boleto ou PIX, ${brl(DY.boletoPix || 10)} a mais por mês.</p>
+        <div class="cbw">${cbNet(p, o)}</div>
+        <p class="mil__v-val">Oferta válida até ${DY.validadeOferta || '01/12/2026'}.</p>
+        <div class="mil__bts"><a class="bt bt--ouro" href="${linkContratar(p, 'casa')}">Quero este plano</a>${DET[p.id] ? `<a class="bt-mini bt-mini--claro" href="${V1 + DET[p.id]}">Página do plano</a>` : ''}<button type="button" class="bt-mini bt-mini--claro" data-mil-voltar>Voltar</button></div>
+      </div>`;
   }
   let milVirado = false;
   function virarMil(paraVerso) {
@@ -375,7 +398,7 @@
     if (d.obj) $('[data-mil-obj]', box).src = d.obj;
     $('[data-mil-ops]', box).innerHTML = opsVisiveis(p).map((k) => tile(p, k)).join('');
     $('[data-mil-preco]', box).innerHTML = precoHtml(o.preco, p.id).replace('pc__preco', 'pc__preco pc__preco--g');
-    $('[data-mil-cb]', box).innerHTML = cbHtml(DY.brl(cb(o.preco, 50)));
+    $('[data-mil-cb]', box).innerHTML = cbNet(p, o);
     $('[data-mil-de]', box).textContent = 'De ' + brl(o.de || p.de);
     $('[data-mil-ir]', box).href = linkContratar(p, 'casa');
     versoMil(p);
@@ -399,7 +422,7 @@
       <p class="pc__sub">Upload de ${up}</p>
       <div class="pc__op"><p class="pc__op-t">O plano inclui</p><ul class="pc__inc">${(INCLUI[p.id] || []).map((t) => `<li>${t}</li>`).join('')}</ul></div>
       <div class="pc__pe"><p class="pc__de">De ${brl(o.de || p.de)}</p>${precoHtml(o.preco, p.id)}
-      <div class="pc__cb">${cbHtml(DY.brl(cb(o.preco, 50)))}</div>
+      <div class="cbw">${cbNet(p, o, 'emp')}</div>
       <a class="pc__btn" href="${linkContratar(p, 'empresa')}">Quero este plano</a>
       ${btDet}</div>${painelDet(`${milhar(p.num)} Mega`, [['Download', val(p, 'Download')], ['Upload', val(p, 'Upload')], ['Modem', val(p, 'Modem')], ['O plano inclui', (INCLUI[p.id] || []).filter((t) => !t.startsWith('Modem')).join(' · ')], ['Fidelidade', '24 meses']], '')}</article>`;
   }
@@ -441,7 +464,7 @@
     if (noDestaque) blocoMil(p);
     else {
       raiz.querySelector('.pc__de').textContent = 'De ' + brl(o.de || p.de);
-      { const c = raiz.querySelector('.pc__cb, [data-mil-cb]'); if (c) c.innerHTML = cbHtml(DY.brl(cb(o.preco, 50))); }
+      { const w = raiz.querySelector('.cbw'); if (w) w.innerHTML = cbNet(p, o); }
       raiz.querySelector('[data-ir]').href = linkContratar(p, 'casa');
       const num = raiz.querySelector('[data-num]'); num.dataset.v = o.preco;
     }
@@ -483,10 +506,10 @@
       <div class="mil__dir">
         <p class="mil__t">Sem gastar a internet</p>
         <ul class="apps apps--dest">${apps.map((k) => `<li title="${APP[k]}"><img src="/img/apps/${k}.svg" alt="${APP[k]}"><span>${APP[k]}</span></li>`).join('')}</ul>
-        <div class="mil__val">${precoHtml(p.preco, 'c' + p.id).replace('pc__preco', 'pc__preco pc__preco--g').replace('/mês', '/mês por linha')}
-        <div class="pc__cb">${cbHtml(DY.brl(cb(p.preco, 100)), ', por linha')}</div></div>
-        <div class="qtd"><span class="qtd__l" id="ql-d${p.id}">Linhas</span><div class="qtd__ctrl" role="group" aria-labelledby="ql-d${p.id}"><button type="button" data-l="-1" aria-label="Tirar uma linha"${n <= 1 ? ' disabled' : ''}>−</button><output aria-live="polite">${n}</output><button type="button" data-l="1" aria-label="Adicionar uma linha"${n >= MAX_L ? ' disabled' : ''}>+</button></div></div>
+        <div class="mil__val"><div class="cel__preco">${precoCel(p, true)}</div>
         <p class="qtd__tot">${totalCel(p)}</p>
+        <div class="cbw">${cbCel(p)}</div></div>
+        <div class="qtd"><span class="qtd__l" id="ql-d${p.id}">Linhas</span><div class="qtd__ctrl" role="group" aria-labelledby="ql-d${p.id}"><button type="button" data-l="-1" aria-label="Tirar uma linha"${n <= 1 ? ' disabled' : ''}>−</button><output aria-live="polite">${n}</output><button type="button" data-l="1" aria-label="Adicionar uma linha"${n >= MAX_L ? ' disabled' : ''}>+</button></div></div>
         <div class="mil__bts"><a class="bt bt--ouro" data-ir-cel href="${linkCel(p)}">Quero este plano</a><button type="button" class="bt-mini bt-mini--claro pc__det" data-det aria-expanded="false">Ver detalhes do plano</button></div>
       </div>
       ${painelDet(`${p.gb} GB por mês`, [...(p.detalhes || []).map((d) => [d[1], d[2]]), ['Também vem no plano', (p.servicos || []).join(' · ')]], '')}`;
@@ -606,5 +629,44 @@ document.querySelectorAll('[data-slides]').forEach((m) => {
     acumulado = Math.sign(d) === Math.sign(acumulado) ? acumulado + d : d;
     if (acumulado > 12) mostra(false); else if (acumulado < -8) mostra(true);
   }, { passive: true });
+})();
+
+/* cashback: o selinho abre uma janela que explica, com o valor do plano escolhido */
+(() => {
+  const j = document.createElement('dialog'); j.className = 'cbm'; j.setAttribute('aria-labelledby', 'cbm-t');
+  j.innerHTML = `<div class="cbm__caixa">
+    <button type="button" class="cbm__x" aria-label="Fechar" data-cbm-fechar>×</button>
+    <img class="cbm__obj" src="/img/3d-g/cashback.webp" alt="">
+    <p class="cbm__eyebrow">Cashback, o que é isso?</p>
+    <h3 id="cbm-t">Parte do que você paga volta para você no PIX</h3>
+    <p class="cbm__txt" data-cbm-txt></p>
+    <ol class="cbm__passos" data-cbm-passos></ol>
+    <p class="cbm__nota" data-cbm-nota></p>
+    <button type="button" class="cbm__ok" data-cbm-fechar>Entendi</button>
+  </div>`;
+  document.body.append(j);
+  const $j = (s) => j.querySelector(s);
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('.cb'); if (b) {
+      const d = b.dataset, preco = DY.brl(+d.cbPreco), valor = DY.brl(+d.cbValor), n = +d.cbLinhas;
+      const cel = d.cbTipo === 'cel';
+      const plano = cel ? (n > 1 ? `${n} linhas do plano de ${d.cbPlano}` : `1 linha do plano de ${d.cbPlano}`) : `o plano de ${d.cbPlano}`;
+      $j('[data-cbm-txt]').innerHTML = `Se você contratar ${plano}, você paga <b>${preco} por mês</b>, que é o valor da mensalidade. ${cel ? 'Com as linhas ativadas e o contrato concluído' : 'Depois da instalação, com o contrato concluído'}, você recebe <b class="cbm__v">${valor}</b> de volta no seu PIX.`;
+      $j('[data-cbm-passos]').innerHTML = `<li><b>Você contrata</b><span>Pelo site, em poucos minutos</span></li>
+        <li><b>Paga a mensalidade</b><span>${preco} por mês${cel && n > 1 ? `, ${n} linhas` : ''}</span></li>
+        <li><b>Recebe ${valor} no PIX</b><span>Em até 7 dias depois do contrato concluído</span></li>`;
+      $j('[data-cbm-nota]').textContent = cel
+        ? 'O cashback é pago uma única vez: o valor de uma mensalidade inteira, por linha contratada.'
+        : 'O cashback é pago uma única vez: metade de uma mensalidade do plano escolhido.';
+      j.showModal();
+      if (window.gsap && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        gsap.fromTo($j('.cbm__caixa'), { y: 30, scale: .96, autoAlpha: 0 }, { y: 0, scale: 1, autoAlpha: 1, duration: .45, ease: 'back.out(1.6)' });
+        gsap.fromTo($j('.cbm__obj'), { y: 20, rotate: -12 }, { y: 0, rotate: 0, duration: .7, ease: 'back.out(2)', delay: .05 });
+        gsap.from(j.querySelectorAll('.cbm__passos li'), { x: -14, autoAlpha: 0, duration: .35, stagger: .08, delay: .2 });
+      }
+      return;
+    }
+    if (e.target.closest('[data-cbm-fechar]') || e.target === j) j.close();
+  });
 })();
 

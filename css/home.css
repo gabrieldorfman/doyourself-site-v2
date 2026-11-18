@@ -1262,3 +1262,97 @@ main > section.topo { height: auto !important; min-height: 100svh; }
   .apps--dest li { min-width: 0; }
   .mil--cel .qtd { max-width: none; }
 }
+
+/* ===== 18/11 (noite 3): preço em destaque, cashback compacto com explicação, verso reorganizado, logos dos apps ===== */
+/* preço do plano: o número que o cliente procura primeiro */
+.pc__preco b { font-size: 56px; font-weight: 700; letter-spacing: -.04em; }
+.pc__preco i { font-size: 24px; font-weight: 600; }
+.pc__preco small { font-size: 19px; }
+@media (max-width: 619px) { .pc__preco b { font-size: 48px; } }
+
+/* selinho de cashback: uma linha, clicável */
+.cbw { margin-top: 12px; }
+.cb { position: relative; display: flex; align-items: center; gap: 9px; width: 100%; padding: 7px 8px 7px 7px; border-radius: 14px; border: 1px solid #c6ecd6; background: #ecf8f1; color: #155a37; font: 500 14px/1.2 var(--font-text); text-align: left; cursor: pointer; transition: background .2s, border-color .2s, transform .15s; }
+.cb:hover { background: #def3e7; border-color: #9fd9b8; }
+.cb:active { transform: scale(.99); }
+.cb img { width: 30px; height: 30px; flex: none; filter: drop-shadow(0 3px 4px rgb(15 91 56 / .25)); }
+.cb__t { flex: 1; } .cb__t b { font-weight: 800; color: #0f5b38; white-space: nowrap; }
+.cb__q { flex: none; display: inline-flex; align-items: center; gap: 5px; padding: 6px 9px; border-radius: 999px; background: #fff; border: 1px solid #c6ecd6; font-size: 12px; font-weight: 700; color: #0f5b38; }
+.cb__q::before { content: "?"; display: grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; background: #0f5b38; color: #fff; font-size: 10.5px; }
+@media (hover: hover) {
+  .cb::after { content: attr(data-dica); position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translate(-50%, 4px); padding: 7px 11px; border-radius: 9px; background: #1b1d1c; color: #fff; font-size: 12.5px; font-weight: 600; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 5; }
+  .cb:hover::after { opacity: 1; transform: translate(-50%, 0); }
+}
+/* em fundo escuro */
+.pc.is-dest .cb, .mil .cb { background: rgb(255 255 255 / .08); border-color: rgb(255 255 255 / .16); color: #d4ecdf; }
+.pc.is-dest .cb:hover, .mil .cb:hover { background: rgb(255 255 255 / .14); }
+.pc.is-dest .cb__t b, .mil .cb__t b { color: #9fe3bf; }
+.pc.is-dest .cb__q, .mil .cb__q { background: rgb(255 255 255 / .1); border-color: rgb(255 255 255 / .18); color: #fff; }
+.pc.is-dest .cb__q::before, .mil .cb__q::before { background: var(--ouro); color: #3b2c06; }
+.mil [data-mil-cb] { max-width: 380px; }
+
+/* celular: valor das linhas logo embaixo do preço */
+.cel__preco .pc__preco em { white-space: nowrap; }
+.pc--cel .qtd__tot { margin: 2px 0 0; min-height: 0; text-align: left; font-size: 13px; }
+.mil--cel .qtd__tot { margin-top: 2px; }
+.mil--cel .apps--dest img { background: none; padding: 0; width: 30px; height: 30px; }
+.mil--cel .apps--dest img[src*="waze"] { filter: brightness(0) invert(1); }
+
+/* logos dos aplicativos (detalhes rápidos e verso da oferta) */
+.apl { margin-top: 12px; }
+.apl__t { margin: 0 0 8px; font-size: 12.5px; font-weight: 700; color: var(--pc-ink, var(--net-ink)); }
+.apl ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.apl li { display: grid; justify-items: center; gap: 6px; min-width: 84px; padding: 10px 8px 9px; border-radius: 14px; border: 1px solid #dfe7f1; background: #f6f9fd; font-size: 12px; font-weight: 600; color: var(--tinta); text-align: center; }
+.apl__ic { display: grid; place-items: center; width: 40px; height: 40px; }
+.apl__ic img { max-width: 40px; max-height: 40px; border-radius: 10px; object-fit: contain; }
+.apl__ic--preto { background: #0d0d0d; border-radius: 10px; } .apl__ic--preto img { width: 72%; }
+.pc.is-dest .apl__t { color: var(--ouro); }
+.pc.is-dest .apl li { background: rgb(255 255 255 / .08); border-color: rgb(255 255 255 / .14); color: #fff; }
+
+/* verso da oferta do mês: detalhes à esquerda, preço e cashback à direita */
+.mil__verso { display: grid; grid-template-columns: 1.25fr 1fr; gap: 36px; align-items: stretch; flex-direction: initial; }
+.mil__v-esq { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.mil__v-esq .mil__selo { align-self: flex-start; }
+.mil__v-t { margin: 0; display: grid; gap: 2px; font: 400 22px/1.1 var(--font-display); color: #cfe0f5; }
+.mil__v-t b { font-size: clamp(44px, 4.6vw, 60px); font-weight: 600; letter-spacing: -.04em; color: #fff; line-height: 1; }
+.mil__spec { grid-template-columns: repeat(3, 1fr); }
+.mil__verso .apl { margin-top: 2px; }
+.mil__verso .apl__t { color: var(--ouro); }
+.mil__verso .apl li { background: rgb(255 255 255 / .08); border-color: rgb(255 255 255 / .14); color: #fff; }
+.mil__v-dir { display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 28px; border-radius: 24px; background: rgb(255 255 255 / .05); border: 1px solid rgb(231 198 107 / .35); }
+.mil__v-de { margin: 0; font-size: 15px; color: #cfe0f5; } .mil__v-de s { color: #9fb4cc; }
+.mil__v-dir .pc__preco { color: #fff; }
+.mil__v-nota { margin: 0 0 6px; font-size: 13.5px; line-height: 1.45; color: #9fb4cc; }
+.mil__v-dir .cbw { margin-top: 4px; }
+.mil__v-val { margin: 6px 0 0; font-size: 12.5px; color: #9fb4cc; }
+.mil__v-dir .mil__bts { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.mil__v-dir .mil__bts .bt { flex: 1 1 100%; justify-content: center; }
+.mil__v-dir .mil__bts .bt-mini { flex: 1 1 0; }
+@media (max-width: 1123px) { .mil__verso { grid-template-columns: 1fr; gap: 20px; } .mil__spec { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 619px) {
+  .mil__verso { gap: 14px; } .mil__v-t b { font-size: 42px; }
+  .mil__spec { grid-template-columns: 1fr 1fr; }
+  .mil__v-dir { padding: 18px 14px; }
+  .apl li { min-width: 0; flex: 1 1 0; padding: 8px 4px; font-size: 11px; }
+}
+
+/* janela do cashback, com o fundo desfocado */
+.cbm { width: min(480px, calc(100% - 32px)); max-height: calc(100svh - 40px); padding: 0; border: 0; border-radius: 28px; background: transparent; overflow: visible; }
+.cbm::backdrop { background: rgb(15 25 20 / .35); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.cbm__caixa { position: relative; display: grid; gap: 12px; padding: 64px 28px 24px; border-radius: 28px; background: #fff; box-shadow: 0 40px 90px -30px rgb(15 25 20 / .55); color: var(--tinta); }
+.cbm__obj { position: absolute; left: 50%; top: -58px; width: 112px; margin-left: -56px; filter: drop-shadow(0 16px 18px rgb(15 91 56 / .3)); }
+.cbm__x { position: absolute; right: 14px; top: 14px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: #f1efe8; color: var(--tinta); font-size: 22px; line-height: 1; cursor: pointer; }
+.cbm__eyebrow { margin: 0; text-align: center; font-size: 13px; font-weight: 700; color: var(--marca); text-transform: uppercase; letter-spacing: .06em; }
+.cbm h3 { margin: 0; text-align: center; font: 500 26px/1.15 var(--font-display); letter-spacing: -.02em; text-wrap: balance; }
+.cbm__txt { margin: 4px 0 0; font-size: 15.5px; line-height: 1.55; color: #3d403c; text-align: center; }
+.cbm__txt b { color: var(--tinta); } .cbm__txt .cbm__v { color: #0f7a40; }
+.cbm__passos { list-style: none; counter-reset: p; margin: 6px 0 0; padding: 14px; display: grid; gap: 10px; border-radius: 18px; background: #f3faf6; border: 1px solid #d3eedf; }
+.cbm__passos li { counter-increment: p; display: grid; grid-template-columns: 28px 1fr; column-gap: 12px; align-items: center; }
+.cbm__passos li::before { content: counter(p); grid-row: 1 / span 2; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--marca); color: #fff; font-size: 13px; font-weight: 700; }
+.cbm__passos b { font-size: 15px; } .cbm__passos span { font-size: 13px; color: var(--cinza); }
+.cbm__nota { margin: 0; font-size: 13px; line-height: 1.5; color: var(--cinza); text-align: center; }
+.cbm__ok { margin-top: 4px; height: 50px; border: 0; border-radius: 999px; background: var(--marca); color: #fff; font: 700 16px/1 var(--font-text); cursor: pointer; }
+.cbm__ok:hover { background: #355f4c; }
+
+.cb .cb__t { align-self: center; font-size: 14px; font-weight: 500; line-height: 1.25; }
+.apl ul { list-style: none; margin: 0; padding: 0; }
