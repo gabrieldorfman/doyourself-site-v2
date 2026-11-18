@@ -1062,9 +1062,12 @@ main > section.jornada { height: auto !important; min-height: 0 !important; padd
 }
 
 /* ===== menu translúcido, some ao descer e volta ao subir ===== */
-header.nav { background: rgb(246 245 239 / .72); -webkit-backdrop-filter: saturate(1.7) blur(18px); backdrop-filter: saturate(1.7) blur(18px); border-bottom-color: rgb(27 29 28 / .07); transition: transform .38s cubic-bezier(.2, .7, .2, 1), background .3s; will-change: transform; }
+/* o desfoque fica numa camada de fundo (::before): no próprio header ele prenderia o menu aberto do celular dentro da barra */
+header.nav { background: transparent; isolation: isolate; border-bottom-color: rgb(27 29 28 / .07); transition: transform .38s cubic-bezier(.2, .7, .2, 1); }
+header.nav::before { content: ""; position: absolute; inset: 0; z-index: -1; background: rgb(246 245 239 / .72); -webkit-backdrop-filter: saturate(1.7) blur(18px); backdrop-filter: saturate(1.7) blur(18px); transition: background .3s; pointer-events: none; }
 header.nav.nav--some { transform: translateY(-101%); }
-header.nav.is-open { background: var(--creme); transform: none; }
+header.nav.is-open { transform: none; transition: none; }
+header.nav.is-open::before { background: var(--creme); }
 .nav-oculto .jo__fixo { top: 0; height: 100svh; }
 .jo__fixo { transition: top .38s cubic-bezier(.2, .7, .2, 1), height .38s cubic-bezier(.2, .7, .2, 1); }
 
@@ -1477,3 +1480,73 @@ main > section.topo { height: auto !important; min-height: 100svh; }
   .cep__acoes .cep__nao { height: 44px; align-self: center; }
   .cep__acoes .cep__btn { width: 100%; }
 }
+
+/* ===== revisão de responsividade (celular pequeno 320–374, celular 375–619, tablet 620–1123) ===== */
+
+/* selo de Cashback: texto numa linha só; nos cards estreitos o "O que é?" vira só o círculo com "?" */
+.cb__t { white-space: nowrap; }
+.cards .cb__t { white-space: normal; }
+@media (max-width: 1364px) {
+  .cards .cb { gap: 8px; padding: 7px 7px 7px 6px; }
+  .cards .cb .cb__t { font-size: 13px; white-space: normal; line-height: 1.2; }
+  .cards .cb .cb__t b { display: block; font-size: 15px; }
+  .cards .cb__q { font-size: 0; gap: 0; padding: 4px; }
+  .cards .cb__q::before { width: 18px; height: 18px; font-size: 12px; }
+}
+
+/* tablet: faixa do estado numa linha só (ícone, texto e botão) */
+@media (min-width: 620px) and (max-width: 1123px) {
+  .regiao { flex-wrap: nowrap; }
+  .regiao__txt { flex: 1 1 auto; }
+  .regiao__sel { flex: none; }
+}
+
+/* dúvidas: o botão do WhatsApp não encosta na primeira pergunta */
+main > section.dy > .cx.duv { display: grid; }
+@media (max-width: 1123px) { .duv { gap: 36px; } }
+
+/* combo: os objetos 3D ficam dentro do espaço do próprio painel, sem invadir a seção de cima */
+@media (max-width: 1123px) {
+  .combo__painel { padding-top: 84px; }
+  .combo__objs .obj:nth-child(1) { top: -40px; } .combo__objs .obj:nth-child(2) { top: -64px; } .combo__objs .obj:nth-child(3) { top: -48px; }
+}
+@media (max-width: 619px) {
+  .combo__painel { padding-top: 72px; }
+  .combo__objs .obj:nth-child(1) { top: -30px; } .combo__objs .obj:nth-child(2) { top: -48px; } .combo__objs .obj:nth-child(3) { top: -36px; }
+  /* celular em destaque: o aparelho não cobre o texto acima do card */
+  .mil--cel .obj { width: 80px; top: -44px; right: 8px; }
+  /* lista do combo mais compacta */
+  .conta__l span { display: block; line-height: 1.35; margin-top: 2px; }
+}
+
+/* celular pequeno (até 374): menu, quadros da oferta, simulador, perfis e botões */
+@media (max-width: 374px) {
+  :root { --gut: 16px; }
+  .topo { padding-inline: 8px; }
+  .mil__info { grid-template-columns: 1fr; }
+  .mil__info b { white-space: normal; }
+  .sim__in, .sim__out { padding: 18px; }
+  .sim__linha { flex-wrap: wrap; row-gap: 2px; }
+  .sim__linha span { font-size: 14px; white-space: nowrap; }
+  .sim__linha b { font-size: 21px; white-space: nowrap; margin-left: auto; }
+  .bt { height: auto; min-height: 52px; padding: 10px 18px; font-size: 15px; line-height: 1.2; text-align: center; }
+  .cb { padding: 6px; gap: 7px; }
+  .cb img { width: 26px; height: 26px; }
+  .cb .cb__t { font-size: 13px; }
+  .cb__q { font-size: 0; gap: 0; padding: 4px; }
+  .cb__q::before { width: 18px; height: 18px; font-size: 12px; }
+  .h-sec { font-size: 29px; }
+}
+/* até 359: os perfis "para quem…" ficam um por linha */
+@media (max-width: 359px) {
+  .perfis { grid-template-columns: 1fr; }
+  .nav__logo img { height: 28px; width: auto; max-width: 150px; }
+  .nav__toggle { padding: 0 12px 0 10px !important; gap: 6px !important; font-size: 14px !important; }
+  .topo .eyebrow { font-size: 13px; }
+}
+
+.feat__chip { white-space: nowrap; }
+.bt-mini { white-space: nowrap; }
+@media (max-width: 374px) { .bt-mini { font-size: 13.5px; padding-inline: 14px; } }
+/* passos "Como funciona" em celular estreito: o ícone 3D não cobre o título do cartão */
+@media (max-width: 389px) { .jo__obj { width: 21%; left: 4%; top: 5%; } }

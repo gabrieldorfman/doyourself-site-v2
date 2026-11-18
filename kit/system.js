@@ -357,8 +357,8 @@ function actionbar() {
   const hrefs = new Set(own.filter(a => a.tagName === 'A').map(a => a.href));
   const labels = new Set(own.map(words).filter(Boolean));
   const twins = [...document.querySelectorAll('a[href], button')].filter(el => !bar.contains(el) && ((el.tagName === 'A' && hrefs.has(el.href)) || labels.has(words(el))));
-  const hero = document.querySelector('main > :is(.hero, .section--hero)');
-  const lead = hero ? hero.querySelector('.btn--primary') || hero.querySelector('.btn') || hero : null;
+  const hero = document.querySelector('main > :is(.hero, .section--hero, [data-bar-hero])');
+  const lead = hero ? hero.querySelector('[data-bar-lead]') || hero.querySelector('.btn--primary') || hero.querySelector('.btn') || hero : null;
   let past = !lead; // no hero: only the twins on the screen decide
   const onScreen = new Set();
   const update = () => {
