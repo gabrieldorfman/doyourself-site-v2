@@ -139,7 +139,6 @@ const netSimples = (id, preco, de, up, wifi, selo, variante, extra) => ({ id, va
   ...(extra ? { nota: extra } : {}),
   detalhes: detNet(mega(id.replace(/^e/, '')), up, wifi, variante === 'premium'), apps: ['aya-books', 'aya-bancah'],
   tituloAcao: 'Este plano inclui', opcoes: [SO(preco, de, mega(id.replace(/^e/, '')))], opcaoPadrao: 0, de, tarja: { streaming: null } });
-const TAXA_CNPJ = 'Taxa de habilitação de R$ 960, isenta com 24 meses de contrato';
 
 DY.catalogo = {
   // Internet para a sua casa (CPF)
@@ -151,15 +150,16 @@ DY.catalogo = {
   },
   // Internet para a sua empresa (CNPJ) — sem streaming e sem bônus no celular
   empresa: {
-    tbr: [netSimples('e500', 89.99, 129.99, '250 Mega', W56, 'BÁSICO', 'branco'), netSimples('e600', 109.99, 149.99, '300 Mega', W56, 'ESSENCIAL', 'tint'), netSimples('e1000', 99.99, 189.99, '500 Mega', W67, 'OFERTA DO MÊS', 'premium', TAXA_CNPJ)],
-    norte: [netSimples('e500', 79.99, 129.99, '250 Mega', W56, 'BÁSICO', 'branco'), netSimples('e600', 109.99, 149.99, '300 Mega', W56, 'ESSENCIAL', 'tint'), netSimples('e1000', 99.99, 189.99, '500 Mega', W67, 'OFERTA DO MÊS', 'premium', TAXA_CNPJ)],
-    ce: [netSimples('e300', 49.99, 99.99, '150 Mega', W56, 'SÓ NO CEARÁ', 'branco'), netSimples('e500', 79.99, 129.99, '250 Mega', W56, 'BÁSICO', 'branco'), netSimples('e600', 109.99, 149.99, '300 Mega', W56, 'ESSENCIAL', 'tint'), netSimples('e1000', 99.99, 189.99, '500 Mega', W67, 'OFERTA DO MÊS', 'premium', TAXA_CNPJ)],
-    sp: [netSimples('e400', 79.99, 119.99, '200 Mega', W56, 'BÁSICO', 'branco'), netSimples('e500', 99.99, 129.99, '250 Mega', W56, 'BÁSICO', 'branco'), netSimples('e600', 109.99, 149.99, '300 Mega', W56, 'ESSENCIAL', 'tint'), netSimples('e1000', 99.99, 189.99, '500 Mega', W67, 'OFERTA DO MÊS', 'premium', TAXA_CNPJ)],
+    tbr: [netSimples('e500', 89.99, 129.99, '250 Mega', W56, 'BÁSICO', 'branco'), netSimples('e600', 109.99, 149.99, '300 Mega', W56, 'ESSENCIAL', 'tint'), netSimples('e1000', 99.99, 189.99, '500 Mega', W67, 'OFERTA DO MÊS', 'premium')],
+    norte: [netSimples('e500', 79.99, 129.99, '250 Mega', W56, 'BÁSICO', 'branco'), netSimples('e600', 109.99, 149.99, '300 Mega', W56, 'ESSENCIAL', 'tint'), netSimples('e1000', 99.99, 189.99, '500 Mega', W67, 'OFERTA DO MÊS', 'premium')],
+    ce: [netSimples('e300', 49.99, 99.99, '150 Mega', W56, 'SÓ NO CEARÁ', 'branco'), netSimples('e500', 79.99, 129.99, '250 Mega', W56, 'BÁSICO', 'branco'), netSimples('e600', 109.99, 149.99, '300 Mega', W56, 'ESSENCIAL', 'tint'), netSimples('e1000', 99.99, 189.99, '500 Mega', W67, 'OFERTA DO MÊS', 'premium')],
+    sp: [netSimples('e400', 79.99, 119.99, '200 Mega', W56, 'BÁSICO', 'branco'), netSimples('e500', 99.99, 129.99, '250 Mega', W56, 'BÁSICO', 'branco'), netSimples('e600', 109.99, 149.99, '300 Mega', W56, 'ESSENCIAL', 'tint'), netSimples('e1000', 99.99, 189.99, '500 Mega', W67, 'OFERTA DO MÊS', 'premium')],
   },
 };
 // Plano que abre em destaque em cada lista (a oferta foco)
 /* Página de cada plano de internet para casa (id do catálogo → endereço) */
 DY.paginaPlano = { 500: '/internet-fibra/casa/500-mega', 600: '/internet-fibra/casa/600-mega', 800: '/internet-fibra/casa/800-mega', 1000: '/internet-fibra/casa/1-giga' };
+DY.validadeOferta = '01/12/2026'; // ofertas de novembro/2026
 DY.boletoPix = 10; // boleto ou PIX: R$ 10,00 a mais por mês
 DY.padraoInternet = (lista) => Math.max(0, lista.findIndex((p) => p.selo === 'OFERTA DO MÊS'));
 
