@@ -342,7 +342,7 @@
   const DESTAQUE = {
     '1000': { obj: '/img/3d-g/controle.webp', nome: 'Internet + NoPing grátis por 6 meses',
       txt: 'A velocidade para a casa toda: jogos, chamadas de vídeo, séries em 4K e vários aparelhos ligados ao mesmo tempo.',
-      info: [['500 Mega de upload', 'Envie vídeos e faça lives sem fila'], ['Modem Wi-Fi 6', 'Mais alcance pela casa, sem custo'], ['NoPing por 6 meses', 'Menos atraso nos jogos online'], ['Instalação em até 48 h', 'Grátis, com teste de velocidade']] },
+      info: [['1.000 Mega de download', 'Séries em 4K e jogos sem travar'], ['500 Mega de upload', 'Envie vídeos e faça lives sem fila'], ['Modem Wi-Fi 6', 'Mais alcance pela casa, sem custo'], ['Instalação em até 48 h', 'Grátis, com teste de velocidade']] },
   };
   const ofertaCasa = (todos) => todos.find((p) => p.selo === 'OFERTA DO MÊS' && p.id !== '2000') || todos.find((p) => p.id === '1000');
 
@@ -352,15 +352,16 @@
     const o = p.opcoes[opIdx(p)];
     const spec = [['Download', val(p, 'Download')], ['Upload', val(p, 'Upload')], ['Modem', val(p, 'Modem')], ['Aplicativos', appsNet(p)], ['Instalação', 'Grátis, em até 48 horas'], ['Fidelidade', '12 meses']];
     v.innerHTML = `
+      <div class="mil__v-obj" aria-hidden="true"><img src="/img/3d-g/info.webp" alt=""></div>
       <div class="mil__v-esq">
         <span class="mil__selo">OFERTA DO MÊS</span>
         <p class="mil__v-t"><b>${milhar(p.num)} Mega</b><span>em detalhes</span></p>
-        <ul class="mil__spec">${[['Download', val(p, 'Download')], ['Upload', val(p, 'Upload')], ['Modem', val(p, 'Modem')], ['Instalação', 'Grátis, em até 48 h'], ['Fidelidade', '12 meses'], ['Franquia', 'Sem limite de uso']].map(([a, b]) => `<li><span>${a}</span><b>${b}</b></li>`).join('')}</ul>
-        ${appsLogos(p)}
+        <ul class="mil__spec">${[['Download', val(p, 'Download')], ['Upload', val(p, 'Upload')], ['Modem', val(p, 'Modem')], ['Instalação em até 48 h', 'Grátis'], ['Atendimento', 'WhatsApp 24 h'], ['Franquia', 'Sem limite de uso']].map(([a, b]) => `<li><span>${a}</span><b>${b}</b></li>`).join('')}</ul>
+        ${p.opcoes.length > 1 ? `<div class="mil__v-apps"><p class="mil__t">Escolha o seu aplicativo</p><div class="ops ops--3" role="radiogroup" aria-label="Aplicativo do plano">${opsVisiveis(p).map((k) => tile(p, k)).join('')}</div></div>` : appsLogos(p)}
       </div>
       <div class="mil__v-dir">
         <p class="mil__v-de">De <s>${brl(o.de || p.de)}</s> por</p>
-        ${precoHtml(o.preco, 'v' + p.id).replace('pc__preco', 'pc__preco pc__preco--g')}
+        ${precoHtml(o.preco, p.id).replace('pc__preco', 'pc__preco pc__preco--g')}
         <p class="mil__v-nota">No débito em conta. No boleto ou PIX, ${brl(DY.boletoPix || 10)} a mais por mês.</p>
         <div class="cbw">${cbNet(p, o)}</div>
         <p class="mil__v-val">Oferta válida até ${DY.validadeOferta || '01/12/2026'}.</p>
@@ -373,13 +374,20 @@
     if (paraVerso === milVirado) return; milVirado = paraVerso;
     $('[data-mil-virar]', box).setAttribute('aria-expanded', String(paraVerso));
     const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const fim = () => { box.classList.toggle('is-virado', paraVerso); v.hidden = !paraVerso; frente.forEach((f) => (f.inert = paraVerso)); (paraVerso ? $('[data-mil-voltar]', v) : $('[data-mil-virar]', box)).focus({ preventScroll: true }); };
+    const foco = () => (paraVerso ? $('[data-mil-voltar]', v) : $('[data-mil-virar]', box)).focus({ preventScroll: true });
+    const plano = () => { if (window.gsap) gsap.set(box, { clearProps: 'transform' }); box.style.transform = ''; };
     // o verso pode ter mais conteúdo que a frente (no celular): o card cresce para caber
     if (paraVerso) { v.hidden = false; const alt = v.scrollHeight + 6; if (alt > box.offsetHeight + 2) { box.dataset.altura = box.offsetHeight; temGsap ? gsap.to(box, { minHeight: alt, duration: .6, ease: 'power2.inOut' }) : (box.style.minHeight = alt + 'px'); } }
     else if (box.dataset.altura) { temGsap ? gsap.to(box, { minHeight: 0, duration: .6, delay: .35, ease: 'power2.inOut', clearProps: 'minHeight' }) : (box.style.minHeight = ''); delete box.dataset.altura; }
-    if (!temGsap || calmo) { gsap?.set?.(box, { rotateX: paraVerso ? -180 : 0, transformPerspective: 2400 }); if (!temGsap) box.style.transform = paraVerso ? 'perspective(2400px) rotateX(-180deg)' : ''; fim(); return; }
-    gsap.to(box, { rotateX: paraVerso ? -180 : 0, transformPerspective: 2400, duration: .95, ease: 'power3.inOut', onComplete: fim });
-    gsap.fromTo($('.obj', box), { y: 0 }, { y: -26, duration: .45, yoyo: true, repeat: 1, ease: 'power2.out' });
+    const fimIda = () => { box.classList.add('is-virado'); plano(); frente.forEach((f) => (f.inert = true)); foco(); };
+    const fimVolta = () => { plano(); v.hidden = true; frente.forEach((f) => (f.inert = false)); foco(); };
+    if (!temGsap || calmo) { if (paraVerso) fimIda(); else { box.classList.remove('is-virado'); fimVolta(); } return; }
+    if (paraVerso) {
+      gsap.fromTo(box, { rotateX: 0, transformPerspective: 2400 }, { rotateX: -180, duration: .95, ease: 'power3.inOut', onComplete: fimIda });
+    } else {
+      box.classList.remove('is-virado'); gsap.set(box, { rotateX: -180, transformPerspective: 2400 });
+      gsap.to(box, { rotateX: 0, duration: .95, ease: 'power3.inOut', onComplete: fimVolta });
+    }
   }
   document.addEventListener('click', (e) => {
     if (e.target.closest('[data-mil-virar]')) { versoMil(ofertaCasa(casa())); virarMil(true); }
@@ -461,7 +469,7 @@
     $$('.op', grupo).forEach((x) => { const on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-checked', String(on)); });
     if (temGsap) gsap.fromTo(b, { scale: .94 }, { scale: 1, duration: .45, ease: 'back.out(3)' });
     const noDestaque = !!b.closest('[data-mil]'); const raiz = noDestaque ? $('[data-mil]') : b.closest('.pc');
-    if (noDestaque) blocoMil(p);
+    if (noDestaque) { blocoMil(p); if (milVirado) { const sel = $('[data-mil-verso] .op.is-on'); if (sel) sel.focus({ preventScroll: true }); } }
     else {
       raiz.querySelector('.pc__de').textContent = 'De ' + brl(o.de || p.de);
       { const w = raiz.querySelector('.cbw'); if (w) w.innerHTML = cbNet(p, o); }
