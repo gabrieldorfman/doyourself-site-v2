@@ -1126,3 +1126,23 @@ main > section.topo { height: auto !important; min-height: 100svh; }
   .cep__f--cid input { max-width: 360px; }
   @supports not (field-sizing: content) { .cep__f--uf select { width: 250px; } .cep__f--cid input { width: 350px; } }
 }
+/* modo "Não sei meu CEP" em duas colunas alinhadas: Estado | Cidade, Rua | Número; "Ver ofertas" embaixo */
+@media (min-width: 620px) {
+  .cep__modo[data-modo="rua"] { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+  .cep__modo[data-modo="rua"][hidden] { display: none; }
+  .cep__modo[data-modo="rua"] .cep__linha { display: contents; }
+  .cep__modo[data-modo="rua"] .cep__f { flex: none; width: 100%; }
+  .cep__modo[data-modo="rua"] .cep__f--uf select, .cep__modo[data-modo="rua"] .cep__f--cid input { field-sizing: fixed; width: 100%; min-width: 0; max-width: none; }
+  .cep__modo[data-modo="rua"] .cep__btn { grid-column: 1 / -1; justify-self: center; min-width: 260px; justify-content: center; margin-top: 4px; }
+  .cep__modo[data-modo="rua"] .cep__res { grid-column: 1 / -1; }
+}
+/* botão do WhatsApp preenchido de verde, texto branco */
+.cep__zapbt { border-color: #128c4a; background: #128c4a; color: #fff; box-shadow: 0 10px 22px -12px rgb(18 140 74 / .7); }
+.cep__zapbt:hover { background: #0f7a40; border-color: #0f7a40; }
+.cep__zapbt svg { fill: #fff; }
+@media (min-width: 620px) and (max-width: 799px) {
+  .cep__modo[data-modo="rua"] { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
+  .cep__modo[data-modo="rua"] .cep__f input, .cep__modo[data-modo="rua"] .cep__f select { padding-left: 14px; }
+  .cep__modo[data-modo="rua"] .cep__f span { left: 14px; }
+}
+.cep__zap a.cep__zapbt, .cep__zap a.cep__zapbt:hover { color: #fff; }
