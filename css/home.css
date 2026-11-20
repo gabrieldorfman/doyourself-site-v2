@@ -1550,3 +1550,161 @@ main > section.dy > .cx.duv { display: grid; }
 @media (max-width: 374px) { .bt-mini { font-size: 13.5px; padding-inline: 14px; } }
 /* passos "Como funciona" em celular estreito: o ícone 3D não cobre o título do cartão */
 @media (max-width: 389px) { .jo__obj { width: 21%; left: 4%; top: 5%; } }
+
+/* ===================== 20/11: WTTx, ofertas do mês de empresa e celular, combo e rodapé ===================== */
+:root { --wtx: #4152c9; --wtx-ink: #2d3a9e; --wtx-a: #eef0fd; --wtx-b: #d6dbfa; --wtx-noite: #141a4a; --emp: #2c4a66; }
+
+/* WTTx: um azul próprio (índigo), diferente da fibra de casa e da fibra de empresa */
+.svc--wtx { --c: var(--wtx); --a: var(--wtx-a); --b: var(--wtx-b); --ink: var(--wtx-ink); }
+.bt--wtx { background: var(--wtx); color: #fff; } .bt--wtx:hover { background: var(--wtx-ink); }
+.etq--wtx { --tg: var(--wtx); --tg-s: rgb(65 82 201 / .55); }
+.etq--emp { --tg: var(--emp); --tg-s: rgb(44 74 102 / .55); }
+.eyebrow--wtx { color: var(--wtx-ink); }
+main > section.wtx-exp { background: var(--creme); }
+main > section.wtx-planos { background: linear-gradient(180deg, #f3f4fd 0%, #eef0fd 60%, var(--creme) 100%); }
+main > section.porque--wtx { background: linear-gradient(180deg, var(--creme) 0%, #eef0fd 50%, var(--creme) 100%); }
+.porque--wtx { --pq: var(--wtx); --pq-ink: var(--wtx-ink); --pq-a: var(--wtx-a); }
+.nos--wtx { background: linear-gradient(160deg, #2b3693 0%, var(--wtx-noite) 100%); }
+.feat--wtx { --ft-g: radial-gradient(130% 120% at 0% 0%, #a9b3f2 0%, #cdd3f8 45%, #eef0fd 100%); --ft-ink: var(--wtx-ink); --ft: var(--wtx); --ft-a: var(--wtx-a); }
+.pc--wtx { --pc: var(--wtx); --pc-ink: var(--wtx-ink); --pc-a: var(--wtx-a); }
+.pc--wtx .pc__op-t { color: var(--wtx-ink); }
+.pc--wtx .pc__sub { min-height: 0; }
+.wtx__info { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+.wtx__info > div { padding: 18px 20px; border-radius: 18px; background: #fff; border: 1px solid var(--wtx-b); }
+.wtx__info b { display: block; color: var(--wtx-ink); font-size: 15px; } .wtx__info p { margin: 4px 0 0; font-size: 14px; color: var(--cinza); line-height: 1.45; }
+.svc--wtx .abre__obj .obj { width: 62%; } .svc--wtx .abre__obj .obj--2 { width: 40%; }
+@media (max-width: 1123px) { main > section.dy:is(.wtx-exp, .wtx-planos) { padding: 40px 0; } .wtx__info { grid-template-columns: 1fr; } }
+@media (max-width: 619px) { main > section.dy:is(.wtx-exp, .wtx-planos) { padding: 28px 0; } .wtx__info > div { padding: 14px 16px; } }
+
+/* cards dos planos centralizados no desktop, com a largura de um card de casa */
+@media (min-width: 1124px) {
+  .cards--emp, .cards--cel { grid-auto-columns: 330px; justify-content: center; }
+  .cards--wtx { grid-auto-columns: calc((100% - 3 * 20px) / 4); justify-content: center; overflow: visible; }
+}
+@media (min-width: 620px) and (max-width: 1123px) { .cards--emp, .cards--cel, .cards--wtx { justify-content: center; } }
+.sub__rot--emp { color: var(--emp); } .sub__rot--wtx { color: var(--wtx-ink); }
+
+/* oferta do mês da empresa: o card do 1.000 Mega, no azul-acinzentado */
+.mil--emp { margin-top: 64px; background: radial-gradient(60% 90% at 100% 0%, #44698f 0%, transparent 65%), radial-gradient(40% 60% at 0% 100%, #24405c 0%, transparent 70%), linear-gradient(135deg, #1f3447 0%, #121f2b 100%); }
+.mil--emp .obj { width: 160px; right: -14px; top: -100px; }
+.mil--emp .obj img, .mil--cel .obj img { width: 100%; }
+.mil--emp .mil__nome { color: #cfe0f5; }
+.mil--emp .mil__info li { color: #c3d1df; }
+.mil--emp .pc__mais { border-radius: inherit; background: linear-gradient(160deg, #34587a, #15232f); color: #fff; padding: 36px 40px; }
+.mil--emp .pc__mais-t { color: var(--ouro); }
+.mil--emp .pc__lista { grid-template-columns: repeat(3, 1fr); column-gap: 24px; }
+.mil--emp .pc__lista li { border-color: rgb(255 255 255 / .12); } .mil--emp .pc__lista span { color: rgb(255 255 255 / .65); } .mil--emp .pc__lista b { color: #fff; }
+.mil--emp .pc__mais .bt-mini { color: var(--ouro); flex: 0 0 auto; min-width: 160px; }
+.mil--emp .mil__val { margin-top: 4px; }
+.mil .op--fixo { box-shadow: none; cursor: default; }
+.op--inc .op__ic { background: rgb(255 255 255 / .1) !important; border-radius: 12px; }
+.op--inc .op__ic img { object-fit: contain !important; padding: 3px; }
+.mil .op--inc small { color: #b9c7d8; font-size: 12px; }
+@media (max-width: 1123px) { .mil--emp .obj { width: 120px; top: -78px; } .mil--emp .pc__lista { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 619px) { .mil--emp { margin-top: 56px; } .mil--emp .obj { width: 92px; top: -58px; right: 4px; } .mil--emp .pc__mais { padding: 22px 16px; } .mil--emp .pc__lista { grid-template-columns: 1fr; } .mil--emp .mil__bts .bt { flex: 1 1 100%; justify-content: center; } }
+
+/* oferta do mês do celular: os apps que não gastam a internet, em blocos como as opções do 1.000 Mega */
+.ops--apps { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.op--app { padding: 10px 4px 8px; gap: 6px; }
+.op--app .op__ic { width: 38px; height: 38px; border-radius: 11px; background: #fff !important; }
+.op--app .op__ic img { object-fit: contain !important; padding: 5px; border-radius: 0; }
+.op--app .op__n { font-size: 12px; text-align: center; }
+.mil--cel .mil__val { margin-top: 4px; }
+@media (max-width: 619px) { .ops--apps { gap: 6px; } .op--app { padding: 8px 2px 6px; } .op--app .op__ic { width: 32px; height: 32px; } .op--app .op__n { font-size: 10.5px; } }
+
+/* contador de linhas: dá para digitar a quantidade (1 a 5.000); acima de 15, aviso de condição especial */
+.qtd__n { width: 54px; height: 36px; border: 0; border-radius: 10px; background: transparent; text-align: center; font: 700 18px/1 var(--font-text); color: var(--tinta); -moz-appearance: textfield; }
+.qtd__n:focus { outline: none; background: #fff; box-shadow: 0 0 0 2px var(--cel); }
+.mil--cel .qtd__n { color: #fff; } .mil--cel .qtd__n:focus { background: rgb(255 255 255 / .12); box-shadow: 0 0 0 2px var(--ouro); }
+.qtd__esp { margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: var(--cel-a); color: var(--cel-ink); font-size: 12.5px; line-height: 1.4; }
+.qtd__esp[hidden] { display: none; }
+.mil--cel .qtd__esp { background: rgb(231 198 107 / .12); color: #f3e3b3; max-width: 420px; } .mil--cel .qtd__esp b { color: var(--ouro); }
+
+/* combo: abertura, 3 passos e o montador */
+main > section.combo { background: linear-gradient(180deg, var(--creme) 0%, #e9f2ec 40%, #e9f2ec 70%, var(--creme) 100%); padding-top: 120px; }
+.combo__topo { max-width: 780px; margin: 0 auto; text-align: center; display: grid; justify-items: center; gap: 14px; }
+.combo__topo .h-sec, .combo__topo .lede { margin: 0; }
+.combo__passos { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.combo__passos li { position: relative; display: grid; grid-template-columns: 64px 1fr; grid-template-rows: auto 1fr; column-gap: 16px; align-items: start; padding: 22px; border-radius: 22px; background: #fff; border: 1px solid #dde9e1; box-shadow: 0 18px 40px -30px rgb(18 56 42 / .35); }
+.combo__passos img { grid-row: 1 / 3; width: 64px; height: 64px; object-fit: contain; }
+.combo__passos b { font-size: 17px; } .combo__passos p { margin: 4px 0 0; font-size: 14px; color: var(--cinza); line-height: 1.45; }
+.combo__n { position: absolute; top: 14px; right: 16px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--marca); color: #fff; font: 700 13px/1 var(--font-text); }
+main > section.combo .combo__painel { margin-top: 28px; grid-template-columns: 1.05fr .95fr; align-items: stretch; gap: 32px; padding: 44px; }
+.combo__t { margin: 0; font: 400 30px/1.1 var(--font-display); letter-spacing: -.02em; color: #fff; }
+.combo__sub { margin: 8px 0 18px; color: #cfe3d7; font-size: 15px; }
+.cmb { margin-top: 12px; padding: 14px 16px; border-radius: 18px; background: rgb(255 255 255 / .06); border: 1px solid rgb(255 255 255 / .12); transition: background .2s, border-color .2s; }
+.cmb.is-on { background: rgb(255 255 255 / .1); border-color: rgb(255 255 255 / .22); }
+.cmb__cab { display: grid; grid-template-columns: auto 40px 1fr; align-items: center; gap: 12px; cursor: pointer; }
+.cmb__cab input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.cmb__sw { position: relative; width: 42px; height: 24px; border-radius: 999px; background: rgb(255 255 255 / .22); transition: background .2s; }
+.cmb__sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform .2s; }
+.cmb__cab input:checked + .cmb__sw { background: var(--ouro); } .cmb__cab input:checked + .cmb__sw::after { transform: translateX(18px); }
+.cmb__cab input:focus-visible + .cmb__sw { outline: 2px solid #fff; outline-offset: 2px; }
+.cmb__cab img { width: 40px; height: 40px; object-fit: contain; }
+.cmb__cab b { display: block; color: #fff; font-size: 15.5px; } .cmb__cab small { display: block; color: #bcd9c9; font-size: 13px; margin-top: 2px; }
+.cmb__chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.cmb__chip { height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid rgb(255 255 255 / .25); background: transparent; color: #fff; font: 600 13.5px/1 var(--font-text); cursor: pointer; transition: all .15s; }
+.cmb__chip:hover { border-color: #fff; } .cmb__chip.is-on { background: var(--ouro); border-color: var(--ouro); color: #3b2c06; }
+.cmb__qtd { display: flex; align-items: center; gap: 8px; margin-top: 12px; color: #fff; font-size: 14px; font-weight: 600; }
+.cmb__qtd span { margin-right: 4px; }
+.cmb__qtd button { width: 34px; height: 34px; border-radius: 50%; border: 0; background: #fff; color: var(--marca-esc); font: 600 19px/1 var(--font-text); cursor: pointer; }
+.cmb__qtd button:disabled { opacity: .35; cursor: default; }
+.cmb__qtd output { min-width: 26px; text-align: center; font-size: 17px; }
+.cmb:not(.is-on) :is(.cmb__chips, .cmb__qtd) { opacity: .35; pointer-events: none; }
+main > section.combo .conta { display: flex; flex-direction: column; padding: 28px; }
+.conta__t { margin: 0 0 4px; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--marca); }
+.conta__l { transition: opacity .2s; } .conta__l.is-off { opacity: .3; }
+.conta__eco { margin: 6px 0 0; font-size: 14px; color: var(--tinta); } .conta__eco b { color: #0f5b38; }
+.conta__eco[hidden] { display: none; }
+main > section.combo .conta .botoes { margin-top: auto; padding-top: 18px; display: flex; flex-wrap: wrap; gap: 10px; }
+main > section.combo .conta .bt { flex: 1 1 180px; justify-content: center; }
+@media (max-width: 1123px) {
+  main > section.combo { padding-top: 72px; }
+  .combo__passos { grid-template-columns: 1fr; gap: 10px; }
+  main > section.combo .combo__painel { grid-template-columns: 1fr; padding: 32px 28px; }
+}
+@media (max-width: 619px) {
+  main > section.combo { padding-top: 48px; }
+  .combo__passos { margin-top: 24px; } .combo__passos li { grid-template-columns: 48px 1fr; padding: 16px; column-gap: 12px; }
+  .combo__passos img { width: 48px; height: 48px; } .combo__passos b { font-size: 16px; padding-right: 30px; display: block; }
+  main > section.combo .combo__painel { padding: 24px 16px 16px; gap: 20px; }
+  .combo__t { font-size: 25px; }
+  .cmb { padding: 12px; } .cmb__chip { height: 34px; padding: 0 12px; font-size: 13px; }
+  main > section.combo .conta { padding: 18px; }
+}
+
+/* rodapé: o formulário de CEP no tom escuro do rodapé */
+.cep--rod { background: rgb(255 255 255 / .04); border: 1px solid rgb(255 255 255 / .1); box-shadow: none; }
+.cep--rod .cep__f input, .cep--rod .cep__f select { background: rgb(255 255 255 / .06); border-color: rgb(255 255 255 / .16); color: #fff; }
+.cep--rod .cep__f input:focus, .cep--rod .cep__f select:focus { background: rgb(255 255 255 / .1); border-color: #8fd9b4; box-shadow: 0 0 0 4px rgb(143 217 180 / .15); }
+.cep--rod .cep__f select option { color: var(--tinta); }
+.cep--rod .cep__f > span { color: rgb(255 255 255 / .6); }
+.cep--rod .cep__f.is-cheio > span, .cep--rod .cep__f:focus-within > span { color: #8fd9b4; }
+.cep--rod .cep__sn { color: rgb(255 255 255 / .65); } .cep--rod .cep__sn i { border-color: #8fd9b4; }
+.cep--rod .cep__nao { background: rgb(255 255 255 / .06); border-color: rgb(255 255 255 / .22); color: #fff; }
+.cep--rod .cep__nao:hover { background: rgb(255 255 255 / .12); border-color: #fff; }
+.cep--rod .cep__btn { background: #2f8a5f; } .cep--rod .cep__btn:hover { background: #379a6b; }
+.cep--rod .cep__end { color: #8fd9b4; } .cep--rod .cep__erro { color: #ffb4a8; }
+.rod__fale .rod__btn { white-space: nowrap; justify-content: center; }
+/* WTTx: cards estreitos (4 por linha) usam o selo de Cashback compacto em qualquer largura */
+.cards--wtx .cb { gap: 8px; padding: 7px 7px 7px 6px; }
+.cards--wtx .cb .cb__t { font-size: 13px; white-space: normal; line-height: 1.2; }
+.cards--wtx .cb .cb__t b { display: block; font-size: 15px; }
+.cards--wtx .cb__q { font-size: 0; gap: 0; padding: 4px; }
+.cards--wtx .cb__q::before { width: 18px; height: 18px; font-size: 12px; }
+/* objetos 3D da abertura do WTTx: o modem menor e dentro do painel, a torre embaixo à esquerda */
+@media (min-width: 1124px) {
+  .svc--wtx .abre__obj .obj { width: min(340px, 86%); right: 0; top: -40px; }
+  .svc--wtx .abre__obj .obj--2 { width: 34%; left: 0; top: 46%; }
+}
+@media (min-width: 620px) and (max-width: 1123px) { .svc--wtx .abre__obj .obj { width: 260px; right: -20px; top: -70px; } .svc--wtx .abre__obj .obj--2 { width: 130px; } }
+@media (max-width: 619px) { .svc--wtx .abre__obj .obj { width: 170px; right: -6px; top: -64px; } .svc--wtx .abre__obj .obj--2 { width: 96px; } }
+/* celular: ajustes do 20/11 */
+@media (max-width: 619px) {
+  .svc--cel .abre__obj .obj:not(.obj--2) { width: 170px; right: 0; top: -104px; }
+  .mil:is(.mil--cel, .mil--emp) .mil__val { margin-top: 14px; }
+}
+.conta__eco b, .conta__l strong { white-space: nowrap; }
+[data-cel-min], [data-wtx-min], [data-net-min], [data-2000] { white-space: nowrap; }
+/* dica "Arraste" e pontos só quando há cards escondidos no trilho */
+.sub:not(.tem-mais) .trilho :is(.dica, .pontos) { display: none; }

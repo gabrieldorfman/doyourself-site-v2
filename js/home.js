@@ -221,15 +221,22 @@
   const cbCel = (p) => cbHtml({ plano: `${p.gb} GB`, preco: totCel(p), valor: DY.cashbackCentavos(totCel(p), 100), linhas: linhas[p.id] || 1, tipo: 'cel' });
   const precoCel = (p, g) => { const h = precoHtml(totCel(p) / 100, 'c' + p.id); return g ? h.replace('pc__preco', 'pc__preco pc__preco--g') : h; };
   // celular: os apps que não gastam a internet viram ícones, e cada card escolhe quantas linhas
-  const APP = { whatsapp: 'WhatsApp', messenger: 'Messenger', waze: 'Waze', facebook: 'Facebook', instagram: 'Instagram' };
-  const linhas = {}; const MAX_L = 20;
-  const linkCel = (p) => `/contratar?origem=celular&para=cnpj&plano=${encodeURIComponent(p.id)}&linhas=${linhas[p.id] || 1}`;
+  const APP = { whatsapp: 'WhatsApp', 'whatsapp-business': 'WhatsApp Business', instagram: 'Instagram', facebook: 'Facebook', messenger: 'Messenger', waze: 'Waze', x: 'X' };
+  const APP_CURTO = { 'whatsapp-business': 'Business' };
+  const linhas = {}; const MAX_L = DY.linhasMax || 5000; const ESP = DY.linhasEspecial || 15;
+  const zapCel = (p, n) => DY.linkWhatsApp(`Olá! Quero ${n} linhas do plano de celular de ${p.gb} GB para a minha empresa.`);
+  const linkCel = (p) => { const n = linhas[p.id] || 1; return n > ESP ? zapCel(p, n) : `/contratar?origem=celular&para=cnpj&plano=${encodeURIComponent(p.id)}&linhas=${n}`; };
+  // contador de linhas: botões e número que dá para digitar
+  const qtdHtml = (p, pre = '') => { const n = linhas[p.id] || 1; return `<div class="qtd"><span class="qtd__l" id="ql-${pre}${p.id}">Linhas</span><div class="qtd__ctrl" role="group" aria-labelledby="ql-${pre}${p.id}"><button type="button" data-l="-1" aria-label="Tirar uma linha"${n <= 1 ? ' disabled' : ''}>−</button><input class="qtd__n" type="text" inputmode="numeric" maxlength="4" value="${n}" aria-label="Quantidade de linhas"><button type="button" data-l="1" aria-label="Adicionar uma linha"${n >= MAX_L ? ' disabled' : ''}>+</button></div></div>
+      <p class="qtd__esp"${n > ESP ? '' : ' hidden'}>Acima de ${ESP} linhas a condição é especial, com valores e franquias negociados. Clique em <b>Quero este plano</b> e fale com a gente.</p>`; };
+  const appsDet = (p) => (p.apps || []).filter((k) => APP[k]).map((k) => APP[k]).join(', ').replace(/, ([^,]*)$/, ' e $1');
+  const detCelLista = (p) => [...(p.detalhes || []).map((d) => [d[1], d[2]]), ['Sem gastar a internet', appsDet(p)], ['MEI', 'Até 3 linhas no CNPJ, de até R$ 100 cada']];
   function totalCel(p) {
     const n = linhas[p.id] || 1;
     return n === 1 ? 'Valor de 1 linha' : `Valor de ${n} linhas · ${brl(p.preco)} cada`;
   }
   function cardCel(p) {
-    const dest = p.selo === 'OFERTA DO MÊS'; const n = linhas[p.id] || 1;
+    const dest = p.selo === 'OFERTA DO MÊS';
     const apps = (p.apps || []).filter((k) => APP[k]);
     const det = (p.detalhes || []).map((d) => `<li><span>${d[1]}</span><b>${d[2]}</b></li>`).join('');
     return `<article class="pc pc--cel${dest ? ' is-dest' : ''}" data-id="${p.id}">
@@ -237,30 +244,40 @@
       <p class="pc__vel"><b>${p.gb}</b><span>GB</span></p>
       <p class="pc__sub">${p.plano} GB do plano + ${p.bonus} GB de bônus</p>
       <div class="pc__op"><p class="pc__op-t">Sem gastar a internet</p><ul class="apps apps--${apps.length}">${apps.map((k) => `<li title="${APP[k]}"><img src="/img/apps/${k}.svg" alt="${APP[k]}"></li>`).join('')}</ul></div>
-      <div class="pc__pe"><div class="cel__preco">${precoCel(p)}</div>
+      <div class="pc__pe">${p.de ? `<p class="pc__de">De ${brl(p.de)}</p>` : ''}<div class="cel__preco">${precoCel(p)}</div>
       <p class="qtd__tot">${totalCel(p)}</p>
       <div class="cbw">${cbCel(p)}</div>
-      <div class="qtd"><span class="qtd__l" id="ql-${p.id}">Linhas</span><div class="qtd__ctrl" role="group" aria-labelledby="ql-${p.id}"><button type="button" data-l="-1" aria-label="Tirar uma linha"${n <= 1 ? ' disabled' : ''}>−</button><output aria-live="polite">${n}</output><button type="button" data-l="1" aria-label="Adicionar uma linha"${n >= MAX_L ? ' disabled' : ''}>+</button></div></div>
+      ${qtdHtml(p)}
       <a class="pc__btn" data-ir-cel href="${linkCel(p)}">Quero este plano</a>
       ${btDet}</div>
-      ${painelDet(`${p.gb} GB por mês`, [...(p.detalhes || []).map((d) => [d[1], d[2]]), ['Também vem no plano', (p.servicos || []).join(' · ')]], '')}</article>`;
+      ${painelDet(`${p.gb} GB por mês`, detCelLista(p), '')}</article>`;
   }
+  function mudaLinhas(card, valor) {
+    const p = DY.planosCnpj.find((x) => x.id === card.dataset.id); if (!p) return;
+    const n = Math.max(1, Math.min(MAX_L, Math.round(+valor) || 1)); const era = linhas[p.id] || 1; linhas[p.id] = n;
+    const antes = { ['c' + p.id]: +$('[data-num]', card).dataset.v };
+    $('.qtd__n', card).value = n; $('.qtd__tot', card).innerHTML = totalCel(p); $('[data-ir-cel]', card).href = linkCel(p);
+    const ir = $('[data-ir-cel]', card); if (n > ESP) { ir.target = '_blank'; ir.rel = 'noopener'; } else ir.removeAttribute('target');
+    $('.cel__preco', card).innerHTML = precoCel(p, card.matches('[data-cel-dest]')); $('.cbw', card).innerHTML = cbCel(p);
+    $('.qtd__esp', card).hidden = n <= ESP;
+    if (n > ESP && era <= ESP) avisar(`Acima de ${ESP} linhas: condição especial pelo WhatsApp.`);
+    contar(card, antes);
+    const [menos, mais] = $$('[data-l]', card); menos.disabled = n <= 1; mais.disabled = n >= MAX_L;
+  }
+  document.addEventListener('change', (e) => { const i = e.target.closest('.qtd__n'); if (i) mudaLinhas(i.closest('.pc, [data-cel-dest]'), i.value); });
+  document.addEventListener('input', (e) => { const i = e.target.closest('.qtd__n'); if (i) i.value = i.value.replace(/\D/g, ''); });
+  document.addEventListener('keydown', (e) => { const i = e.target.closest && e.target.closest('.qtd__n'); if (i && e.key === 'Enter') { e.preventDefault(); i.blur(); } });
+  document.addEventListener('focusout', (e) => { const i = e.target.closest && e.target.closest('.qtd__n'); if (i && i.value === '') mudaLinhas(i.closest('.pc, [data-cel-dest]'), 1); });
   document.addEventListener('click', (e) => {
     const bt = e.target.closest('.pc--cel [data-l]'); if (bt) {
-      const card = bt.closest('.pc, [data-cel-dest]'); const p = DY.planosCnpj.find((x) => x.id === card.dataset.id); if (!p) return;
-      const n = Math.max(1, Math.min(MAX_L, (linhas[p.id] || 1) + +bt.dataset.l)); linhas[p.id] = n;
-      const antes = { ['c' + p.id]: +$('[data-num]', card).dataset.v };
-      $('output', card).textContent = n; $('.qtd__tot', card).innerHTML = totalCel(p); $('[data-ir-cel]', card).href = linkCel(p);
-      $('.cel__preco', card).innerHTML = precoCel(p, card.matches('[data-cel-dest]')); $('.cbw', card).innerHTML = cbCel(p);
-      contar(card, antes);
-      const [menos, mais] = $$('[data-l]', card); menos.disabled = n <= 1; mais.disabled = n >= MAX_L;
-      if (n === MAX_L) avisar('Para mais de 20 linhas, fale com a gente no WhatsApp.');
-      if (temGsap) gsap.fromTo($('output', card), { scale: 1.35 }, { scale: 1, duration: .4, ease: 'back.out(3)' });
+      const card = bt.closest('.pc, [data-cel-dest]');
+      mudaLinhas(card, (linhas[card.dataset.id] || 1) + +bt.dataset.l);
+      if (temGsap) gsap.fromTo($('.qtd__n', card), { scale: 1.3 }, { scale: 1, duration: .4, ease: 'back.out(3)' });
       return;
     }
     const ab = e.target.closest('[data-det]'), fe = e.target.closest('[data-det-fechar]');
     if (ab || fe) {
-      const card = (ab || fe).closest('.pc, [data-cel-dest]'); const mais = $('.pc__mais', card); const abrir = !!ab;
+      const card = (ab || fe).closest('.pc, .mil'); const mais = $('.pc__mais', card); const abrir = !!ab;
       mais.hidden = !abrir; card.classList.toggle('is-det', abrir); $('[data-det]', card).setAttribute('aria-expanded', String(abrir));
       if (abrir && temGsap) gsap.from(mais, { autoAlpha: 0, y: 12, duration: .3, ease: 'power2.out' });
       if (abrir) mais.scrollTop = 0; (abrir ? mais : $('[data-det]', card)).focus({ preventScroll: true });
@@ -407,7 +424,7 @@
   // empresa: o mesmo card da casa, com o que vem no plano no lugar do streaming
   const emp_ = $('[data-emp]'); const tEmp = trilho(emp_);
   const INCLUI = {
-    e1000: ['Gestão de equipe externa, 4 licenças', 'Antivírus incluso', 'Modem Wi-Fi 6'],
+    e1000: ['Gestão de equipe externa, 4 licenças', 'Antivírus incluso', 'Audiolivros e cursos', 'Modem Wi-Fi 6'],
     e600: ['Antivírus incluso', 'Audiolivros e cursos', 'Modem Wi-Fi 5'],
     e500: ['Audiolivros e cursos', 'Instalação em até 48 horas', 'Modem Wi-Fi 5'],
     e400: ['Antivírus incluso', 'Instalação em até 48 horas', 'Modem Wi-Fi 5'],
@@ -426,8 +443,36 @@
       <a class="pc__btn" href="${linkContratar(p, 'empresa')}">Quero este plano</a>
       ${btDet}</div>${painelDet(`${milhar(p.num)} Mega`, [['Download', val(p, 'Download')], ['Upload', val(p, 'Upload')], ['Modem', val(p, 'Modem')], ['O plano inclui', (INCLUI[p.id] || []).filter((t) => !t.startsWith('Modem')).join(' · ')], ['Fidelidade', '24 meses']], '')}</article>`;
   }
+  // oferta do mês para empresa: o mesmo card do 1.000 Mega da casa, no azul-acinzentado da empresa
+  const INCLUI_DEST = {
+    e1000: [['/img/3d-g/pino.webp', 'Gestão de equipe', '4 licenças'], ['/img/3d-g/escudo.webp', 'Antivírus', 'Incluso'], ['/img/3d-g/wifi.webp', 'Modem Wi-Fi 6', 'Incluso']],
+  };
+  function blocoEmpDest(p) {
+    const box = $('[data-emp-dest]'); if (!box) return; if (!p) { box.hidden = true; return; }
+    box.hidden = false; box.dataset.id = p.id; const o = p.opcoes[0]; const up = val(p, 'Upload'); const n = milhar(p.num);
+    const inc = INCLUI_DEST[p.id] || [];
+    box.innerHTML = `
+      <div class="obj" aria-hidden="true"><img src="/img/3d-g/predio.webp" alt=""></div>
+      <div class="mil__esq">
+        <span class="mil__selo">${p.selo}</span>
+        <p class="mil__vel"><b>${n}</b> Mega</p>
+        <p class="mil__nome">Internet no CNPJ com Wi-Fi 6 e ferramentas para a equipe</p>
+        <p class="mil__txt">Velocidade para o caixa, o sistema, as videochamadas e a equipe toda conectada ao mesmo tempo, sem a internet cair no meio do expediente.</p>
+        <ul class="mil__info"><li><b>${n} Mega de download</b><span>Para a empresa toda</span></li><li><b>${up} de upload</b><span>Nuvem, backup e videochamadas</span></li><li><b>Modem Wi-Fi 6</b><span>Mais alcance, sem custo</span></li><li><b>Instalação em até 48 h</b><span>Grátis, no endereço da empresa</span></li></ul>
+      </div>
+      <div class="mil__dir">
+        <p class="mil__t">Já vem no seu ${n} Mega</p>
+        <div class="ops ops--3">${inc.map(([src, t, sub]) => `<span class="op op--fixo op--inc"><span class="op__ic"><img src="${src}" alt=""></span><span class="op__n">${t}</span><small>${sub}</small></span>`).join('')}</div>
+        <div class="mil__val"><p class="mil__de">De ${brl(o.de || p.de)}</p>${precoHtml(o.preco, p.id).replace('pc__preco', 'pc__preco pc__preco--g')}
+        <div class="cbw">${cbNet(p, o, 'emp')}</div></div>
+        <div class="mil__bts"><a class="bt bt--ouro" href="${linkContratar(p, 'empresa')}">Quero este plano</a><button type="button" class="bt-mini bt-mini--claro mil__det pc__det" data-det aria-expanded="false">Ver detalhes do plano</button></div>
+      </div>
+      ${painelDet(`${n} Mega para empresa`, [['Download', val(p, 'Download')], ['Upload', up], ['Modem', val(p, 'Modem')], ['Instalação', 'Grátis, em até 48 horas'], ['O plano inclui', (INCLUI[p.id] || []).filter((t) => !t.startsWith('Modem')).join(' · ')], ['Fidelidade', '24 meses'], ['No boleto ou PIX', 'R$ 10 a mais por mês']], '')}`;
+  }
   function blocoEmp() {
-    const lista = emp(); const cards = $('.cards', emp_);
+    const todos = emp(); const dest = todos.find((p) => p.selo === 'OFERTA DO MÊS');
+    const lista = todos.filter((p) => p !== dest); const cards = $('.cards', emp_);
+    blocoEmpDest(dest);
     cards.style.setProperty('--n', lista.length);
     cards.innerHTML = lista.map(cardEmp).join('');
     tEmp.desenhou();
@@ -445,7 +490,7 @@
     $$('[data-uf-nome]').forEach((n) => (n.textContent = DY.UFS[DY.uf]));
     $$('[data-uf-sel]').forEach((s) => (s.value = DY.uf));
     tNet.desenhou();
-    if (anim) { contar(document, antigos || {}); if (temGsap) gsap.fromTo([...$$('.pc', net), $('[data-mil]'), ...$$('.pc', emp_)], { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .5, stagger: .05, ease: 'power3.out', clearProps: 'transform' }); }
+    if (anim) { contar(document, antigos || {}); if (temGsap) gsap.fromTo([...$$('.pc', net), $('[data-mil]'), ...$$('.pc', emp_), $('[data-emp-dest]')], { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .5, stagger: .05, ease: 'power3.out', clearProps: 'transform' }); }
     const p2 = (todos.find((p) => p.id === '2000') || {}).opcoes;
     if (p2) { $$('[data-2000]').forEach((e) => (e.textContent = brl(p2[0].preco))); }
     const min = Math.min(...todos.map((p) => p.opcoes[0].preco));
@@ -473,7 +518,7 @@
   function trocaNet(fn, msg) {
     const antes = precosNet();
     const sai = () => { fn(); desenhaNet(true, antes); avisar(msg); const ok = $('.regiao__ok'); if (ok) { ok.hidden = false; clearTimeout(ok._t); ok._t = setTimeout(() => (ok.hidden = true), 2600); } };
-    if (temGsap) gsap.to([...$$('.pc', net), $('[data-mil]'), ...$$('.pc', emp_)], { y: 14, autoAlpha: 0, duration: .2, stagger: .02, ease: 'power2.in', onComplete: sai }); else sai();
+    if (temGsap) gsap.to([...$$('.pc', net), $('[data-mil]'), ...$$('.pc', emp_), $('[data-emp-dest]')], { y: 14, autoAlpha: 0, duration: .2, stagger: .02, ease: 'power2.in', onComplete: sai }); else sai();
   }
   $$('[data-uf-sel]').forEach((s) => {
     Object.entries(DY.UFS).sort((a, b) => a[1].localeCompare(b[1], 'pt-BR')).forEach(([uf, n]) => s.add(new Option(n, uf)));
@@ -486,13 +531,13 @@
 
   /* celular (CNPJ) */
   const cel = $('[data-cel]'); const tCel = trilho(cel);
-  const VIT = ['12', '30', '50', '100'];
   let precosCel = {};
 
-  // destaque do celular: o plano da oferta do mês, no mesmo formato do destaque da internet
+  // destaque do celular: o mesmo card da oferta do 1.000 Mega, em verde
+  const tileApp = (k) => `<span class="op op--fixo op--app"><span class="op__ic"><img src="/img/apps/${k}.svg" alt=""></span><span class="op__n">${APP_CURTO[k] || APP[k]}</span></span>`;
   function blocoCelDest(p) {
     const box = $('[data-cel-dest]'); if (!box) return; if (!p) { box.hidden = true; return; }
-    box.hidden = false; box.dataset.id = p.id; const n = linhas[p.id] || 1;
+    box.hidden = false; box.dataset.id = p.id;
     const apps = (p.apps || []).filter((k) => APP[k]);
     box.innerHTML = `
       <div class="obj" aria-hidden="true"><img src="/img/3d-g/celular.webp" alt=""></div>
@@ -500,24 +545,24 @@
         <span class="mil__selo">${p.selo}</span>
         <p class="mil__vel"><b>${p.gb}</b> GB</p>
         <p class="mil__nome">${p.plano} GB do plano + ${p.bonus} GB de bônus</p>
-        <p class="mil__txt">Para a equipe que vive no WhatsApp, no mapa e nas redes, com ligações ilimitadas para todo o Brasil.</p>
-        <ul class="mil__info"><li><b>Ligações ilimitadas</b><span>Para todo o Brasil</span></li><li><b>800 SMS por mês</b><span>Em cada linha</span></li><li><b>Roaming nacional</b><span>Sem custo extra</span></li><li><b>Portabilidade grátis</b><span>Traga o número do CNPJ</span></li></ul>
+        <p class="mil__txt">Internet de sobra para a equipe trabalhar na rua, com ligações ilimitadas e os apps do dia a dia sem gastar a franquia.</p>
+        <ul class="mil__info"><li><b>Ligações ilimitadas</b><span>Para qualquer operadora do Brasil</span></li><li><b>800 SMS por mês</b><span>Em cada linha</span></li><li><b>${apps.length} apps sem gastar a internet</b><span>WhatsApp, Instagram, Waze e mais</span></li><li><b>Portabilidade grátis</b><span>Traga o número do seu CNPJ</span></li></ul>
       </div>
       <div class="mil__dir">
-        <p class="mil__t">Sem gastar a internet</p>
-        <ul class="apps apps--dest">${apps.map((k) => `<li title="${APP[k]}"><img src="/img/apps/${k}.svg" alt="${APP[k]}"><span>${APP[k]}</span></li>`).join('')}</ul>
-        <div class="mil__val"><div class="cel__preco">${precoCel(p, true)}</div>
+        <p class="mil__t">Usar estes apps não gasta a sua internet</p>
+        <div class="ops ops--apps">${apps.map(tileApp).join('')}</div>
+        <div class="mil__val">${p.de ? `<p class="mil__de">De ${brl(p.de)}</p>` : ''}<div class="cel__preco">${precoCel(p, true)}</div>
         <p class="qtd__tot">${totalCel(p)}</p>
         <div class="cbw">${cbCel(p)}</div></div>
-        <div class="qtd"><span class="qtd__l" id="ql-d${p.id}">Linhas</span><div class="qtd__ctrl" role="group" aria-labelledby="ql-d${p.id}"><button type="button" data-l="-1" aria-label="Tirar uma linha"${n <= 1 ? ' disabled' : ''}>−</button><output aria-live="polite">${n}</output><button type="button" data-l="1" aria-label="Adicionar uma linha"${n >= MAX_L ? ' disabled' : ''}>+</button></div></div>
-        <div class="mil__bts"><a class="bt bt--ouro" data-ir-cel href="${linkCel(p)}">Quero este plano</a><button type="button" class="bt-mini bt-mini--claro pc__det" data-det aria-expanded="false">Ver detalhes do plano</button></div>
+        ${qtdHtml(p, 'd')}
+        <div class="mil__bts"><a class="bt bt--ouro" data-ir-cel href="${linkCel(p)}">Quero este plano</a><button type="button" class="bt-mini bt-mini--claro mil__det pc__det" data-det aria-expanded="false">Ver detalhes do plano</button></div>
       </div>
-      ${painelDet(`${p.gb} GB por mês`, [...(p.detalhes || []).map((d) => [d[1], d[2]]), ['Também vem no plano', (p.servicos || []).join(' · ')]], '')}`;
+      ${painelDet(`${p.gb} GB por mês`, detCelLista(p), '')}`;
   }
   function desenhaCel(anim) {
-    const lista = VIT.map((id) => DY.planosCnpj.find((p) => p.id === id)).filter(Boolean);
+    const lista = DY.vitrineCelular.filter(Boolean);
     const antes = precosCel; precosCel = Object.fromEntries(lista.map((p) => ['c' + p.id, p.preco]));
-    const dest = lista.find((p) => p.selo === 'OFERTA DO MÊS') || lista.find((p) => p.id === '50');
+    const dest = lista.find((p) => p.selo === 'OFERTA DO MÊS') || lista[0];
     blocoCelDest(dest);
     const resto = lista.filter((p) => p !== dest);
     $('.cards', cel).style.setProperty('--n', resto.length);
@@ -529,23 +574,72 @@
     combo();
   }
 
-  /* combo: luz + internet 1000 + uma linha de 30 GB */
+  /* combo: o cliente liga/desliga cada serviço, escolhe a conta de luz, o plano de internet e as linhas; o Cashback soma */
+  const cmb = { luz: 700, net: '1000', linhas: 1 };
+  const CONTAS = [300, 500, 700, 1000, 1500];
   function combo() {
     const box = $('[data-combo]'); if (!box) return;
-    const s = DY.energia.simular(700);
-    const n = DY.catalogo.casa[DY.blocoInternet(DY.uf)].find((p) => p.id === '1000').opcoes[0].preco; // 1000 Mega + NoPing
-    const l = (DY.planosCnpj.find((p) => p.id === '30') || DY.planosCnpj[0]).preco;
-    const cbN = cb(n, 50), cbL = cb(l, 100);
-    $('[data-cb=luz]', box).textContent = DY.brl(s.cashback);
-    $('[data-cb=net]', box).textContent = DY.brl(cbN);
-    $('[data-cb=cel]', box).textContent = DY.brl(cbL);
-    $('[data-cb=total]', box).textContent = DY.brl(s.cashback + cbN + cbL);
-    $('[data-eco]', box).textContent = DY.brl(s.economiaMes);
-    $('[data-net-1000]', box).textContent = brl(n);
+    const on = (k) => $(`[data-cmb="${k}"] [data-cmb-on]`, box).checked;
+    const planosNet = casa();
+    if (!planosNet.find((p) => p.id === cmb.net)) cmb.net = (planosNet.find((p) => p.id === '1000') || planosNet[0]).id;
+    const chip = (tipo, v, txt, ativo) => `<button type="button" role="radio" aria-checked="${ativo}" class="cmb__chip${ativo ? ' is-on' : ''}" data-cmb-${tipo}-v="${v}">${txt}</button>`;
+    $('[data-cmb-luz]', box).innerHTML = CONTAS.map((v) => chip('luz', v, 'R$ ' + partes(v).i, v === cmb.luz)).join('');
+    $('[data-cmb-net]', box).innerHTML = planosNet.map((p) => chip('net', p.id, milhar(p.num) + ' Mega', p.id === cmb.net)).join('');
+    const pc = (DY.vitrineCelular || []).find((p) => p.selo === 'OFERTA DO MÊS') || DY.planosCnpj[0];
+    const pn = planosNet.find((p) => p.id === cmb.net); const precoNet = pn.opcoes[0].preco;
+    const s = DY.energia.simular(cmb.luz);
+    const v = { luz: on('luz') && s.elegivel ? s.cashback : 0, net: on('net') ? cb(precoNet, 50) : 0, cel: on('cel') ? DY.cashbackCentavos(c(pc.preco) * cmb.linhas, 100) : 0 };
+    ['luz', 'net', 'cel'].forEach((k) => { $(`[data-cmb="${k}"]`, box).classList.toggle('is-on', on(k)); $(`[data-cmb-l-${k}]`, box).classList.toggle('is-off', !on(k)); $(`[data-cb="${k}"]`, box).textContent = DY.brl(v[k]); });
+    $('[data-cmb-net-nome]', box).textContent = `Internet ${milhar(pn.num)} Mega`;
+    $('[data-cmb-cel-nome]', box).textContent = `Plano de ${pc.gb} GB, no CNPJ`;
+    $('[data-cmb-cel-t]', box).textContent = `Celular ${pc.gb} GB, ${cmb.linhas} ${cmb.linhas > 1 ? 'linhas' : 'linha'}`;
+    $('[data-cmb-linhas]', box).textContent = cmb.linhas;
+    const [menos, mais] = $$('[data-cmb-l]', box); menos.disabled = cmb.linhas <= 1 || !on('cel'); mais.disabled = cmb.linhas >= ESP || !on('cel');
+    const totalAntes = +($('[data-cb=total]', box).dataset.v || 0); const total = v.luz + v.net + v.cel;
+    const el = $('[data-cb=total]', box); el.dataset.v = total;
+    if (temGsap && totalAntes !== total) { const o = { v: totalAntes }; gsap.to(o, { v: total, duration: .6, ease: 'power3.out', onUpdate: () => (el.textContent = DY.brl(Math.round(o.v))) }); } else el.textContent = DY.brl(total);
+    $('[data-eco]', box).textContent = DY.brl(s.economiaMes || 0); $('[data-cmb-eco]', box).hidden = !on('luz');
+    const qtos = ['luz', 'net', 'cel'].filter(on).length;
+    $('[data-cmb-ir]', box).href = `/contratar?origem=combo${on('luz') ? '&conta=' + cmb.luz : ''}${on('net') ? '&plano=' + cmb.net : ''}${on('cel') ? '&linhas=' + cmb.linhas : ''}`;
+    const nomes = [on('luz') && `energia solar (conta de R$ ${partes(cmb.luz).i})`, on('net') && `internet de ${milhar(pn.num)} Mega`, on('cel') && `${cmb.linhas} ${cmb.linhas > 1 ? 'linhas' : 'linha'} de celular de ${pc.gb} GB`].filter(Boolean);
+    const zap = $('[data-cmb-zap]', box); zap.href = DY.linkWhatsApp(`Olá! Quero montar um combo com ${nomes.join(', ').replace(/, ([^,]*)$/, ' e $1') || 'os serviços da Do Yourself'}.`); zap.target = '_blank'; zap.rel = 'noopener';
+    box.classList.toggle('is-vazio', qtos === 0);
+  }
+  { const box = $('[data-combo]'); if (box) {
+    box.addEventListener('change', (e) => { if (e.target.matches('[data-cmb-on]')) combo(); });
+    box.addEventListener('click', (e) => {
+      const l = e.target.closest('[data-cmb-luz-v]'), n = e.target.closest('[data-cmb-net-v]'), q = e.target.closest('[data-cmb-l]');
+      if (l) cmb.luz = +l.dataset.cmbLuzV; else if (n) cmb.net = n.dataset.cmbNetV; else if (q) cmb.linhas = Math.max(1, Math.min(ESP, cmb.linhas + +q.dataset.cmbL)); else return;
+      combo();
+    });
+  } }
+
+  /* WTTx: internet sem fio 4G para empresas. Planos pela franquia, do menor para o maior */
+  const wtx_ = $('[data-wtx]'); const tWtx = wtx_ ? trilho(wtx_) : null;
+  const zapWtx = (p) => DY.linkWhatsApp(`Olá! Quero o WTTx ${p.gb}GB (internet sem fio) para a minha empresa.`);
+  function cardWtx(p) {
+    return `<article class="pc pc--wtx" data-id="${p.id}">
+      <span class="pc__selo">${p.selo}</span>
+      <p class="pc__vel"><b>${p.gb}</b><span>GB</span></p>
+      <p class="pc__sub">Franquia mensal · ${p.mbps} Mbps de velocidade</p>
+      <div class="pc__op"><p class="pc__op-t">O plano inclui</p><ul class="pc__inc"><li>Modem Wi-Fi com chip</li><li>Sem instalação: é só ligar na tomada</li><li>7 dias para testar a cobertura</li></ul></div>
+      <div class="pc__pe">${precoHtml(p.preco, p.id)}
+      <div class="cbw">${cbHtml({ plano: `WTTx ${p.gb} GB`, preco: c(p.preco), valor: cb(p.preco, 50), tipo: 'wtx' })}</div>
+      <a class="pc__btn" href="${zapWtx(p)}" target="_blank" rel="noopener">Quero este plano</a>
+      ${btDet}</div>
+      ${painelDet(`WTTx ${p.gb} GB`, [['Franquia', `${p.gb} GB por mês`], ['Velocidade', `${p.mbps} Mbps`], ['Modem', 'Incluso no plano. Se cancelar, você devolve'], ['Instalação', 'Não precisa: ligue na tomada e navegue'], ['Ativação do chip', 'Em média 48 horas depois de receber'], ['Teste', '7 dias. Se a cobertura não agradar, você devolve sem custo'], ['Suporte', 'Pelo WhatsApp da Do Yourself']], '')}</article>`;
+  }
+  function desenhaWtx() {
+    if (!wtx_) return; const cards = $('.cards', wtx_);
+    const lista = [...DY.wttx].sort((a, b) => a.gb - b.gb);
+    cards.style.setProperty('--n', lista.length);
+    cards.innerHTML = lista.map(cardWtx).join('');
+    tWtx.desenhou();
+    $$('[data-wtx-min]').forEach((e) => (e.textContent = brl(Math.min(...lista.map((p) => p.preco)))));
   }
 
   document.addEventListener('dy:planos', () => { desenhaNet(false); desenhaCel(false); });
-  desenhaNet(false); desenhaCel(false);
+  desenhaNet(false); desenhaCel(false); desenhaWtx();
 
   /* ---------- Animações (GSAP + ScrollTrigger) ---------- */
   if (temGsap) {
@@ -650,12 +744,12 @@ document.querySelectorAll('[data-slides]').forEach((m) => {
     const b = e.target.closest('.cb'); if (b) {
       const nb = (t) => String(t).replace(/ /g, '\u00a0');
       const d = b.dataset, preco = nb(DY.brl(+d.cbPreco)), valor = nb(DY.brl(+d.cbValor)), n = +d.cbLinhas;
-      const cel = d.cbTipo === 'cel';
+      const cel = d.cbTipo === 'cel', wtx = d.cbTipo === 'wtx';
       const plano = cel ? (n > 1 ? `${n} linhas do plano de ${nb(d.cbPlano)}` : `1 linha do plano de ${nb(d.cbPlano)}`) : `o plano de ${d.cbPlano.replace(/^(\S+) Mega/, (m) => nb(m))}`;
       $j('[data-cbm-txt]').innerHTML = `<p>Se você contratar <b>${plano}</b>, você paga <b class="nw">${preco} por mês</b>, que é o valor da mensalidade.</p>
-        <p>${cel ? 'Com as linhas ativadas e o contrato concluído' : 'Depois da instalação, com o contrato concluído'}, você recebe <b class="cbm__v nw">${valor}</b> em forma de <b>Cashback</b>, direto na sua conta, via PIX.</p>`;
+        <p>${cel ? 'Com as linhas ativadas e o contrato concluído' : wtx ? 'Com o chip do modem ativado e o contrato concluído' : 'Depois da instalação, com o contrato concluído'}, você recebe <b class="cbm__v nw">${valor}</b> em forma de <b>Cashback</b>, direto na sua conta, via PIX.</p>`;
       $j('[data-cbm-passos]').innerHTML = `<li><b>Você contrata</b><span>Pelo site, em poucos minutos</span></li>
-        ${cel ? `<li><b>${n > 1 ? 'Suas linhas são ativadas' : 'Sua linha é ativada'}</b><span>Com número novo ou com o seu, pela portabilidade</span></li>` : '<li><b>Sua internet é instalada</b><span>Em até 48 horas, sem custo</span></li>'}
+        ${cel ? `<li><b>${n > 1 ? 'Suas linhas são ativadas' : 'Sua linha é ativada'}</b><span>Com número novo ou com o seu, pela portabilidade</span></li>` : wtx ? '<li><b>Você recebe o modem</b><span>Liga na tomada e o chip é ativado</span></li>' : '<li><b>Sua internet é instalada</b><span>Em até 48 horas, sem custo</span></li>'}
         <li><b>Você recebe ${valor} no PIX</b><span>Em até 7 dias depois do contrato concluído</span></li>`;
       $j('[data-cbm-nota]').innerHTML = cel
         ? 'O <b>Cashback</b> é pago uma única vez: o valor de uma mensalidade inteira, por linha contratada.'

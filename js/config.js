@@ -59,7 +59,7 @@ DY.rotas = {
   'internet-casa':   { r: 'Internet para Casa', href: '/internet-fibra/casa', pronta: true },
   'internet-emp':    { r: 'Internet para Empresa', href: '/internet-fibra/empresa', pronta: true },
   'internet-2g':     { r: 'Internet 2 Giga', href: '/internet-fibra/casa/2-giga', pronta: false },
-  'internet-wttx':   { r: 'Internet sem fio para empresas', href: '/internet-fibra/empresa/sem-fio', pronta: false, alt: 'whatsapp' },
+  'internet-wttx':   { r: 'WTTx', href: '/internet-fibra/empresa/sem-fio', pronta: false, alt: '/#wttx' },
   'internet-home':   { r: 'Internet para Home Office', href: '/internet-fibra/home-office', pronta: false },
   'internet-gamer':  { r: 'Internet Gamer', href: '/internet-fibra/gamer', pronta: false },
   'internet-stream': { r: 'Internet com Streaming', href: '/internet-fibra/streaming', pronta: false },
@@ -87,7 +87,7 @@ DY.rotas = {
 DY.menu = [
   ['inicio'], ['combo'], ['energia'],
   // [rótulo, subitens, página principal (clique no rótulo leva para ela)]
-  ['Internet', ['internet', 'internet-casa', 'internet-emp'], 'internet'],
+  ['Internet', ['internet', 'internet-casa', 'internet-emp', 'internet-wttx'], 'internet'],
   ['Celular', ['celular', 'celular-cpf', 'celular-cnpj'], 'celular'],
   ['Aplicativos', ['apps', 'app-entrar', 'app-globoplay', 'app-hbo', 'app-paramount', 'app-youtube'], 'apps'],
   ['Sobre', ['sobre', 'contato', 'suporte', 'biometria', 'parceiros'], 'sobre'],
@@ -174,16 +174,17 @@ DY.UFS = { AC: 'Acre', AL: 'Alagoas', AP: 'Amapá', AM: 'Amazonas', BA: 'Bahia',
    CNPJ → planos empresariais (tabela própria no PR e em SC) + ofertas só de portabilidade.
    Fonte: wiki Regras Do Yourself, partes 5 e 6. Cashback = 100% da mensalidade.
    ============================================================ */
-const ZERO_BASICO = ['whatsapp', 'messenger', 'waze'];
-const ZERO_COMPLETO = ['whatsapp', 'messenger', 'waze', 'facebook', 'instagram'];
+// Apps que não descontam da franquia (base de celular, nov/2026): 6 e 12 GB têm 4; do 30 GB para cima, os 7
+const ZERO_BASICO = ['whatsapp', 'whatsapp-business', 'messenger', 'waze'];
+const ZERO_COMPLETO = ['whatsapp', 'whatsapp-business', 'instagram', 'facebook', 'messenger', 'waze', 'x'];
 const detCel = (p, prem) => {
   const x = prem ? 'premium-' : '';
   return [
-    [(prem ? 'premium-dados' : 'dados-moveis') + '.svg', 'Dados móveis', `Até ${p.gb} GB por mês`],
-    [x + 'ligacoes.svg', 'Ligações', p.minutos ? `${p.minutos} minutos para todo o Brasil` : 'Ilimitadas para todo o Brasil'],
+    [(prem ? 'premium-dados' : 'dados-moveis') + '.svg', 'Internet', `${p.gb} GB por mês${p.plano ? ` (${p.plano} GB do plano + ${p.bonus} GB de bônus)` : ''}`],
+    [x + 'ligacoes.svg', 'Ligações', p.minutos ? `${p.minutos} minutos para todo o Brasil` : 'Ilimitadas para qualquer operadora do Brasil'],
     [x + 'sms.svg', 'SMS', p.tipo === 'cpf' ? 'Ilimitados' : '800 por mês'],
-    [x + 'tecnologias.svg', 'Roaming nacional', 'Use em todo o Brasil sem custo extra'],
-    [x + 'portabilidade.svg', 'Portabilidade', 'Traga seu número, sem custo'],
+    [x + 'tecnologias.svg', 'Em outro estado', p.tipo === 'cpf' ? 'Use em todo o Brasil sem custo extra' : 'Receba ligações sem custo extra'],
+    [x + 'portabilidade.svg', 'Portabilidade', p.tipo === 'cpf' ? 'Traga seu número, sem custo' : 'Traga o número que já está no CNPJ, sem custo'],
   ];
 };
 const cel = (o) => { const p = { unidade: 'GB', num: String(o.gb), ...o }; p.detalhes = detCel(p, p.variante === 'premium'); return p; };
@@ -201,29 +202,34 @@ DY.celularCpf = [
 ];
 DY.celularCpf.forEach((p) => (p.cashback = 100));
 
-// CNPJ — planos empresariais (preço por linha). prsc = Paraná e Santa Catarina
+// CNPJ — planos empresariais, preço por linha (Book de NOVEMBRO/2026, válido até 01/12/2026).
+// [id, GB do plano, GB de bônus, preço PR/SC, preço demais UFs, selo, variante, apps, preço "de"]
+// 80 GB: oferta relâmpago de novembro, todas as UFs (de R$ 79,99 por R$ 53,99). 40 e 150 GB: preço especial de novembro.
 const EMP = [
-  ['6', 1, 5, 39.99, 29.99, 'ENTRADA', 'branco', ZERO_BASICO, ['Backup em nuvem de 30 GB', 'Cursos de idiomas', 'Audiolivros']],
-  ['12', 2, 10, 44.99, 39.99, 'BÁSICO', 'branco', ZERO_BASICO, ['Nuvem para arquivos', 'Cursos de idiomas', 'Audiolivros', 'Monitor de uso']],
-  ['30', 10, 20, 52.99, 52.99, 'ESSENCIAL', 'tint', ZERO_COMPLETO, ['Nuvem para arquivos', 'Cursos de idiomas', 'Audiolivros', 'Jornais e revistas', 'Monitor de uso']],
-  ['40', 20, 20, 64.99, 64.99, 'ESSENCIAL+', 'tint', ZERO_COMPLETO, ['Nuvem para arquivos', 'Jornais e revistas', 'Audiolivros', 'Cursos de idiomas', 'Antivírus', 'Monitor de uso']],
-  ['50', 30, 20, 69.99, 69.99, 'OFERTA DO MÊS', 'soft', ZERO_COMPLETO, ['Nuvem para arquivos', 'Cursos de idiomas', 'Audiolivros', 'Jornais e revistas', 'Monitor de uso', 'Clube de Vantagens', 'Proteção contra golpes']],
-  ['80', 30, 50, 79.99, 79.99, 'MAIS INTERNET', 'tint', ZERO_COMPLETO, ['Nuvem para arquivos', 'Cursos de idiomas', 'Audiolivros', 'Jornais e revistas', 'Monitor de uso', 'Clube de Vantagens', 'Proteção contra golpes']],
-  ['100', 50, 50, 99.99, 99.99, 'PREMIUM', 'premium', ZERO_COMPLETO, ['Nuvem para arquivos', 'Jornais e revistas', 'Audiolivros', 'Cursos de idiomas', 'Antivírus', 'Monitor de uso', 'Clube de Vantagens']],
-  ['150', 100, 50, 149.99, 149.99, 'PREMIUM', 'premium', ZERO_COMPLETO, ['Nuvem para arquivos', 'Cursos de idiomas', 'Jornais e revistas', 'Audiolivros', 'Monitor de uso', 'Clube de Vantagens', 'Proteção contra golpes']],
+  ['6', 1, 5, 39.99, 29.99, 'ENTRADA', 'branco', ZERO_BASICO],
+  ['12', 2, 10, 44.99, 39.99, 'BÁSICO', 'branco', ZERO_BASICO],
+  ['30', 10, 20, 52.99, 52.99, 'ESSENCIAL', 'tint', ZERO_COMPLETO],
+  ['40', 20, 20, 39.99, 39.99, 'PREÇO ESPECIAL', 'tint', ZERO_COMPLETO, 64.99],
+  ['50', 30, 20, 69.99, 69.99, 'MAIS INTERNET', 'tint', ZERO_COMPLETO],
+  ['80', 30, 50, 53.99, 53.99, 'OFERTA DO MÊS', 'soft', ZERO_COMPLETO, 79.99],
+  ['100', 50, 50, 99.99, 99.99, 'PREMIUM', 'premium', ZERO_COMPLETO],
+  ['150', 100, 50, 99.99, 99.99, 'PREÇO ESPECIAL', 'premium', ZERO_COMPLETO, 149.99],
 ];
+// Só para quem traz o número (portabilidade, no mesmo CNPJ)
 const PORTA = [
-  ['p21', 21, 1, 20, 39.99, 'SÓ PORTABILIDADE', 'branco', ['Nuvem para arquivos', 'Cursos de idiomas', 'Audiolivros']],
-  ['p40', 40, 20, 20, 50.99, 'SÓ PORTABILIDADE', 'tint', ['Nuvem para arquivos', 'Cursos de idiomas', 'Audiolivros', 'Jornais e revistas', 'Monitor de uso', 'Clube de Vantagens', 'Proteção contra golpes']],
-  ['p70', 70, 20, 50, 59.99, 'SÓ PORTABILIDADE', 'soft', ['Nuvem para arquivos', 'Cursos de idiomas', 'Audiolivros', 'Jornais e revistas', 'Monitor de uso', 'Clube de Vantagens', 'Proteção contra golpes']],
+  ['p21', 21, 1, 20, 39.99, 'SÓ PORTABILIDADE', 'branco'],
+  ['p40', 40, 20, 20, 50.99, 'SÓ PORTABILIDADE', 'tint'],
+  ['p70', 70, 20, 50, 59.99, 'SÓ PORTABILIDADE', 'soft'],
 ];
-DY.celularCnpj = (prsc) => EMP.map(([id, plano, bonus, a, b, selo, variante, apps, servicos]) => cel({ tipo: 'cnpj', id, nome: `Empresa ${id} GB`, gb: plano + bonus, plano, bonus, preco: prsc ? a : b, selo, variante, apps, servicos, cashback: 100 }));
-DY.celularPorta = PORTA.map(([id, gb, plano, bonus, preco, selo, variante, servicos]) => cel({ tipo: 'cnpj', id, nome: `Portabilidade ${gb} GB`, gb, plano, bonus, preco, selo, variante, apps: ZERO_COMPLETO, servicos, soPorta: true, cashback: 100 }));
+DY.celularCnpj = (prsc) => EMP.map(([id, plano, bonus, a, b, selo, variante, apps, de]) => cel({ tipo: 'cnpj', id, nome: `Empresa ${id} GB`, gb: plano + bonus, plano, bonus, preco: prsc ? a : b, ...(de ? { de } : {}), selo, variante, apps, cashback: 100 }));
+DY.celularPorta = PORTA.map(([id, gb, plano, bonus, preco, selo, variante]) => cel({ tipo: 'cnpj', id, nome: `Portabilidade ${gb} GB`, gb, plano, bonus, preco, selo, variante, apps: ZERO_COMPLETO, soPorta: true, cashback: 100 }));
+// Linhas: o site aceita de 1 a 5.000; acima de 15 linhas a condição é personalizada (atendimento). MEI: até 3 linhas de até R$ 100 cada.
+DY.linhasMax = 5000; DY.linhasEspecial = 15;
 /* Preço e internet de um plano de celular (CPF: depende de trazer o número ou não) */
 DY.celPreco = (p, porta = true) => (!porta && p.precoNova ? p.precoNova : p.preco);
 DY.celGB = (p, porta = true) => (!porta && p.gbNova ? p.gbNova : p.gb);
 // Vitrine da home (acordeão): 4 planos por tipo
-const VITRINE_CNPJ = ['12', '30', '50', '100'];
+const VITRINE_CNPJ = ['40', '80', '150'];
 
 /* ---------- Estado atual dos planos (muda pelo estado do cliente e pela aba casa/empresa) ----------
    UF: a escolhida pelo cliente > a do CEP > a detectada pela conexão > PR. */
@@ -257,6 +263,16 @@ DY.detectarUF = async () => {
 DY.salvarLocal = (uf, cidade) => { try { localStorage.setItem('dy_local', JSON.stringify({ uf, cidade })); } catch (e) { /* */ } };
 DY.textoLocal = () => (DY.cidade ? `${DY.cidade} - ${DY.uf}` : DY.UFS[DY.uf]);
 
+/* ---------- WTTx: internet sem fio 4G para empresas (base WTTx, nov/2026, todas as UFs) ----------
+   Planos pela franquia, do menor para o maior. Modem incluso no plano (devolvido no cancelamento).
+   Cashback: 50% de uma mensalidade. Não entra no combo por enquanto. */
+DY.wttx = [
+  { id: 'w40', gb: 40, mbps: 2, preco: 49.99, selo: 'ENTRADA' },
+  { id: 'w80', gb: 80, mbps: 5, preco: 89.90, selo: 'ESSENCIAL' },
+  { id: 'w100', gb: 100, mbps: 5, preco: 99.99, selo: 'MAIS FRANQUIA' },
+  { id: 'w500', gb: 500, mbps: 5, preco: 149.99, selo: 'MÁXIMO' },
+];
+
 /* Logos de aplicativo (pasta img/apps) */
 DY.logos = {
   'aya-books': { src: 'apps/aya-books.png', alt: 'AYA Books' },
@@ -267,6 +283,8 @@ DY.logos = {
   'hbo-max': { src: 'apps/hbo-max.png', alt: 'HBO Max' },
   'youtube-premium': { src: 'apps/youtube-premium-logo.svg', alt: 'YouTube Premium' },
   'whatsapp': { src: 'apps/whatsapp.svg', alt: 'WhatsApp' },
+  'whatsapp-business': { src: 'apps/whatsapp-business.svg', alt: 'WhatsApp Business' },
+  'x': { src: 'apps/x.svg', alt: 'X' },
   'messenger': { src: 'apps/messenger.svg', alt: 'Messenger' },
   'waze': { src: 'apps/waze.svg', alt: 'Waze' },
   'waze-premium': { src: 'apps/waze-premium.svg', alt: 'Waze' },
