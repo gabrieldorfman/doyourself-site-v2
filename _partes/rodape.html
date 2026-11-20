@@ -1,0 +1,75 @@
+<div class="aviso" role="status" aria-live="polite"></div>
+
+<footer class="rod" id="contact">
+  <div class="wrap">
+    <div class="rod__cta">
+      <div><h2>Veja os planos do seu endereço</h2><p>Você só precisa do CEP e do número da casa.</p></div>
+      <form class="cep cep--rod" data-cep="home" novalidate>
+        
+        <div class="cep__modo" data-modo="cep">
+          <div class="cep__linha">
+            <label class="cep__f cep__f--cep"><span>CEP</span><input name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-label="CEP"><i class="cep__ok" aria-hidden="true"></i></label>
+            <div class="cep__f cep__f--num"><span>Número</span><input name="numero" inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 120" aria-label="Número do imóvel"><label class="cep__sn"><input type="checkbox" data-sn><i aria-hidden="true"></i>Sem número</label></div>
+          </div>
+          <p class="cep__end" aria-live="polite" hidden></p>
+        </div>
+        <div class="cep__modo" data-modo="rua" hidden>
+          <div class="cep__linha">
+            <label class="cep__f cep__f--uf"><span>Estado</span><select data-uf aria-label="Estado"></select></label>
+            <label class="cep__f cep__f--cid"><span>Cidade</span><input data-cidade list="cidades-rod" autocomplete="address-level2" placeholder="Ex.: Curitiba" aria-label="Cidade"></label>
+            <datalist id="cidades-rod"></datalist>
+          </div>
+          <div class="cep__linha">
+            <div class="cep__f cep__f--rua"><span>Rua</span><input data-rua role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug-rod" autocomplete="off" placeholder="Ex.: Rua das Palmeiras" aria-label="Nome da rua"><ul class="cep__sug" id="sug-rod" role="listbox" hidden></ul></div>
+            <div class="cep__f cep__f--num"><span>Número</span><input data-num-rua inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 120" aria-label="Número do imóvel"><label class="cep__sn"><input type="checkbox" data-sn><i aria-hidden="true"></i>Sem número</label></div>
+          </div>
+          <button type="button" data-buscar hidden></button>
+          <ul class="cep__res"></ul>
+        </div>
+        <p class="cep__erro" role="status" aria-live="polite"></p>
+        <div class="cep__acoes">
+          <button class="cep__nao" type="button" aria-expanded="false">Não sei meu CEP</button>
+          <button class="cep__btn" type="submit">Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        </div>
+      </form>
+    </div>
+    <div class="rod__barra">
+      <div class="rod__btns">
+        <a class="rod__btn rod__btn--zap" data-zap="Olá! Vim pelo site da Do Yourself." href="https://wa.me/5541995701636">Falar no WhatsApp</a>
+        <a class="rod__btn" data-zap="Olá! Quero saber como fazer a biometria." href="https://wa.me/5541995701636">Como fazer a biometria</a>
+      </div>
+      <div class="rod__sociais">
+        <a href="https://www.instagram.com/do.yourself_/" target="_blank" rel="noopener" aria-label="Instagram da Do Yourself"><img src="/img/social/instagram-glifo.svg" alt=""></a>
+        <a href="https://www.facebook.com/profile.php?id=61591531077211" target="_blank" rel="noopener" aria-label="Facebook da Do Yourself"><img class="cheio" src="/img/social/facebook.svg" alt=""></a>
+      </div>
+    </div>
+    <nav class="rod__mapa" aria-label="Mapa do site">
+      <details class="rod__col" open><summary>Combo Do Yourself</summary><ul>
+        <li><a href="/contratar?origem=combo">Montar meu combo</a></li><li><a href="/#combo">Economize com o combo</a></li><li><a href="/#como-funciona">Como funciona</a></li><li><a href="/#duvidas">Dúvidas frequentes</a></li></ul></details>
+      <details class="rod__col" open><summary>Energia solar</summary><ul>
+        <li><a href="/#simulador">Simulador de economia</a></li><li><a class="em-breve" data-zap="Olá! Quero saber da energia solar para casa ou apartamento." href="https://wa.me/5541995701636">Para casas e apartamentos</a></li><li><a class="em-breve" data-zap="Olá! Quero saber da energia solar para condomínio." href="https://wa.me/5541995701636">Para condomínios</a></li><li><a class="em-breve" data-zap="Olá! Quero saber da energia solar para empresa." href="https://wa.me/5541995701636">Para comércios e empresas</a></li><li><a class="em-breve" data-zap="Olá! Quero entender como funciona a energia solar por assinatura." href="https://wa.me/5541995701636">Como funciona</a></li></ul></details>
+      <details class="rod__col" open><summary>Internet</summary><ul>
+        <li><a href="/#internet">Internet Fibra</a></li><li><a href="/internet/casa">Internet para casa</a></li><li><a href="/#planos-empresa">Internet para empresas</a></li><li><a href="/#wttx">WTTx</a></li><li><a href="/#planos-internet">Internet para home office</a></li><li><a href="/#internet">Internet gamer</a></li><li><a href="/#internet">Internet com streaming</a></li><li><a href="/#internet">Wi-Fi 7</a></li><li><a class="em-breve" data-zap="Olá! Quero ajuda para entrar nos aplicativos do plano." href="https://wa.me/5541995701636">Como entrar nos aplicativos</a></li><li><a href="/#como-funciona">Como funciona</a></li><li><a href="/#duvidas">Dúvidas frequentes</a></li></ul></details>
+      <details class="rod__col" open><summary>Planos de celular</summary><ul>
+        <li><a href="/#planos-celular">Planos para CNPJ e MEI</a></li><li><a data-zap="Olá! Quero mais de 15 linhas de celular para a minha empresa." href="https://wa.me/5541995701636">Mais de 15 linhas</a></li><li><a class="em-breve" data-zap="Olá! Quero saber como funciona a portabilidade." href="https://wa.me/5541995701636">Portabilidade grátis</a></li></ul></details>
+      <details class="rod__col" open><summary>Institucional</summary><ul>
+        <li><a class="em-breve" data-zap="Olá! Quero conhecer a Do Yourself." href="https://wa.me/5541995701636">Sobre a Do Yourself</a></li><li><a class="em-breve" data-zap="Olá! Quero saber se tem cobertura na minha cidade." href="https://wa.me/5541995701636">Cobertura</a></li><li><a class="em-breve" data-zap="Olá! Quero ser parceiro da Do Yourself." href="https://wa.me/5541995701636">Seja um parceiro</a></li></ul></details>
+      <details class="rod__col" open><summary>Atendimento</summary><ul>
+        <li><a data-zap="Olá! Preciso de suporte." href="https://wa.me/5541995701636">Central de suporte</a></li><li><a data-zap="Olá! Vim pelo site da Do Yourself." href="https://wa.me/5541995701636">Fale conosco</a></li><li><a data-zap="Olá! Quero saber como fazer a biometria." href="https://wa.me/5541995701636">Como fazer a biometria</a></li></ul></details>
+      <div class="rod__fale">
+        <h3>Fale com a gente</h3>
+        <p>Dúvidas sobre planos, contratação ou fatura? Fale direto com a Do Yourself no WhatsApp.</p>
+        <a class="rod__btn rod__btn--zap" data-zap="Olá! Vim pelo site da Do Yourself." href="https://wa.me/5541995701636">Chamar no WhatsApp</a>
+        <dl><dt>WhatsApp</dt><dd>(41) 99570-1636</dd><dt>E-mail</dt><dd>contato@doyourself.online</dd><dt>Horário</dt><dd>24 horas</dd></dl>
+      </div>
+    </nav>
+    <div class="rod__fim">
+      <img src="/img/marca/dy-lockup-completo-escuro.svg" alt="Do Yourself" width="160" height="45">
+      <span>&copy; 2026 Do Yourself · Imagens criadas com Magnific</span>
+    </div>
+  </div>
+</footer>
+
+<nav class="actionbar" aria-label="Ações rápidas">
+  <a class="btn btn--primary" href="#cep-topo">Ver ofertas do meu CEP</a>
+</nav>

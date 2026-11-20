@@ -55,7 +55,7 @@
     return lista.filter((e) => { const f = faixa(e.complemento); return f && f.exato == null && n >= f.de && n <= f.ate && (f.par == null || n % 2 === f.par); });
   }
   const tiraTipo = (q) => q.replace(/^(rua|r\.|avenida|av\.?|travessa|tv\.|alameda|al\.|rodovia|estrada)\s+/i, '').trim() || q;
-  const irContratar = (f, cep, num) => { location.href = `/contratar?origem=${f.dataset.cep || 'home'}&cep=${cep.replace(/\D/g, '').replace(/^(\d{5})/, '$1-')}&numero=${encodeURIComponent(num)}`; };
+  const irContratar = (f, cep, num) => { location.href = `/contratar?origem=${f.dataset.cep || 'home'}${f.dataset.para ? '&para=' + f.dataset.para : ''}&cep=${cep.replace(/\D/g, '').replace(/^(\d{5})/, '$1-')}&numero=${encodeURIComponent(num)}`; };
 
   $$('[data-cep]').forEach((f) => {
     const inCep = $('[name=cep]', f), inNum = $('[name=numero]', f), erro = $('.cep__erro', f);
@@ -286,7 +286,9 @@
 
 
   // trilho: setas no desktop quando sobra card, pontos e dica no celular
+  const SEM_TRILHO = { desenhou() {} };
   function trilho(el) {
+    if (!el) return SEM_TRILHO;
     const cards = $('.cards', el), pontos = $('.pontos', el), dica = $('.dica', el);
     const [ant, prox] = $$('.trilho__setas button', el);
     const passo = () => (cards.querySelector('.pc')?.offsetWidth || 280) + 20;
@@ -403,7 +405,7 @@
   const ofertaCasa = (todos) => todos.find((p) => p.selo === 'OFERTA DO MÊS' && p.id !== '2000') || todos.find((p) => p.id === '1000');
 
   function blocoMil(p) {
-    const box = $('[data-mil]'); if (!p) { box.hidden = true; return; }
+    const box = $('[data-mil]'); if (!box) return; if (!p) { box.hidden = true; return; }
     box.hidden = false; const d = DESTAQUE[p.id] || {};
     const info = d.info || (p.detalhes || []).slice(0, 4).map((x) => [x[2], x[1]]);
     const o = p.opcoes[opIdx(p)];
@@ -471,6 +473,7 @@
   }
   function blocoEmp() {
     const todos = emp(); const dest = todos.find((p) => p.selo === 'OFERTA DO MÊS');
+    if (!emp_) return;
     const lista = todos.filter((p) => p !== dest); const cards = $('.cards', emp_);
     blocoEmpDest(dest);
     cards.style.setProperty('--n', lista.length);
@@ -479,6 +482,7 @@
   }
   const precosNet = () => Object.fromEntries([...casa(), ...emp()].map((p) => [p.id, p.opcoes[opIdx(p)].preco]));
   function desenhaNet(anim, antigos) {
+    if (!net) { blocoEmp(); return; }
     const todos = casa();
     const destaque = ofertaCasa(todos);
     const lista = todos.filter((p) => p !== destaque && p.id !== '2000');
@@ -490,7 +494,7 @@
     $$('[data-uf-nome]').forEach((n) => (n.textContent = DY.UFS[DY.uf]));
     $$('[data-uf-sel]').forEach((s) => (s.value = DY.uf));
     tNet.desenhou();
-    if (anim) { contar(document, antigos || {}); if (temGsap) gsap.fromTo([...$$('.pc', net), $('[data-mil]'), ...$$('.pc', emp_), $('[data-emp-dest]')], { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .5, stagger: .05, ease: 'power3.out', clearProps: 'transform' }); }
+    if (anim) { contar(document, antigos || {}); if (temGsap) gsap.fromTo([...(net ? $$('.pc', net) : []), $('[data-mil]'), ...(emp_ ? $$('.pc', emp_) : []), $('[data-emp-dest]')].filter(Boolean), { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .5, stagger: .05, ease: 'power3.out', clearProps: 'transform' }); }
     const p2 = (todos.find((p) => p.id === '2000') || {}).opcoes;
     if (p2) { $$('[data-2000]').forEach((e) => (e.textContent = brl(p2[0].preco))); }
     const min = Math.min(...todos.map((p) => p.opcoes[0].preco));
@@ -518,7 +522,7 @@
   function trocaNet(fn, msg) {
     const antes = precosNet();
     const sai = () => { fn(); desenhaNet(true, antes); avisar(msg); const ok = $('.regiao__ok'); if (ok) { ok.hidden = false; clearTimeout(ok._t); ok._t = setTimeout(() => (ok.hidden = true), 2600); } };
-    if (temGsap) gsap.to([...$$('.pc', net), $('[data-mil]'), ...$$('.pc', emp_), $('[data-emp-dest]')], { y: 14, autoAlpha: 0, duration: .2, stagger: .02, ease: 'power2.in', onComplete: sai }); else sai();
+    if (temGsap) gsap.to([...(net ? $$('.pc', net) : []), $('[data-mil]'), ...(emp_ ? $$('.pc', emp_) : []), $('[data-emp-dest]')].filter(Boolean), { y: 14, autoAlpha: 0, duration: .2, stagger: .02, ease: 'power2.in', onComplete: sai }); else sai();
   }
   $$('[data-uf-sel]').forEach((s) => {
     Object.entries(DY.UFS).sort((a, b) => a[1].localeCompare(b[1], 'pt-BR')).forEach(([uf, n]) => s.add(new Option(n, uf)));
@@ -560,6 +564,7 @@
       ${painelDet(`${p.gb} GB por mês`, detCelLista(p), '')}`;
   }
   function desenhaCel(anim) {
+    if (!cel) { combo(); return; }
     const lista = DY.vitrineCelular.filter(Boolean);
     const antes = precosCel; precosCel = Object.fromEntries(lista.map((p) => ['c' + p.id, p.preco]));
     const dest = lista.find((p) => p.selo === 'OFERTA DO MÊS') || lista[0];
@@ -648,9 +653,11 @@
     // os objetos 3D flutuam devagar
     $$('.obj').forEach((o, i) => gsap.to(o, { y: i % 2 ? 14 : -14, rotation: i % 2 ? 2 : -2, duration: 3.2 + (i % 3) * .5, ease: 'sine.inOut', yoyo: true, repeat: -1 }));
     // entrada do topo
+    if ($('.topo__cena')) {
     gsap.from('.topo__cena .obj', { y: 60, scale: .85, autoAlpha: 0, duration: 1, stagger: .14, ease: 'back.out(1.6)', delay: .15 });
     gsap.from('.topo__cena .tag', { y: 16, autoAlpha: 0, duration: .6, stagger: .12, ease: 'power3.out', delay: .7 });
-    gsap.from('.topo__cep', { y: 30, autoAlpha: 0, duration: .8, ease: 'power3.out', delay: .35 });
+    }
+    if ($('.topo__cep')) gsap.from('.topo__cep', { y: 30, autoAlpha: 0, duration: .8, ease: 'power3.out', delay: .35 });
     // ao chegar em cada bloco
     $$('[data-sobe]').forEach((el) => gsap.to(el, { y: 0, autoAlpha: 1, duration: .8, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 86%', once: true } }));
     // o objeto da abertura de cada serviço sobe um pouco com a rolagem
