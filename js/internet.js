@@ -1,63 +1,96 @@
 /* Do Yourself v2 — páginas de internet
-   Tabela "Compare os planos": monta as colunas a partir do catálogo do estado escolhido
-   e redesenha quando o estado muda (evento dy:planos). */
+   1. Streaming por plano: abas 600 / 800 / 1.000 Mega, com o preço do estado escolhido (evento dy:planos)
+   2. Faixa de aplicativos: botão de pausa
+   3. Como a fibra chega: a seção fica na tela e a linha de luz se desenha com a rolagem */
 (function () {
-  const tabela = document.querySelector('[data-cmp]');
-  if (!tabela || !window.DY) return;
+  const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const brl = (v) => (window.DY ? DY.brl(Math.round(v * 100)) : 'R$ ' + v.toFixed(2).replace('.', ','));
 
-  const brl = (v) => DY.brl(Math.round(v * 100));
-  const milhar = (n) => String(n).replace(/^(\d)(\d{3})$/, '$1.$2');
-  const val = (p, k) => ((p.detalhes || []).find((d) => d[1].startsWith(k)) || [])[2] || '';
+  /* 1. abas do streaming */
+  const esc = document.querySelector('[data-esc]');
+  if (esc) {
+    const abas = [...esc.querySelectorAll('[role="tab"]')];
+    const ind = esc.querySelector('.esc__ind');
+    const escolhe = (i, foco) => {
+      abas.forEach((a, k) => {
+        const on = k === i;
+        a.setAttribute('aria-selected', on); a.tabIndex = on ? 0 : -1;
+        document.getElementById(a.getAttribute('aria-controls')).hidden = !on;
+      });
+      if (ind) ind.style.transform = `translateX(${i * 100}%)`;
+      if (foco) abas[i].focus();
+    };
+    abas.forEach((a, i) => {
+      a.addEventListener('click', () => escolhe(i));
+      a.addEventListener('keydown', (e) => {
+        const n = abas.length; let k = null;
+        if (e.key === 'ArrowRight') k = (i + 1) % n; else if (e.key === 'ArrowLeft') k = (i - 1 + n) % n;
+        else if (e.key === 'Home') k = 0; else if (e.key === 'End') k = n - 1;
+        if (k !== null) { e.preventDefault(); escolhe(k, true); }
+      });
+    });
+    escolhe(abas.findIndex((a) => a.getAttribute('aria-selected') === 'true'));
 
-  // streaming de cada plano (o 1.000 Mega sem streaming vem com NoPing por 6 meses)
-  const STREAM = {
-    '600': ['Paramount+ ou Globoplay', 'você escolhe um'],
-    '800': ['YouTube Premium', 'incluso'],
-    '1000': ['NoPing, Paramount+ ou HBO Max', 'você escolhe um'],
-    '2000': ['HBO Max, Paramount+, Globoplay e Looke', 'os quatro inclusos'],
-  };
-  // aplicativos de conteúdo (nomes genéricos), com a observação de quando muda conforme o streaming
-  const APPS = {
-    '300': ['Audiolivros, cursos, revistas digitais e antivírus'],
-    '400': ['Audiolivros, cursos, revistas digitais e antivírus'],
-    '500': ['Audiolivros, cursos e revistas digitais'],
-    '600': ['Audiolivros, cursos, revistas digitais e antivírus', 'Com Globoplay: audiolivros e cursos'],
-    '800': ['Audiolivros, cursos e antivírus'],
-    '1000': ['Audiolivros, cursos, revistas digitais, idiomas e antivírus', 'Com Paramount+, sem o curso de idiomas'],
-    '2000': ['Audiolivros, cursos, revistas digitais, idiomas e antivírus'],
-  };
-  const PAGINA = { '500': '/internet/casa/500-mega', '600': '/internet/casa/600-mega', '800': '/internet/casa/800-mega', '1000': '/internet/casa/1000-mega', '2000': '/internet/casa/2000-mega' };
-  const PAGINAS_PRONTAS = new Set(); // as páginas de cada velocidade entram aqui quando estiverem no ar
-
-  function desenha() {
-    const lista = DY.catalogo.casa[DY.blocoInternet(DY.uf)].slice().sort((a, b) => a.num - b.num);
-    const col = (p) => (p.selo === 'OFERTA DO MÊS' ? ' class="is-dest"' : '');
-    const linha = (rot, fn, cls = '') => `<tr${cls ? ` class="${cls}"` : ''}><th scope="row">${rot}</th>${lista.map((p) => `<td${col(p)}>${fn(p)}</td>`).join('')}</tr>`;
-    const menor = (p) => p.opcoes.reduce((m, o) => (o.preco < m.preco ? o : m), p.opcoes[0]);
-    const cab = `<thead><tr><td class="cmp__canto">Plano</td>${lista.map((p) => `<th scope="col"${col(p)}><span class="cmp__selo">${p.selo === 'OFERTA DO MÊS' ? 'Oferta do mês' : p.id === '2000' ? 'O máximo' : '&nbsp;'}</span><span class="cmp__vel"><b>${milhar(p.num)}</b> Mega</span></th>`).join('')}</tr></thead>`;
-    const corpo = [
-      linha('Download', (p) => `${milhar(p.num)} Mega`),
-      linha('Upload', (p) => val(p, 'Upload')),
-      linha('Wi-Fi do modem', (p) => val(p, 'Modem').replace(' incluso', '')),
-      linha('Streaming', (p) => (STREAM[p.id] ? `${STREAM[p.id][0]}<small>${STREAM[p.id][1]}</small>` : '<span class="cmp__nao">Sem streaming</span>')),
-      linha('Aplicativos', (p) => { const a = APPS[p.id] || APPS['500']; return a[0] + (a[1] ? `<small>${a[1]}</small>` : ''); }),
-      linha('Instalação', () => 'Grátis, em até 48 h'),
-      linha('Preço por mês', (p) => { const o = menor(p); return `${p.opcoes.length > 1 ? '<small class="cmp__ap">a partir de</small>' : ''}<span class="cmp__preco">${brl(o.preco)}</span><small class="cmp__de">de ${brl(o.de || p.de)}</small>`; }, 'cmp__l-preco'),
-      linha('Cashback no PIX', (p) => `<span class="cmp__cb">${DY.brl(DY.cashbackCentavos(Math.round(menor(p).preco * 100), 50))}</span><small>50% de uma mensalidade</small>`),
-      linha('', (p) => `<a class="cmp__bt" href="/contratar?origem=internet&amp;para=casa&amp;plano=${encodeURIComponent(p.id)}">Quero o ${milhar(p.num)} Mega</a>${PAGINAS_PRONTAS.has(p.id) ? `<a class="cmp__pg" href="${PAGINA[p.id]}">Ver o plano</a>` : ''}`, 'cmp__l-bt'),
-    ].join('');
-    tabela.style.setProperty('--n', lista.length);
-    tabela.innerHTML = cab + '<tbody>' + corpo + '</tbody>';
+    const precos = () => {
+      if (!window.DY || !DY.catalogo) return;
+      const lista = DY.catalogo.casa[DY.blocoInternet(DY.uf)] || [];
+      esc.querySelectorAll('[data-esc-preco]').forEach((el) => {
+        const p = lista.find((x) => x.id === el.dataset.escPreco); if (!p) return;
+        el.textContent = brl(Math.min(...p.opcoes.map((o) => o.preco)));
+      });
+    };
+    precos(); document.addEventListener('dy:planos', precos);
   }
 
-  // a dica de arrastar some quando a tabela já cabe na tela ou depois do primeiro arraste
-  const rola = tabela.closest('.cmp__rola'), caixa = tabela.closest('.cmp');
-  const confere = () => caixa && caixa.classList.toggle('tem-mais', rola.scrollWidth > rola.clientWidth + 4);
-  if (rola) {
-    rola.addEventListener('scroll', () => { if (rola.scrollLeft > 20) caixa.classList.add('rolou'); rola.classList.toggle('is-rolado', rola.scrollLeft > 4); }, { passive: true });
-    addEventListener('resize', confere);
+  /* 2. faixa de aplicativos */
+  const fita = document.querySelector('[data-fita]');
+  if (fita) {
+    const bt = fita.querySelector('.fita__pausa');
+    bt && bt.addEventListener('click', () => {
+      const parada = fita.classList.toggle('is-parada');
+      bt.setAttribute('aria-pressed', parada);
+      bt.setAttribute('aria-label', parada ? 'Continuar a faixa de aplicativos' : 'Pausar a faixa de aplicativos');
+    });
   }
 
-  desenha(); confere();
-  document.addEventListener('dy:planos', () => { desenha(); confere(); });
+  /* 3. o caminho da fibra */
+  const fio = document.querySelector('[data-fio]');
+  if (fio) {
+    const pista = fio.querySelector('.fio__pista');
+    const palco = fio.querySelector('.fio__palco');
+    const luz = fio.querySelector('.fio__luz');
+    const ponta = fio.querySelector('.fio__ponta');
+    const passos = [...fio.querySelectorAll('.fio__p')];
+    const nos = [fio.querySelector('.fio__no--1'), fio.querySelector('.fio__no--2'), fio.querySelector('.fio__casa'), fio.querySelector('.fio__modem')];
+    const total = luz.getTotalLength();
+    let ultimo = -1;
+    const desenha = (p) => {
+      const d = Math.min(1, Math.max(0, p * 1.08));
+      luz.style.strokeDashoffset = String(1 - d);
+      const pt = luz.getPointAtLength(total * d);
+      ponta.setAttribute('cx', pt.x); ponta.setAttribute('cy', pt.y);
+      ponta.style.opacity = d > 0.002 && d < 0.998 ? 1 : 0;
+      const marcos = [0, 0.3, 0.62, 0.97];
+      nos.forEach((n, k) => n && n.classList.toggle('is-on', d >= marcos[k]));
+      palco.classList.toggle('is-fim', d >= 0.97);
+      const i = Math.min(passos.length - 1, Math.floor(p * passos.length * 0.999));
+      if (i !== ultimo) {
+        passos.forEach((s, k) => { s.classList.toggle('is-on', k === i); s.classList.toggle('is-feito', k < i); });
+        ultimo = i;
+      }
+    };
+    if (calmo) { desenha(1); passos.forEach((s) => s.classList.add('is-on')); }
+    else {
+      let pedido = false;
+      const noScroll = () => {
+        if (pedido) return; pedido = true;
+        requestAnimationFrame(() => {
+          pedido = false;
+          const r = pista.getBoundingClientRect(); const curso = r.height - innerHeight;
+          desenha(Math.min(1, Math.max(0, -r.top / Math.max(1, curso))));
+        });
+      };
+      addEventListener('scroll', noScroll, { passive: true }); addEventListener('resize', noScroll); noScroll();
+    }
+  }
 })();
