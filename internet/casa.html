@@ -92,13 +92,25 @@
             <li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Streaming em alguns planos</li>
           </ul>
         </div>
-        <div class="topo__cena hm" aria-hidden="true">
-          <span class="hm__luz"></span>
-          <span class="hm__anel"></span><span class="hm__anel"></span><span class="hm__anel"></span>
-          <svg class="hm__sinal" viewBox="0 0 120 90"><path class="s3" d="M10 40a71 71 0 0 1 100 0"/><path class="s2" d="M28 58a45 45 0 0 1 64 0"/><path class="s1" d="M46 75a19 19 0 0 1 28 0"/></svg>
-          <div class="obj obj--m"><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720"></div>
-          <a class="tag tag--a" href="#planos-internet" tabindex="-1"><i></i><span>1.000 Mega<small>R$ 99,99 por mês</small></span></a>
-          <a class="tag tag--b" href="#instalacao" tabindex="-1"><i></i><span>Instalação grátis<small>em até 48 horas</small></span></a>
+        <div class="topo__cena of" data-oferta>
+          <span class="of__brilho" aria-hidden="true"></span>
+          <div class="of__tela" role="group" aria-label="Oferta do mês">
+            <span class="of__riscos" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+            <div class="of__topo"><span class="of__selo">Oferta do mês</span><span class="of__wifi" data-of-wifi>Wi-Fi 6 incluso</span></div>
+            <div class="of__medidor" aria-hidden="true">
+              <svg viewBox="0 0 260 150"><defs><linearGradient id="of-g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5aa9ee"/><stop offset=".7" stop-color="#9fd0ff"/><stop offset="1" stop-color="#e7c66b"/></linearGradient></defs>
+                <path class="of__base" d="M30 136 A100 100 0 0 1 230 136"/>
+                <path class="of__arco" d="M30 136 A100 100 0 0 1 230 136" pathLength="1"/>
+              </svg>
+              <p class="of__vel"><b data-of-num>1.000</b><span>Mega</span></p>
+            </div>
+            <div class="of__apps"><span class="of__rot" data-of-rot>Escolha um</span><ul data-of-apps><li><span><img src="/img/apps/noping.svg" alt=""></span>NoPing</li><li><span><img src="/img/apps/paramount-44.svg" alt=""></span>Paramount+</li><li><span><img src="/img/apps/hbo-max.png" alt=""></span>HBO Max</li></ul></div>
+            <div class="of__rodape">
+              <div class="of__preco"><s data-of-de>De R$ 189,99</s><p><span data-of-preco>R$ 99,99</span><small>/mês</small></p></div>
+              <span class="of__cb">+ <b data-of-cb>R$ 49,99</b> de Cashback no PIX</span>
+            </div>
+            <a class="bt bt--ouro of__bt" href="#planos-internet">Quero esta oferta<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+          </div>
         </div>
       </div>
     </div>
@@ -237,12 +249,12 @@
         <div class="cx fio__grade">
           <div class="fio__esq">
             <span class="etq etq--net">Como a fibra chega</span>
-            <h2 class="fio__h" id="fio-h">Fibra de verdade, da rede até o seu modem</h2>
+            <h2 class="fio__h" id="fio-h">Fibra de verdade, do início ao fim</h2>
             <ol class="fio__passos">
-              <li class="fio__p is-on"><span class="fio__n">1</span><div><b>Sai de uma rede em anel</b><p>A fibra óptica parte de uma rede ligada em anel. Se um trecho tem problema, o sinal segue pelo outro lado.</p></div></li>
-              <li class="fio__p"><span class="fio__n">2</span><div><b>Passa pela sua rua</b><p>O cabo segue pelos postes até a caixa de fibra mais perto da sua casa.</p></div></li>
-              <li class="fio__p"><span class="fio__n">3</span><div><b>Entra na sua casa</b><p>O técnico leva a fibra até dentro de casa. Sem nenhum trecho de cabo de cobre no caminho, como em muita internet "de fibra".</p></div></li>
-              <li class="fio__p"><span class="fio__n">4</span><div><b>Chega no modem Wi-Fi</b><p>O modem recebe a fibra e distribui a internet pela casa toda. O técnico testa a velocidade na hora.</p></div></li>
+              <li class="fio__p is-on"><span class="fio__n">1</span><div><b>Sai da central</b><p>A sua internet nasce na central da operadora parceira e já sai de lá em fibra óptica.</p></div></li>
+              <li class="fio__p"><span class="fio__n">2</span><div><b>Chega até um poste da sua rua</b><p>O cabo de fibra passa pelos postes até a caixa mais perto da sua casa.</p></div></li>
+              <li class="fio__p"><span class="fio__n">3</span><div><b>Entra na sua casa</b><p>Na instalação, o técnico puxa a fibra do poste até dentro da sua casa. Sem nenhum trecho de cabo de cobre no caminho.</p></div></li>
+              <li class="fio__p"><span class="fio__n">4</span><div><b>Se conecta no modem Wi-Fi</b><p>A fibra liga no modem, que espalha o Wi-Fi pela casa toda. O técnico testa a velocidade na hora.</p></div></li>
             </ol>
           </div>
           <div class="fio__palco" aria-hidden="true">
@@ -252,11 +264,14 @@
               <path class="fio__luz" d="M70 92 C 190 92, 230 170, 290 210 S 420 250, 430 330 S 330 420, 270 440" pathLength="1"/>
               <circle class="fio__ponta" r="9"/>
             </svg>
-            <span class="fio__no fio__no--1"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><small>Rede em anel</small></span>
-            <span class="fio__no fio__no--2"><svg viewBox="0 0 24 24"><path d="M12 3v18M7 6h10M8 10h8"/><path d="M9 21h6"/></svg><small>Poste e caixa</small></span>
+            <span class="fio__no fio__no--1"><svg viewBox="0 0 24 24"><path d="M4 21V8l8-4 8 4v13"/><path d="M9 21v-5h6v5M8 11h2M14 11h2"/></svg><small>Central</small></span>
+            <span class="fio__no fio__no--2"><svg viewBox="0 0 24 24"><path d="M12 3v18M7 6h10M8 10h8"/><path d="M9 21h6"/></svg><small>Poste da sua rua</small></span>
             <div class="fio__casa"><img src="/img/3d-g/casa.webp" alt="" width="720" height="720"></div>
             <div class="fio__modem"><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720"></div>
-            <span class="fio__selo"><i></i>Fibra até o modem</span>
+            <div class="fio__ok">
+              <svg class="fio__sinal" viewBox="0 0 120 90"><path class="s3" d="M10 40a71 71 0 0 1 100 0" pathLength="1"/><path class="s2" d="M28 58a45 45 0 0 1 64 0" pathLength="1"/><path class="s1" d="M46 75a19 19 0 0 1 28 0" pathLength="1"/></svg>
+            </div>
+            <span class="fio__feito"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" pathLength="1"/><path d="M7 12.5l3.2 3.2L17 9" pathLength="1"/></svg>Internet conectada</span>
           </div>
         </div>
       </div>
@@ -372,37 +387,40 @@
     </div>
   </section>
 
-  <section class="dy ben-sec" id="por-que" aria-labelledby="ben-h">
+  <section class="dy nos-sec" id="por-que" aria-labelledby="nos-h">
     <div class="cx">
       <div class="sub__topo sub__topo--c" data-sobe>
-        <div><span class="eyebrow eyebrow--net">Por que contratar com a Do Yourself</span><h2 class="h-sec h-sec--m" id="ben-h">O mesmo plano, com mais coisa junto</h2><p>Você contrata a internet da operadora parceira e ganha o que só a gente oferece.</p></div>
+        <div><span class="eyebrow eyebrow--net">Por que contratar com a Do Yourself</span><h2 class="h-sec h-sec--m" id="nos-h">A mesma fibra. Com gente de verdade do seu lado.</h2><p>A internet é da operadora parceira. O cuidado com você é nosso, do primeiro oi até muito depois da instalação.</p></div>
       </div>
-      <div class="ben" data-sobe>
-        <article class="ben__c ben__c--cb">
-          <div class="ben__obj" aria-hidden="true"><img src="/img/3d-g/cashback.webp" alt="" width="720" height="720" loading="lazy"></div>
-          <span class="ben__rot">Cashback no PIX</span>
-          <p class="ben__num"><span data-m-count>50</span>%</p>
-          <p class="ben__t">de uma mensalidade de volta no seu PIX</p>
-          <p class="ben__txt">No 1.000 Mega, são <b>R$ 49,99</b>. O valor cai em até 7 dias depois que o contrato é concluído, uma única vez.</p>
-        </article>
-        <article class="ben__c">
-          <span class="ben__rot">Atendimento</span>
-          <p class="ben__num"><span data-m-count>24</span> h</p>
-          <p class="ben__txt">Gente de verdade no WhatsApp, a qualquer hora, que acompanha até resolver.</p>
-        </article>
-        <article class="ben__c">
-          <span class="ben__rot">Instalação</span>
-          <p class="ben__num">até <span data-m-count>48</span> h</p>
-          <p class="ben__txt">A gente agenda com você e acompanha o técnico até a internet estar funcionando.</p>
-        </article>
-        <article class="ben__c ben__c--larg">
-          <span class="ben__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 16 0v5a2 2 0 0 1-2 2h-1v-6h3M4 13h3v6H6a2 2 0 0 1-2-2v-5"/></svg></span>
-          <div><span class="ben__rot">Depois da instalação</span><h3>A gente continua com você</h3><p class="ben__txt">Dúvida na fatura, ajuda para ativar os aplicativos ou vontade de trocar de plano: é o mesmo WhatsApp, com quem já conhece o seu cadastro.</p></div>
-        </article>
-        <article class="ben__c ben__c--larg">
-          <span class="ben__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3Z"/><path d="M9 12l2 2 4-4"/></svg></span>
-          <div><span class="ben__rot">Um contato para tudo</span><h3>Internet, celular e luz no mesmo lugar</h3><p class="ben__txt">Quando quiser juntar outro serviço, os seus dados já estão com a gente. É só pedir.</p></div>
-        </article>
+      <p class="nos__frase" data-frase>Sem central, sem robô e sem repetir os seus dados. Você fala com <em>gente</em>, que te chama <em>pelo nome</em>, sempre no <em>mesmo WhatsApp</em>.</p>
+      <div class="nos__grade">
+        <div class="nos__cel" data-sobe aria-label="Exemplo de conversa com a Do Yourself">
+          <div class="nos__cel-topo"><span class="nos__av">DY</span><div><b>Do Yourself</b><small><i></i>online agora</small></div></div>
+          <div class="nos__conversa" data-conversa>
+            <span class="nos__dia">Hoje</span>
+            <span class="nos__msg nos__msg--eu">Oi! Quero a internet de 1.000 Mega.</span>
+            <span class="nos__msg">Oi, Marina! Vou ver as opções do seu endereço agora mesmo.</span>
+            <span class="nos__dia">6 meses depois</span>
+            <span class="nos__msg nos__msg--eu">A fatura deste mês veio diferente…</span>
+            <span class="nos__msg">Oi, Marina! Já estou vendo no seu cadastro. Te explico em um minuto.</span>
+            <span class="nos__dia">1 ano depois</span>
+            <span class="nos__msg nos__msg--eu">Dá para ter desconto na conta de luz também?</span>
+            <span class="nos__msg">Dá sim! Pelo mesmo WhatsApp. Vou simular para você 😊</span>
+          </div>
+          <p class="nos__nota">Exemplo de conversa</p>
+        </div>
+        <div class="nos__dir">
+          <ul class="nos__lista" data-sobe>
+            <li><span class="nos__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 16 0v5a2 2 0 0 1-2 2h-1v-6h3M4 13h3v6H6a2 2 0 0 1-2-2v-5"/></svg></span><div><b>Gente de verdade, 24 horas</b><p>Atendimento humano todos os dias, a qualquer hora. Nada de central, menu de opções ou robô.</p></div></li>
+            <li><span class="nos__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/></svg></span><div><b>Sempre o mesmo WhatsApp</b><p>Dúvida, fatura, suporte, indicação ou um serviço novo: tudo no mesmo contato, com quem já conhece você.</p></div></li>
+            <li><span class="nos__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3Z"/><path d="M9 12l2 2 4-4"/></svg></span><div><b>A gente resolve por você</b><p>Se for preciso falar com a operadora, quem fala somos nós. Você não liga para central nenhuma.</p></div></li>
+            <li><span class="nos__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4M9 15l2 2 4-4"/></svg></span><div><b>Do agendamento à internet funcionando</b><p>A gente marca a instalação com você e acompanha o técnico até tudo estar ligado.</p></div></li>
+          </ul>
+          <div class="nos__cb" data-sobe>
+            <img src="/img/3d-g/cashback.webp" alt="" width="720" height="720" loading="lazy">
+            <div><span>E ainda tem o Cashback</span><p><b data-m-count>50%</b> de uma mensalidade de volta no PIX</p><small>No 1.000 Mega, são R$ 49,99, em até 7 dias depois que o contrato é concluído.</small></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
