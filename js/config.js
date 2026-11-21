@@ -51,47 +51,52 @@ DY.bancosDebito = [
 DY.rotas = {
   inicio:            { r: 'Início', href: '/', pronta: true },
   combo:             { r: 'Combo', href: '/combo', pronta: true },
-  energia:           { r: 'Energia Solar', href: '/energia', pronta: true },
-  'energia-casas':   { r: 'Para Casas e Apartamentos', href: '/energia/casas', pronta: false, alt: '/energia' },
-  'energia-cond':    { r: 'Para Condomínios', href: '/energia/condominios', pronta: false, alt: '/energia' },
-  'energia-emp':     { r: 'Para Comércios e Empresas', href: '/energia/empresas', pronta: false, alt: '/energia' },
-  internet:          { r: 'Internet Fibra', href: '/internet-fibra', pronta: true },
-  'internet-casa':   { r: 'Internet para Casa', href: '/internet-fibra/casa', pronta: true },
-  'internet-emp':    { r: 'Internet para Empresa', href: '/internet-fibra/empresa', pronta: true },
-  'internet-2g':     { r: 'Internet 2 Giga', href: '/internet-fibra/casa/2-giga', pronta: false },
-  'internet-wttx':   { r: 'WTTx', href: '/internet-fibra/empresa/sem-fio', pronta: false, alt: '/#wttx' },
-  'internet-home':   { r: 'Internet para Home Office', href: '/internet-fibra/home-office', pronta: false },
-  'internet-gamer':  { r: 'Internet Gamer', href: '/internet-fibra/gamer', pronta: false },
-  'internet-stream': { r: 'Internet com Streaming', href: '/internet-fibra/streaming', pronta: false },
-  'internet-wifi6':  { r: 'Wi-Fi 6', href: '/internet-fibra/wifi-6', pronta: false },
-  celular:           { r: 'Planos de Celular', href: '/celular', pronta: true },
-  'celular-cpf':     { r: 'Planos para CPF', href: '/celular/cpf', pronta: true },
-  'celular-cnpj':    { r: 'Planos para CNPJ (Empresas)', href: '/celular/cnpj', pronta: true },
+  energia:           { r: 'Energia por assinatura', href: '/energia', pronta: true },
+  'energia-sim':     { r: 'Simulador de economia', href: '/energia/simulador', pronta: true },
+  'energia-cond':    { r: 'Para Condomínios', href: '/energia/condominio', pronta: true },
+  'energia-com':     { r: 'Para Comércios', href: '/energia/comercio', pronta: true },
+  'energia-emp':     { r: 'Para Empresas', href: '/energia/empresas', pronta: true },
+  internet:          { r: 'Internet Fibra', href: '/internet', pronta: true },
+  'internet-casa':   { r: 'Internet para Casa', href: '/internet/casa', pronta: true },
+  'internet-emp':    { r: 'Internet para Empresa', href: '/internet/empresa', pronta: true },
+  'internet-wttx':   { r: 'WTTx', href: '/internet/wttx', pronta: true },
+  'internet-home':   { r: 'Internet para Home Office', href: '/internet/home-office', pronta: true },
+  'internet-gamer':  { r: 'Internet Gamer', href: '/internet/gamer', pronta: true },
+  'internet-stream': { r: 'Internet com Streaming', href: '/internet/streaming', pronta: true },
+  'internet-wifi':   { r: 'Wi-Fi 5, 6 e 7', href: '/internet/wi-fi', pronta: true },
+  celular:           { r: 'Planos para CNPJ', href: '/celular', pronta: true },
+  'celular-mei':     { r: 'Celular para MEI', href: '/celular/mei', pronta: true },
+  'celular-port':    { r: 'Portabilidade grátis', href: '/celular/portabilidade', pronta: true },
   apps:              { r: 'Aplicativos inclusos', href: '/aplicativos', pronta: true },
-  'app-entrar':      { r: 'Como entrar nos aplicativos', href: '/aplicativos#como-entrar', pronta: true },
-  'app-globoplay':   { r: 'Globoplay', href: '/aplicativos#globoplay', pronta: true },
-  'app-hbo':         { r: 'HBO Max', href: '/aplicativos#hbo-max', pronta: true },
-  'app-paramount':   { r: 'Paramount+', href: '/aplicativos#paramount', pronta: true },
-  'app-youtube':     { r: 'YouTube Premium', href: '/aplicativos#youtube-premium', pronta: true },
+  'app-entrar':      { r: 'Como entrar nos aplicativos', href: '/aplicativos/como-entrar', pronta: true },
+  'app-globoplay':   { r: 'Globoplay', href: '/aplicativos/globoplay', pronta: true },
+  'app-hbo':         { r: 'HBO Max', href: '/aplicativos/hbo-max', pronta: true },
+  'app-paramount':   { r: 'Paramount+', href: '/aplicativos/paramount', pronta: true },
+  'app-youtube':     { r: 'YouTube Premium', href: '/aplicativos/youtube', pronta: true },
+  'app-noping':      { r: 'NoPing', href: '/aplicativos/noping', pronta: true },
+  ajuda:             { r: 'Central de ajuda', href: '/ajuda', pronta: true },
+  suporte:           { r: 'Suporte 24 horas', href: '/ajuda/suporte', pronta: true },
+  biometria:         { r: 'Como fazer a biometria', href: '/ajuda/biometria', pronta: true },
+  'ajuda-internet':  { r: 'Ajuda com a internet', href: '/ajuda/internet', pronta: true },
+  'ajuda-celular':   { r: 'Ajuda com o celular', href: '/ajuda/celular', pronta: true },
+  'ajuda-energia':   { r: 'Ajuda com a energia', href: '/ajuda/energia', pronta: true },
   sobre:             { r: 'Sobre a Do Yourself', href: '/sobre', pronta: true },
+  cashback:          { r: 'Como funciona o Cashback', href: '/cashback', pronta: true },
   contato:           { r: 'Contato', href: '/contato', pronta: false, alt: 'whatsapp' },
-  suporte:           { r: 'Suporte', href: '/suporte', pronta: false, alt: 'whatsapp' },
-  biometria:         { r: 'Como fazer a Biometria', href: '/biometria', pronta: false },
-  parceiros:         { r: 'Seja um parceiro', href: '/parceiros', pronta: false },
-  blog:              { r: 'Blog', href: '/blog', pronta: false },
   duvidas:           { r: 'Dúvidas frequentes', href: '/#duvidas', pronta: true },
-  privacidade:       { r: 'Política de Privacidade', href: '/politica-de-privacidade', pronta: false },
-  etica:             { r: 'Ética e Integridade', href: '/etica-e-integridade', pronta: false },
+  privacidade:       { r: 'Política de Privacidade', href: '/privacidade', pronta: true },
+  termos:            { r: 'Termos de uso', href: '/termos', pronta: true },
 };
-/* Menu principal (wiki componente-menu-responsivo §6). Ordem: Combo → Energia → Internet → Celular */
+/* Menu principal (mapa do site v2). Ordem: Combo → Energia → Internet → Celular */
 DY.menu = [
-  ['inicio'], ['combo'], ['energia'],
+  ['inicio'], ['combo'],
   // [rótulo, subitens, página principal (clique no rótulo leva para ela)]
-  ['Internet', ['internet', 'internet-casa', 'internet-emp', 'internet-wttx'], 'internet'],
-  ['Celular', ['celular', 'celular-cpf', 'celular-cnpj'], 'celular'],
-  ['Aplicativos', ['apps', 'app-entrar', 'app-globoplay', 'app-hbo', 'app-paramount', 'app-youtube'], 'apps'],
-  ['Sobre', ['sobre', 'contato', 'suporte', 'biometria', 'parceiros'], 'sobre'],
-  ['blog'],
+  ['Energia', ['energia', 'energia-sim', 'energia-cond', 'energia-com', 'energia-emp'], 'energia'],
+  ['Internet', ['internet', 'internet-casa', 'internet-emp', 'internet-wttx', 'internet-wifi'], 'internet'],
+  ['Celular', ['celular', 'celular-mei', 'celular-port'], 'celular'],
+  ['Aplicativos', ['apps', 'app-entrar', 'app-globoplay', 'app-paramount', 'app-hbo', 'app-youtube', 'app-noping'], 'apps'],
+  ['Ajuda', ['ajuda', 'suporte', 'biometria', 'ajuda-internet', 'ajuda-celular', 'ajuda-energia'], 'ajuda'],
+  ['Sobre', ['sobre', 'cashback'], 'sobre'],
 ];
 /* Endereço de uma rota: a página, o atalho ou null (= em breve) */
 DY.linkRota = (k) => {
@@ -158,7 +163,7 @@ DY.catalogo = {
 };
 // Plano que abre em destaque em cada lista (a oferta foco)
 /* Página de cada plano de internet para casa (id do catálogo → endereço) */
-DY.paginaPlano = { 500: '/internet-fibra/casa/500-mega', 600: '/internet-fibra/casa/600-mega', 800: '/internet-fibra/casa/800-mega', 1000: '/internet-fibra/casa/1-giga' };
+DY.paginaPlano = { 500: '/internet/casa/500-mega', 600: '/internet/casa/600-mega', 800: '/internet/casa/800-mega', 1000: '/internet/casa/1000-mega', 2000: '/internet/casa/2000-mega' };
 DY.validadeOferta = '01/12/2026'; // ofertas de novembro/2026
 DY.boletoPix = 10; // boleto ou PIX: R$ 10,00 a mais por mês
 DY.padraoInternet = (lista) => Math.max(0, lista.findIndex((p) => p.selo === 'OFERTA DO MÊS'));

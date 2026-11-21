@@ -329,8 +329,8 @@
   const avisar = (m) => { aviso.textContent = m; aviso.classList.add('is-on'); clearTimeout(tAviso); tAviso = setTimeout(() => aviso.classList.remove('is-on'), 2800); };
 
   /* internet: cards de casa (sem o 1000 e o 2000), o 1000 Mega em destaque e a lista para empresas */
-  const V1 = 'https://doyourself-site.vercel.app';
-  const DET = { '500': '/internet-fibra/casa/500-mega', '600': '/internet-fibra/casa/600-mega', '800': '/internet-fibra/casa/800-mega', '1000': '/internet-fibra/casa/1-giga' };
+  const V1 = ''; // páginas de cada plano agora estão na própria v2
+  const DET = DY.paginaPlano || {};
   const LOGO = { 'GloboPlay': ['/img/apps/globoplay.png', 'Globoplay'], 'Paramount+': ['/img/apps/paramount-44.svg', 'Paramount+'], 'HBO Max': ['/img/apps/hbo-max.png', 'HBO Max'], 'YouTube Premium': ['/img/apps/youtube-premium-logo.svg', 'YouTube Premium'], 'Somente Internet': ['/img/apps/noping.svg', 'Internet + NoPing'] };
   const escolha = {}; // plano -> índice da opção
   const net = $('[data-net]');

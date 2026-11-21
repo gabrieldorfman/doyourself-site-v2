@@ -329,3 +329,50 @@ main > section.fim-sec { padding-top: 24px; }
   .fim__obj { width: 150px; height: 150px; top: -56px; right: 8px; } .fim__obj .obj { width: 150px; }
   .fim p { font-size: 16px; }
 }
+
+/* ---------- páginas que por enquanto só têm o topo ---------- */
+.topo--so .topo__grid { min-height: 520px; padding: 56px 0 72px; }
+.topo--so .botoes { margin-top: 28px; }
+.topo--so .topo__painel { border-radius: 0 0 var(--raio-g) var(--raio-g); }
+.topo--luz .topo__painel { background: radial-gradient(55% 70% at 85% 30%, var(--luz-b) 0%, transparent 62%), radial-gradient(40% 55% at 62% 92%, #ffe9cf 0%, transparent 70%), linear-gradient(180deg, #fffaf3 0%, var(--luz-a) 100%); }
+.topo--cel .topo__painel { background: radial-gradient(55% 70% at 85% 30%, var(--cel-b) 0%, transparent 62%), radial-gradient(40% 55% at 62% 92%, #dcf3e6 0%, transparent 70%), linear-gradient(180deg, #f6fcf8 0%, var(--cel-a) 100%); }
+.topo--marca .topo__painel { background: radial-gradient(55% 70% at 85% 30%, #d3e7dc 0%, transparent 62%), radial-gradient(40% 55% at 62% 92%, #e6f0ea 0%, transparent 70%), linear-gradient(180deg, #f8fbf9 0%, #edf4f0 100%); }
+.topo--emp .topo__painel { background: radial-gradient(55% 70% at 85% 30%, #cdd9e5 0%, transparent 62%), radial-gradient(40% 55% at 62% 92%, #e1e8ef 0%, transparent 70%), linear-gradient(180deg, #f8fafc 0%, #eaeff4 100%); }
+.topo--wtx .topo__painel { background: radial-gradient(55% 70% at 85% 30%, #d3d8f7 0%, transparent 62%), radial-gradient(40% 55% at 62% 92%, #e4e7fb 0%, transparent 70%), linear-gradient(180deg, #f8f9fe 0%, #eceefc 100%); }
+.topo--luz h1 em { color: var(--luz); } .topo--cel h1 em { color: var(--cel); } .topo--marca h1 em { color: var(--marca); }
+.topo--emp h1 em { color: #2c4a66; } .topo--wtx h1 em { color: #4152c9; }
+.topo--net { --c: var(--net); } .topo--luz { --c: var(--luz); } .topo--cel { --c: var(--cel); } .topo--marca { --c: var(--marca); } .topo--emp { --c: #2c4a66; } .topo--wtx { --c: #4152c9; }
+
+.hx { height: 440px; }
+.hx__luz { position: absolute; left: 50%; top: 50%; width: 80%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(closest-side, rgb(255 255 255 / .95), rgb(255 255 255 / .45) 60%, transparent); }
+.hx .obj--x { width: 62%; left: 19%; top: 8%; }
+.hx .tag--a { left: 0; top: 18%; } .hx .tag--b { right: 0; bottom: 12%; }
+.hx .tag i { background: var(--c); } .hx .tag--b i { background: var(--ouro); }
+.hx .tag b { font-weight: 700; }
+.hx__logo { display: grid; place-items: center; }
+.hx__logo span { display: grid; place-items: center; width: 62%; aspect-ratio: 1; margin: 12% auto 0; border-radius: 28%; background: #fff; box-shadow: 0 40px 70px -30px rgb(15 34 56 / .45), inset 0 0 0 1px #e3e9f1; }
+.hx__logo span.is-preto { background: #111; }
+.hx__logo img { width: 56%; height: auto; }
+
+.hx-l { display: flex; flex-wrap: wrap; gap: 8px; margin: 26px 0 0; padding: 0; list-style: none; }
+.hx-l a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 6px 12px 6px 8px; border-radius: 999px; background: rgb(255 255 255 / .9); border: 1px solid #dfe7ef; color: var(--tinta); font-size: 14.5px; font-weight: 600; text-decoration: none; transition: border-color .2s, transform .2s; }
+.hx-l a:not(:has(.hx-l__ic)) { padding-left: 16px; }
+.hx-l a:hover { border-color: var(--c); transform: translateY(-2px); }
+.hx-l svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: .5; }
+.hx-l__ic { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #f4f7fb; overflow: hidden; }
+.hx-l__ic.is-preto { background: #111; }
+.hx-l__ic img { max-width: 20px; max-height: 18px; }
+
+@media (max-width: 1123px) {
+  .topo--so .topo__grid { min-height: 0; padding: 40px 0 56px; }
+  .hx { height: 340px; max-width: 520px; }
+}
+@media (max-width: 619px) {
+  .topo--so .topo__grid { padding: 26px 0 40px; }
+  .topo--so .botoes { flex-direction: column; align-items: stretch; }
+  .topo--so .botoes .bt { flex: none; width: 100%; }
+  .hx { height: 270px; }
+  .hx .obj--x { width: 60%; left: 20%; top: 10%; }
+  .hx .tag--a { top: 6%; } .hx .tag--b { bottom: 4%; }
+}
+.nw { white-space: nowrap; }
