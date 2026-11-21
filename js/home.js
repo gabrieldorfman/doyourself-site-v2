@@ -723,7 +723,12 @@ document.querySelectorAll('[data-slides]').forEach((m) => {
   const nav = document.querySelector('header.nav'); if (!nav) return;
   let ultimo = scrollY, acumulado = 0;
   const mostra = (v) => { nav.classList.toggle('nav--some', !v); document.documentElement.classList.toggle('nav-oculto', !v); };
+  // no alto da página a barra fica transparente e mostra a cor do topo; ao rolar, vira vidro translúcido
+  const temTopo = !!document.querySelector('main > section.topo');
+  const topo = () => nav.classList.toggle('nav--topo', temTopo && scrollY < 8);
+  topo();
   addEventListener('scroll', () => {
+    topo();
     const y = scrollY, d = y - ultimo; ultimo = y;
     if (nav.classList.contains('is-open') || nav.matches(':focus-within') && d > 0 && nav.querySelector('.nav__item:hover')) return;
     if (y < 140) { acumulado = 0; mostra(true); return; }

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /contratar
+
+Sitemap: https://doyourself.digital/sitemap.xml

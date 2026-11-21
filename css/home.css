@@ -1708,3 +1708,15 @@ main > section.combo .conta .bt { flex: 1 1 180px; justify-content: center; }
 [data-cel-min], [data-wtx-min], [data-net-min], [data-2000] { white-space: nowrap; }
 /* dica "Arraste" e pontos só quando há cards escondidos no trilho */
 .sub:not(.tem-mais) .trilho :is(.dica, .pontos) { display: none; }
+
+/* ---------- 21/11: o topo começa atrás do menu ----------
+   A cor do topo (hero) vai até o alto da tela e aparece por trás da barra do menu.
+   No alto da página a barra fica transparente; ao rolar, volta o vidro translúcido. */
+main > section.topo { padding: 0 !important; }
+main > section.topo .topo__painel { padding-top: var(--nav, 72px); border-radius: 0 0 var(--raio-g) var(--raio-g); }
+@media (max-width: 619px) { main > section.topo .topo__painel { border-radius: 0 0 26px 26px; } }
+header.nav::before { transition: background .35s, backdrop-filter .35s, -webkit-backdrop-filter .35s; }
+header.nav.nav--topo { border-bottom-color: transparent; }
+header.nav.nav--topo::before { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+header.nav.nav--topo:has(.nav__item:hover, .nav__item:focus-within, .nav__item.is-open)::before { background: rgb(246 245 239 / .72); -webkit-backdrop-filter: saturate(1.7) blur(18px); backdrop-filter: saturate(1.7) blur(18px); }
+header.nav.nav--topo.is-open::before { background: var(--creme); }

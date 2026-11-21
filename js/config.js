@@ -107,6 +107,8 @@ DY.linkRota = (k) => {
 };
 
 DY.img = (p) => '/img/' + p;
+/* Domínio oficial do site (os links internos são relativos e funcionam em qualquer endereço) */
+DY.dominio = 'https://doyourself.digital';
 
 /* ============================================================
    PLANOS — outubro 2026 (ULTRABOOK até 03/11 · BOOK TBP até 05/11)
