@@ -37,6 +37,7 @@
 <link rel="stylesheet" href="/css/v2.css">
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
+<link rel="stylesheet" href="/css/apps.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -45,7 +46,7 @@
 <script src="/js/config.js"></script>
 </head>
 <body>
-<!-- Do Yourself v2 · Aplicativo incluso (/aplicativos/globoplay): por enquanto só o topo; as próximas seções entram depois -->
+<!-- Do Yourself v2 · Aplicativo incluso (/aplicativos/globoplay) -->
 <!--#menu-->
 <header class="nav">
   <div class="wrap nav__bar">
@@ -92,20 +93,104 @@
 </header>
 <!--/menu-->
 
-<main id="top">
+<main id="top" class="pg-ax">
   <section class="topo topo--pg topo--so topo--net" aria-labelledby="hero-h" data-bar-hero>
     <div class="topo__painel">
       <div class="cx topo__grid">
         <div class="topo__txt">
           <span class="etq etq--net">Aplicativo incluso</span>
           <h1 id="hero-h"><em>Globoplay</em> incluso na sua internet</h1>
-          <p class="lede">Novelas, séries, filmes e o conteúdo da Globo, incluso no plano de 600 Mega.</p>
-          <div class="botoes"><a class="bt bt--net" href="/internet/casa/600-mega">Ver o 600 Mega<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" href="/aplicativos/como-entrar">Como entrar</a></div>
+          <p class="lede">Novelas, séries, realities e a TV Globo ao vivo, no plano de 600 Mega. É o plano Padrão com Anúncios.</p>
+          <p class="ax-topo-p" data-ax-plano="600:globoplay">600 Mega por <b data-ax-preco>R$ 0,00</b>/mês, com <b data-ax-cb>R$ 0,00</b> de <b>Cashback</b></p>
+          <ul class="pg-chips"><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>3 telas ao mesmo tempo</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>TV Globo ao vivo</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Só no CPF</li></ul>
+          <div class="botoes"><a class="bt bt--net" href="/internet/casa/600-mega">Ver o 600 Mega<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" href="#como-ativar">Como ativar</a></div>
         </div>
         <div class="topo__cena hx" aria-hidden="true">
-          <span class="hx__luz"></span>
-          <div class="obj obj--x hx__logo"><span><img src="/img/apps/globoplay.png" alt="" width="160" height="160"></span></div>
+          <div class="zz zz--globoplay ax-cena" style="--c1:#f0334e;--c2:#ff7a3d"><div class="zz__cena"><span class="zz__logo"><img src="/img/apps/globoplay.png" alt=""></span><span class="zz__tag zz__tag--1">TV Globo ao vivo</span><span class="zz__tag zz__tag--2">BBB</span><span class="zz__tag zz__tag--3">Vale Tudo</span><span class="zz__tag zz__tag--4">Arcanjo Renegado</span></div></div>
           
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy ax-ver-sec" id="o-que-assistir" aria-labelledby="ver-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">O que assistir</span><h2 class="h-sec h-sec--m" id="ver-h">Sua próxima maratona está aqui</h2><p>Toque no que você gosta.</p></div></div>
+      <div class="ax-ver" data-ax-abas data-sobe style="--c1:#e02544;--c2:#ff7a3d">
+        <div class="ax-ver__m" role="radiogroup" aria-label="Tipo de conteúdo"><button type="button" role="radio" aria-checked="true" data-ax-aba="0">Novelas</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-ax-aba="1">Séries</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-ax-aba="2">Realities</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-ax-aba="3">Ao vivo</button></div>
+        <ul class="ax-ver__l" data-ax-painel="0"><li>Vale Tudo</li><li>Amor de Mãe</li><li>Pai Herói</li><li>Por Você</li><li>Sete Vidas</li></ul>
+        <ul class="ax-ver__l" data-ax-painel="1" hidden><li>Arcanjo Renegado</li><li>Sessão de Terapia</li><li>Pablo & Luisão</li><li>The Chosen</li><li>This Is Us</li></ul>
+        <ul class="ax-ver__l" data-ax-painel="2" hidden><li>BBB, com câmeras</li><li>Estrela da Casa</li></ul>
+        <ul class="ax-ver__l" data-ax-painel="3" hidden><li>TV Globo</li><li>Futura</li><li>ge fast</li><li>CBN</li><li>DPA</li></ul>
+      </div>
+      <p class="zz__nota">O catálogo é do Globoplay e pode mudar.</p>
+    </div>
+  </section>
+
+  <section class="dy ax-ga-sec" id="o-que-vem" aria-labelledby="ga-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">O que você ganha</span><h2 class="h-sec h-sec--m" id="ga-h">Com o Globoplay na sua internet</h2><p>Sem pagar outra assinatura.</p></div></div>
+      <ul class="ax-ga" data-sobe style="--c1:#e02544;--c2:#ff7a3d"><li><h3>8 canais ao vivo</h3><p>TV Globo, Futura, ge fast, Receitas fast, Malhação fast, DPA e CBN Rio e São Paulo.</p></li><li><h3>3 telas ao mesmo tempo</h3><p>Para você e mais dois familiares.</p></li><li><h3>Qualidade até 4K</h3><p>Depende do vídeo e do aparelho.</p></li><li><h3>Em todo lugar</h3><p>TV, celular, tablet e computador.</p></li></ul>
+    </div>
+  </section>
+
+  <section class="dy ax-pl-sec" id="planos" aria-labelledby="pl-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Onde vem</span><h2 class="h-sec h-sec--m" id="pl-h">O plano com o Globoplay</h2><p>O preço já inclui a internet, o modem Wi-Fi e o aplicativo.</p></div></div>
+      <div class="ax-pls" data-sobe><article class="ax-pl" data-ax-plano="600:globoplay"><div class="ax-pl__t"><span class="ax-logo"><img src="/img/apps/globoplay.png" alt="" loading="lazy"></span><div><h3>600 Mega</h3><p>Wi-Fi 5 · Globoplay incluso</p></div></div><p class="ax-pl__p"><b data-ax-preco>R$ 0,00</b><span>por mês, no débito em conta</span></p><p class="ax-pl__cb"><img src="/img/3d/cashback-p.webp" alt="" width="36" height="36"><span>Você recebe <b data-ax-cb>R$ 0,00</b> de <b>Cashback</b>, uma vez, via PIX</span></p><a class="bt bt--net" href="/internet/casa/600-mega">Ver o plano<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></article></div>
+      <p class="zz__nota">Preços para <b data-uf-nome>Paraná</b>, só no CPF. No boleto ou no PIX, R$ 10 a mais por mês. Confira no seu CEP.</p>
+    </div>
+  </section>
+
+  <section class="dy ax-at-sec" id="como-ativar" aria-labelledby="at-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Como ativar</span><h2 class="h-sec h-sec--m" id="at-h">Pronto em 5 passos</h2><p>Dá para ativar logo depois da instalação.</p></div></div>
+      <div data-sobe><div class="ax-at" data-ax-at style="--c1:#e02544;--c2:#ff7a3d">
+          <ol class="ax-at__l"><li><button type="button" data-ax-p="0" aria-current="step"><b>1</b><span><strong>Abra o aplicativo da operadora</strong><small>Entre com o seu CPF e a senha. O atendente informa qual é o aplicativo.</small></span></button></li><li><button type="button" data-ax-p="1"><b>2</b><span><strong>Toque em “Assinatura Inclusa”</strong><small>São os benefícios que fazem parte do seu plano.</small></span></button></li><li><button type="button" data-ax-p="2"><b>3</b><span><strong>Escolha o Globoplay</strong><small>Toque em “Cadastrar” e depois em “Sim”.</small></span></button></li><li><button type="button" data-ax-p="3"><b>4</b><span><strong>Comece a ativação</strong><small>Entre com o CPF e a senha do passo 1, toque em “Começar” e aceite o termo.</small></span></button></li><li><button type="button" data-ax-p="4"><b>5</b><span><strong>Entre na Conta Globo</strong><small>Use a sua ou crie uma. Aceite os termos e pronto.</small></span></button></li></ol>
+          <div class="ax-at__r"><div class="ax-at__cel" aria-hidden="true"><i class="ax-at__ilha"></i><div class="ax-at__t" data-ax-t="0"><span class="ax-logo"><img src="/img/apps/globoplay.png" alt="" loading="lazy"></span><b>Entrar</b><span class="ax-at__campo">CPF do titular</span><span class="ax-at__bt">Entrar</span></div><div class="ax-at__t" data-ax-t="1" hidden><span class="ax-logo"><img src="/img/apps/globoplay.png" alt="" loading="lazy"></span><b>Seu plano</b><span class="ax-at__campo">Assinatura Inclusa</span><span class="ax-at__bt">Abrir</span></div><div class="ax-at__t" data-ax-t="2" hidden><span class="ax-logo"><img src="/img/apps/globoplay.png" alt="" loading="lazy"></span><b>Globoplay</b><span class="ax-at__campo">Padrão com Anúncios</span><span class="ax-at__bt">Cadastrar</span></div><div class="ax-at__t" data-ax-t="3" hidden><span class="ax-logo"><img src="/img/apps/globoplay.png" alt="" loading="lazy"></span><b>Ative sua assinatura</b><span class="ax-at__campo">Aceito o termo</span><span class="ax-at__bt">Começar</span></div><div class="ax-at__t" data-ax-t="4" hidden><span class="ax-logo"><img src="/img/apps/globoplay.png" alt="" loading="lazy"></span><b>Assinatura ativada</b><span class="ax-at__campo">Pronto para assistir</span><span class="ax-at__bt">Começar a usar</span></div></div>
+            <div class="ax-at__tx" aria-live="polite"><div data-ax-x="0"><small>Passo 1 de 5</small><strong>Abra o aplicativo da operadora</strong><p>Entre com o seu CPF e a senha. O atendente informa qual é o aplicativo.</p></div><div data-ax-x="1" hidden><small>Passo 2 de 5</small><strong>Toque em “Assinatura Inclusa”</strong><p>São os benefícios que fazem parte do seu plano.</p></div><div data-ax-x="2" hidden><small>Passo 3 de 5</small><strong>Escolha o Globoplay</strong><p>Toque em “Cadastrar” e depois em “Sim”.</p></div><div data-ax-x="3" hidden><small>Passo 4 de 5</small><strong>Comece a ativação</strong><p>Entre com o CPF e a senha do passo 1, toque em “Começar” e aceite o termo.</p></div><div data-ax-x="4" hidden><small>Passo 5 de 5</small><strong>Entre na Conta Globo</strong><p>Use a sua ou crie uma. Aceite os termos e pronto.</p></div></div>
+            <div class="ax-at__nav"><button type="button" class="bt bt--linha" data-ax-ant disabled>Voltar</button><button type="button" class="bt bt--net" data-ax-prox>Próximo passo</button></div>
+          </div>
+        </div></div>
+      <p class="zz__nota">Telas ilustrativas. Se travar em algum passo, <a data-zap="Olá! Preciso de ajuda para ativar o Globoplay." href="https://wa.me/5541995701636">chame a gente no WhatsApp</a>.</p>
+    </div>
+  </section>
+
+  <section class="dy" id="duvidas" aria-labelledby="duvidas-h">
+    <div class="cx duv">
+      <div data-sobe>
+        <span class="eyebrow"><i style="background:var(--net)">?</i>Dúvidas</span>
+        <h2 class="h-sec" id="duvidas-h">Perguntas sobre o Globoplay</h2>
+        <p class="lede">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p>
+        <div class="botoes"><a class="bt bt--linha" data-zap="Olá! Tenho uma dúvida sobre o Globoplay no plano de internet." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></div>
+      </div>
+      <div class="faq" data-sobe>
+        <div class="faq__item"><h3>Tem anúncio?</h3><p>Sim. É o plano Padrão com Anúncios, com propaganda antes e durante os vídeos.</p></div>
+        <div class="faq__item"><h3>Já tenho conta Globo. Posso usar?</h3><p>Pode usar o mesmo login. Se já paga um Globoplay, veja na sua Conta Globo se quer manter as duas assinaturas.</p></div>
+        <div class="faq__item"><h3>Dá para baixar e ver sem internet?</h3><p>Não neste plano.</p></div>
+        <div class="faq__item"><h3>Como coloco na Smart TV?</h3><p>Abra o Globoplay na TV, vá em “Minha Conta” e “Entrar”. No celular, acesse ativar.globo.com, digite o código da TV e entre na sua Conta Globo.</p></div>
+        <div class="faq__item"><h3>Posso ter um Globoplay maior?</h3><p>Pode. Você faz a troca no próprio Globoplay e paga a nova assinatura à parte, fora da conta da internet.</p></div>
+        <div class="faq__item"><h3>Esqueci a senha da Conta Globo.</h3><p>Na tela de login, toque em “Esqueceu sua senha?”.</p></div>
+        <div class="faq__item"><h3>Empresa (CNPJ) também recebe?</h3><p>Não. O Globoplay vem só nos planos no CPF. <a href="/internet/empresa">Ver internet para empresas</a>.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy ax-out-sec" id="outros" aria-labelledby="out-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Outros aplicativos</span><h2 class="h-sec h-sec--m" id="out-h">Prefere outro?</h2><p>Cada plano traz um. Escolha o que combina com a sua casa.</p></div></div>
+      <ul class="ax-out" data-sobe><li><a href="/aplicativos/noping"><span class="ax-logo is-preto"><img src="/img/apps/noping.svg" alt="" loading="lazy"></span><b>NoPing</b><small data-ax-plano="1000:noping">1.000 Mega, <span data-ax-preco>R$ 0,00</span></small></a></li><li><a href="/aplicativos/paramount"><span class="ax-logo"><img src="/img/apps/paramount-44.svg" alt="" loading="lazy"></span><b>Paramount+</b><small data-ax-plano="600:paramount">600 Mega, <span data-ax-preco>R$ 0,00</span></small></a></li><li><a href="/aplicativos/youtube"><span class="ax-logo" data-larga><img src="/img/apps/youtube-premium-logo.svg" alt="" loading="lazy"></span><b>YouTube Premium</b><small data-ax-plano="800:youtube">800 Mega, <span data-ax-preco>R$ 0,00</span></small></a></li><li><a href="/aplicativos/hbo-max"><span class="ax-logo is-preto"><img src="/img/apps/hbo-max.png" alt="" loading="lazy"></span><b>HBO Max</b><small data-ax-plano="1000:hbo">1.000 Mega, <span data-ax-preco>R$ 0,00</span></small></a></li></ul>
+    </div>
+  </section>
+
+  <section class="dy fim-sec" aria-labelledby="fim-h">
+    <div class="cx">
+      <div class="fim" data-sobe>
+        <div class="fim__obj" aria-hidden="true"><div class="obj"><img src="/img/3d-g/tv.webp" alt="" width="720" height="720"></div></div>
+        <div class="fim__txt">
+          <h2 id="fim-h">Quer o Globoplay na sua casa?</h2>
+          <p>Consulte o seu CEP. A gente confirma se a fibra chega até você.</p>
+          <div class="botoes"><a class="bt bt--ouro" href="#contact">Consultar meu CEP<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha-claro" data-zap="Olá! Quero a internet com o Globoplay." href="https://wa.me/5541995701636">Chamar no WhatsApp</a></div>
         </div>
       </div>
     </div>
@@ -196,6 +281,7 @@
 <script src="/js/vendor/ScrollTrigger.min.js"></script>
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
+<script src="/js/apps.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>

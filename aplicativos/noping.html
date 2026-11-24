@@ -37,6 +37,7 @@
 <link rel="stylesheet" href="/css/v2.css">
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
+<link rel="stylesheet" href="/css/apps.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -45,7 +46,7 @@
 <script src="/js/config.js"></script>
 </head>
 <body>
-<!-- Do Yourself v2 · Aplicativo incluso (/aplicativos/noping): por enquanto só o topo; as próximas seções entram depois -->
+<!-- Do Yourself v2 · Aplicativo incluso (/aplicativos/noping) -->
 <!--#menu-->
 <header class="nav">
   <div class="wrap nav__bar">
@@ -92,20 +93,104 @@
 </header>
 <!--/menu-->
 
-<main id="top">
+<main id="top" class="pg-ax">
   <section class="topo topo--pg topo--so topo--net" aria-labelledby="hero-h" data-bar-hero>
     <div class="topo__painel">
       <div class="cx topo__grid">
         <div class="topo__txt">
           <span class="etq etq--net">Aplicativo incluso</span>
           <h1 id="hero-h"><em>NoPing</em> incluso na sua internet</h1>
-          <p class="lede">Menos atraso nos jogos online, grátis por 6 meses no plano de 1.000 Mega.</p>
-          <div class="botoes"><a class="bt bt--net" href="/internet/casa/1000-mega">Ver o 1.000 Mega<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" href="/aplicativos/como-entrar">Como entrar</a></div>
+          <p class="lede">Menos atraso nos jogos online: 6 meses grátis no plano de 1.000 Mega, sem cobrança depois.</p>
+          <p class="ax-topo-p" data-ax-plano="1000:noping">1.000 Mega por <b data-ax-preco>R$ 0,00</b>/mês, com <b data-ax-cb>R$ 0,00</b> de <b>Cashback</b></p>
+          <ul class="pg-chips"><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Windows e celular</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Sem cartão de crédito</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Só no CPF</li></ul>
+          <div class="botoes"><a class="bt bt--net" href="/internet/casa/1000-mega">Ver o 1.000 Mega<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" href="#como-ativar">Como ativar</a></div>
         </div>
         <div class="topo__cena hx" aria-hidden="true">
-          <span class="hx__luz"></span>
-          <div class="obj obj--x hx__logo"><span class="is-preto"><img src="/img/apps/noping.svg" alt="" width="160" height="160"></span></div>
+          <div class="zz zz--noping ax-cena" style="--c1:#0d110c;--c2:#1f3316"><div class="zz__cena"><span class="zz__logo"><img src="/img/apps/noping.svg" alt=""></span><span class="zz__tag zz__tag--1">Valorant</span><span class="zz__tag zz__tag--2">CS2</span><span class="zz__tag zz__tag--3">Fortnite</span><span class="zz__tag zz__tag--4">League of Legends</span></div></div>
           
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy ax-demo-sec" id="na-pratica" aria-labelledby="demo-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Na prática</span><h2 class="h-sec h-sec--m" id="demo-h">O caminho até o jogo</h2><p>Ligue o NoPing e veja o que muda na rota.</p></div></div>
+      <div class="ax-rota" data-ax-liga="nao" data-sobe>
+        <div class="ax-chave" role="radiogroup" aria-label="NoPing"><button type="button" role="radio" aria-checked="true" data-ax-v="nao">Sem o NoPing</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-ax-v="sim">Com o NoPing</button></div>
+        <svg viewBox="0 35 800 190" class="ax-rota__s" aria-hidden="true"><path class="ax-r ax-r--ruim" d="M150 130 C210 20 260 240 330 60 S470 235 540 90 S620 190 650 130"/><path class="ax-r ax-r--bom" d="M150 130 C280 40 520 40 650 130"/><path class="ax-r ax-r--bom ax-r--2" d="M150 130 H650"/><path class="ax-r ax-r--bom ax-r--2" d="M150 130 C280 220 520 220 650 130"/></svg>
+        <span class="ax-rota__p ax-rota__p--a"><img src="/img/3d-g/controle.webp" alt="" loading="lazy">Você</span><span class="ax-rota__p ax-rota__p--b"><img src="/img/3d-g/torre.webp" alt="" loading="lazy">Servidor do jogo</span>
+        <p class="ax-demo__t" aria-live="polite" data-ax-nao="A conexão pode dar voltas até chegar ao servidor. Aí aparece o atraso no comando." data-ax-sim="O NoPing procura caminhos mais diretos, até 5 ao mesmo tempo. Se um falha, outro segue.">A conexão pode dar voltas até chegar ao servidor. Aí aparece o atraso no comando.</p>
+      </div>
+      <p class="zz__nota">Desenho ilustrativo. O resultado depende do jogo, do servidor e do seu aparelho.</p>
+    </div>
+  </section>
+
+  <section class="dy ax-ga-sec" id="o-que-vem" aria-labelledby="ga-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">O que você ganha</span><h2 class="h-sec h-sec--m" id="ga-h">Com o NoPing na sua internet</h2><p>São 6 meses grátis, sem cobrança no fim.</p></div></div>
+      <ul class="ax-ga" data-sobe style="--c1:#0d110c;--c2:#1f3316"><li><h3>Um caminho melhor até o jogo</h3><p>O NoPing procura rotas com menos atraso entre você e o servidor da partida.</p></li><li><h3>Até 5 rotas ao mesmo tempo</h3><p>Se um caminho falha, os outros ajudam a manter a conexão.</p></li><li><h3>Mais de 3.000 jogos</h3><p>Como Valorant, CS2, Fortnite e League of Legends.</p></li><li><h3>Extras para treinar</h3><p>Treino de mira, gravação das partidas e temperatura do computador na tela.</p></li></ul>
+    </div>
+  </section>
+
+  <section class="dy ax-pl-sec" id="planos" aria-labelledby="pl-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Onde vem</span><h2 class="h-sec h-sec--m" id="pl-h">O plano com o NoPing</h2><p>O preço já inclui a internet, o modem Wi-Fi e o aplicativo.</p></div></div>
+      <div class="ax-pls" data-sobe><article class="ax-pl" data-ax-plano="1000:noping"><div class="ax-pl__t"><span class="ax-logo is-preto"><img src="/img/apps/noping.svg" alt="" loading="lazy"></span><div><h3>1.000 Mega</h3><p>Wi-Fi 6 · 6 meses de NoPing</p></div></div><p class="ax-pl__p"><b data-ax-preco>R$ 0,00</b><span>por mês, no débito em conta</span></p><p class="ax-pl__cb"><img src="/img/3d/cashback-p.webp" alt="" width="36" height="36"><span>Você recebe <b data-ax-cb>R$ 0,00</b> de <b>Cashback</b>, uma vez, via PIX</span></p><a class="bt bt--net" href="/internet/casa/1000-mega">Ver o plano<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></article></div>
+      <p class="zz__nota">Preços para <b data-uf-nome>Paraná</b>, só no CPF. No boleto ou no PIX, R$ 10 a mais por mês. Confira no seu CEP.</p>
+    </div>
+  </section>
+
+  <section class="dy ax-at-sec" id="como-ativar" aria-labelledby="at-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Como ativar</span><h2 class="h-sec h-sec--m" id="at-h">Pronto em 5 passos</h2><p>Depois da instalação, é só esperar o código.</p></div></div>
+      <div data-sobe><div class="ax-at" data-ax-at style="--c1:#0d110c;--c2:#1f3316">
+          <ol class="ax-at__l"><li><button type="button" data-ax-p="0" aria-current="step"><b>1</b><span><strong>Espere o código</strong><small>Ele chega por e-mail e SMS, em até 3 dias úteis depois da instalação.</small></span></button></li><li><button type="button" data-ax-p="1"><b>2</b><span><strong>Abra o link que veio com o código</strong><small>Ele leva à página de resgate do NoPing.</small></span></button></li><li><button type="button" data-ax-p="2"><b>3</b><span><strong>Crie a conta ou entre na sua</strong><small>Para conta nova, preencha nome, e-mail e senha.</small></span></button></li><li><button type="button" data-ax-p="3"><b>4</b><span><strong>Digite o código</strong><small>Escreva igual ao que recebeu. Aceite o regulamento e toque em resgatar.</small></span></button></li><li><button type="button" data-ax-p="4"><b>5</b><span><strong>Baixe e jogue</strong><small>Instale o NoPing e entre com o mesmo e-mail e senha.</small></span></button></li></ol>
+          <div class="ax-at__r"><div class="ax-at__cel" aria-hidden="true"><i class="ax-at__ilha"></i><div class="ax-at__t" data-ax-t="0"><span class="ax-logo is-preto"><img src="/img/apps/noping.svg" alt="" loading="lazy"></span><b>Seu código chegou</b><span class="ax-at__campo">ABCDE-12345-FGHIJ</span><span class="ax-at__bt">Copiar código</span></div><div class="ax-at__t" data-ax-t="1" hidden><span class="ax-logo is-preto"><img src="/img/apps/noping.svg" alt="" loading="lazy"></span><b>Resgate o NoPing</b><span class="ax-at__campo">6 meses grátis</span><span class="ax-at__bt">Começar</span></div><div class="ax-at__t" data-ax-t="2" hidden><span class="ax-logo is-preto"><img src="/img/apps/noping.svg" alt="" loading="lazy"></span><b>Criar conta</b><span class="ax-at__campo">seu@email.com</span><span class="ax-at__bt">Continuar</span></div><div class="ax-at__t" data-ax-t="3" hidden><span class="ax-logo is-preto"><img src="/img/apps/noping.svg" alt="" loading="lazy"></span><b>Código de ativação</b><span class="ax-at__campo">ABCDE-12345-FGHIJ</span><span class="ax-at__bt">Resgatar</span></div><div class="ax-at__t" data-ax-t="4" hidden><span class="ax-logo is-preto"><img src="/img/apps/noping.svg" alt="" loading="lazy"></span><b>Tudo certo</b><span class="ax-at__campo">Escolha o seu jogo</span><span class="ax-at__bt">Jogar</span></div></div>
+            <div class="ax-at__tx" aria-live="polite"><div data-ax-x="0"><small>Passo 1 de 5</small><strong>Espere o código</strong><p>Ele chega por e-mail e SMS, em até 3 dias úteis depois da instalação.</p></div><div data-ax-x="1" hidden><small>Passo 2 de 5</small><strong>Abra o link que veio com o código</strong><p>Ele leva à página de resgate do NoPing.</p></div><div data-ax-x="2" hidden><small>Passo 3 de 5</small><strong>Crie a conta ou entre na sua</strong><p>Para conta nova, preencha nome, e-mail e senha.</p></div><div data-ax-x="3" hidden><small>Passo 4 de 5</small><strong>Digite o código</strong><p>Escreva igual ao que recebeu. Aceite o regulamento e toque em resgatar.</p></div><div data-ax-x="4" hidden><small>Passo 5 de 5</small><strong>Baixe e jogue</strong><p>Instale o NoPing e entre com o mesmo e-mail e senha.</p></div></div>
+            <div class="ax-at__nav"><button type="button" class="bt bt--linha" data-ax-ant disabled>Voltar</button><button type="button" class="bt bt--net" data-ax-prox>Próximo passo</button></div>
+          </div>
+        </div></div>
+      <p class="zz__nota">Telas ilustrativas. Se travar em algum passo, <a data-zap="Olá! Preciso de ajuda para ativar o NoPing." href="https://wa.me/5541995701636">chame a gente no WhatsApp</a>.</p>
+    </div>
+  </section>
+
+  <section class="dy" id="duvidas" aria-labelledby="duvidas-h">
+    <div class="cx duv">
+      <div data-sobe>
+        <span class="eyebrow"><i style="background:var(--net)">?</i>Dúvidas</span>
+        <h2 class="h-sec" id="duvidas-h">Perguntas sobre o NoPing</h2>
+        <p class="lede">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p>
+        <div class="botoes"><a class="bt bt--linha" data-zap="Olá! Tenho uma dúvida sobre o NoPing no plano de internet." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></div>
+      </div>
+      <div class="faq" data-sobe>
+        <div class="faq__item"><h3>Vou pagar depois dos 6 meses?</h3><p>Não. O acesso termina sozinho, sem cobrança. Se quiser continuar, você contrata direto com o NoPing.</p></div>
+        <div class="faq__item"><h3>Preciso cadastrar cartão?</h3><p>Não. O cartão só é pedido se você decidir contratar depois dos 6 meses.</p></div>
+        <div class="faq__item"><h3>Já tenho conta no NoPing. Posso usar?</h3><p>Pode. Escolha “Já tenho conta”, entre e digite o código. Os 6 meses não se somam a outras promoções parecidas.</p></div>
+        <div class="faq__item"><h3>Até quando posso ativar?</h3><p>O código da oferta atual vale até 31/01/2027.</p></div>
+        <div class="faq__item"><h3>Posso dar o código para outra pessoa?</h3><p>Não. Ele é pessoal e só pode ser usado uma vez.</p></div>
+        <div class="faq__item"><h3>Vem no 1.000 Mega com streaming?</h3><p>Não. O NoPing vem só no 1.000 Mega sem streaming, no CPF.</p></div>
+        <div class="faq__item"><h3>Em quais aparelhos funciona?</h3><p>No computador com Windows e no celular.</p></div>
+        <div class="faq__item"><h3>Empresa (CNPJ) também recebe?</h3><p>Não. O NoPing vem só nos planos no CPF. <a href="/internet/empresa">Ver internet para empresas</a>.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy ax-out-sec" id="outros" aria-labelledby="out-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Outros aplicativos</span><h2 class="h-sec h-sec--m" id="out-h">Prefere outro?</h2><p>Cada plano traz um. Escolha o que combina com a sua casa.</p></div></div>
+      <ul class="ax-out" data-sobe><li><a href="/aplicativos/paramount"><span class="ax-logo"><img src="/img/apps/paramount-44.svg" alt="" loading="lazy"></span><b>Paramount+</b><small data-ax-plano="600:paramount">600 Mega, <span data-ax-preco>R$ 0,00</span></small></a></li><li><a href="/aplicativos/globoplay"><span class="ax-logo"><img src="/img/apps/globoplay.png" alt="" loading="lazy"></span><b>Globoplay</b><small data-ax-plano="600:globoplay">600 Mega, <span data-ax-preco>R$ 0,00</span></small></a></li><li><a href="/aplicativos/youtube"><span class="ax-logo" data-larga><img src="/img/apps/youtube-premium-logo.svg" alt="" loading="lazy"></span><b>YouTube Premium</b><small data-ax-plano="800:youtube">800 Mega, <span data-ax-preco>R$ 0,00</span></small></a></li><li><a href="/aplicativos/hbo-max"><span class="ax-logo is-preto"><img src="/img/apps/hbo-max.png" alt="" loading="lazy"></span><b>HBO Max</b><small data-ax-plano="1000:hbo">1.000 Mega, <span data-ax-preco>R$ 0,00</span></small></a></li></ul>
+    </div>
+  </section>
+
+  <section class="dy fim-sec" aria-labelledby="fim-h">
+    <div class="cx">
+      <div class="fim" data-sobe>
+        <div class="fim__obj" aria-hidden="true"><div class="obj"><img src="/img/3d-g/controle.webp" alt="" width="720" height="720"></div></div>
+        <div class="fim__txt">
+          <h2 id="fim-h">Quer o NoPing na sua casa?</h2>
+          <p>Consulte o seu CEP. A gente confirma se a fibra chega até você.</p>
+          <div class="botoes"><a class="bt bt--ouro" href="#contact">Consultar meu CEP<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha-claro" data-zap="Olá! Quero a internet com o NoPing." href="https://wa.me/5541995701636">Chamar no WhatsApp</a></div>
         </div>
       </div>
     </div>
@@ -196,6 +281,7 @@
 <script src="/js/vendor/ScrollTrigger.min.js"></script>
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
+<script src="/js/apps.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>
