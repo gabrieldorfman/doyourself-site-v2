@@ -37,6 +37,7 @@
 <link rel="stylesheet" href="/css/v2.css">
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
+<link rel="stylesheet" href="/css/ajuda.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -45,7 +46,7 @@
 <script src="/js/config.js"></script>
 </head>
 <body>
-<!-- Do Yourself v2 · Ajuda com a energia (/ajuda/energia): por enquanto só o topo; as próximas seções entram depois -->
+<!-- Do Yourself v2 · Ajuda com a energia (/ajuda/energia) -->
 <!--#menu-->
 <header class="nav">
   <div class="wrap nav__bar">
@@ -92,7 +93,7 @@
 </header>
 <!--/menu-->
 
-<main id="top">
+<main id="top" class="pg-aj is-luz">
   <section class="topo topo--pg topo--so topo--luz" aria-labelledby="hero-h" data-bar-hero>
     <div class="topo__painel">
       <div class="cx topo__grid">
@@ -100,7 +101,8 @@
           <span class="etq etq--luz">Ajuda com a energia</span>
           <h1 id="hero-h">Ajuda com a sua <em>energia por assinatura</em></h1>
           <p class="lede">Como ler a conta, quando o desconto começa e como funciona o Cashback da energia.</p>
-          <div class="botoes"><a class="bt bt--luz" data-zap="Olá! Preciso de ajuda com a energia por assinatura." href="https://wa.me/5541995701636">Pedir ajuda no WhatsApp</a></div>
+          <ul class="pg-chips"><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Ler a conta</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Início do desconto</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Falta de luz</li></ul>
+          <div class="botoes"><a class="bt bt--luz" href="#conta">Entender a conta<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" data-zap="Olá! Preciso de ajuda com a energia por assinatura." href="https://wa.me/5541995701636">Pedir ajuda no WhatsApp</a></div>
         </div>
         <div class="topo__cena hx" aria-hidden="true">
           <span class="hx__luz"></span>
@@ -109,6 +111,45 @@
         </div>
       </div>
     </div>
+  </section>
+
+  <section class="dy" id="conta" aria-labelledby="aj10">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow">Sua conta</span><h2 class="h-sec h-sec--m" id="aj10">Entenda a conta, linha por linha</h2><p>Toque em cada parte.</p></div></div>
+      <div class="aj-ab aj-fa" data-aj-abas data-sobe><div class="aj-ab__b" role="radiogroup" aria-label="Partes da conta"><button type="button" role="radio" aria-checked="true"><span>Energia consumida</span><b>700 kWh</b></button><button type="button" role="radio" aria-checked="false" tabindex="-1"><span>Créditos de energia</span><b>− créditos</b></button><button type="button" role="radio" aria-checked="false" tabindex="-1"><span>Custo mínimo</span><b>todo mês</b></button><button type="button" role="radio" aria-checked="false" tabindex="-1"><span>Iluminação pública</span><b>todo mês</b></button><button type="button" role="radio" aria-checked="false" tabindex="-1"><span>Total a pagar</span><b>menor</b></button></div><div class="aj-ab__p" aria-live="polite"><div class="aj-p"><h3>Energia consumida</h3><p>É o quanto o imóvel usou no mês. É sobre essa energia que o desconto vale.</p></div><div class="aj-p" hidden><h3>Créditos de energia</h3><p>A energia gerada na usina entra aqui e abate o seu consumo.</p></div><div class="aj-p" hidden><h3>Custo mínimo</h3><p>É o valor de estar ligado à rede. Todo imóvel paga, com ou sem assinatura.</p></div><div class="aj-p" hidden><h3>Iluminação pública</h3><p>Vai para a prefeitura e não entra no desconto.</p></div><div class="aj-p" hidden><h3>Total a pagar</h3><p>É o que sobra depois dos créditos. Se vierem duas contas, some as duas para comparar.</p></div></div><p class="aj-nt">Conta de exemplo. O desenho e os nomes mudam de uma distribuidora para outra.</p></div>
+    </div>
+  </section>
+
+  <section class="dy" aria-labelledby="aj11">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow">Quando começa</span><h2 class="h-sec h-sec--m" id="aj11">Da assinatura ao desconto</h2><p>Você não precisa fazer nada na espera.</p></div></div>
+      <ol class="aj-tl" data-sobe><li><small>Dia 1</small><h3>Biometria do contrato</h3><p>Você assina pelo celular, por um link.</p></li><li><small>Em até 7 dias</small><h3>Cashback na conta</h3><p>10% da nova conta, uma vez, via PIX na sua conta bancária.</p></li><li><small>Nas próximas semanas</small><h3>Os créditos são ligados</h3><p>Até lá, pague a conta normalmente.</p></li><li><small>Em até 90 dias</small><h3>Primeira conta com desconto</h3><p>Guarde as contas antigas para comparar.</p></li></ol>
+    </div>
+  </section>
+
+  <section class="dy" id="resolver" aria-labelledby="aj12">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow">Resolver agora</span><h2 class="h-sec h-sec--m" id="aj12">O que você precisa?</h2><p>Toque e veja o que fazer.</p></div></div>
+      <div class="aj-ab aj-rs" data-aj-abas data-sobe><div class="aj-ab__b" role="radiogroup" aria-label="Assunto da energia"><button type="button" role="radio" aria-checked="true"><img src="/img/3d-g/lampada.webp" alt="" width="120" height="120"><b>Faltou luz</b></button><button type="button" role="radio" aria-checked="false" tabindex="-1"><img src="/img/3d-g/calendario.webp" alt="" width="120" height="120"><b>Sem desconto</b></button><button type="button" role="radio" aria-checked="false" tabindex="-1"><img src="/img/3d-g/info.webp" alt="" width="120" height="120"><b>Conta alta</b></button><button type="button" role="radio" aria-checked="false" tabindex="-1"><img src="/img/3d-g/casa.webp" alt="" width="120" height="120"><b>Vou me mudar</b></button></div><div class="aj-ab__p" aria-live="polite"><div class="aj-p"><h3>A luz acabou</h3><ol class="aj-ch"><li><label><input type="checkbox"><span>Veja se o disjuntor da casa caiu.</span></label></li><li><label><input type="checkbox"><span>Pergunte a um vizinho se também faltou.</span></label></li><li><label><input type="checkbox"><span>Ligue para a distribuidora da sua cidade. O número está na conta.</span></label></li></ol><p class="aj-nr">Não resolveu? Mande esta mensagem e a gente continua daqui.</p><a class="bt bt--a" data-zap="Olá! Tenho uma dúvida sobre falta de luz." href="https://wa.me/5541995701636">Continuar no WhatsApp</a></div><div class="aj-p" hidden><h3>O desconto ainda não veio</h3><ol class="aj-ch"><li><label><input type="checkbox"><span>Veja a data em que você assinou.</span></label></li><li><label><input type="checkbox"><span>A primeira conta com desconto pode levar até 90 dias.</span></label></li><li><label><input type="checkbox"><span>Passou do prazo? Separe a última conta.</span></label></li></ol><p class="aj-nr">Não resolveu? Mande esta mensagem e a gente continua daqui.</p><a class="bt bt--a" data-zap="Olá! Já passou o prazo e o desconto na conta de luz ainda não veio." href="https://wa.me/5541995701636">Continuar no WhatsApp</a></div><div class="aj-p" hidden><h3>A conta veio mais alta</h3><ol class="aj-ch"><li><label><input type="checkbox"><span>Compare o consumo em kWh com o mês passado.</span></label></li><li><label><input type="checkbox"><span>Veja se a bandeira tarifária mudou.</span></label></li><li><label><input type="checkbox"><span>Veja se são duas contas e some as duas.</span></label></li><li><label><input type="checkbox"><span>Separe a foto da conta.</span></label></li></ol><p class="aj-nr">Não resolveu? Mande esta mensagem e a gente continua daqui.</p><a class="bt bt--a" data-zap="Olá! Minha conta de luz veio mais alta e quero entender." href="https://wa.me/5541995701636">Continuar no WhatsApp</a></div><div class="aj-p" hidden><h3>Mudança de endereço</h3><ol class="aj-ch"><li><label><input type="checkbox"><span>Avise a gente antes da mudança.</span></label></li><li><label><input type="checkbox"><span>Separe uma conta de luz do endereço novo.</span></label></li><li><label><input type="checkbox"><span>A conta precisa estar no seu nome.</span></label></li></ol><p class="aj-nr">Não resolveu? Mande esta mensagem e a gente continua daqui.</p><a class="bt bt--a" data-zap="Olá! Vou me mudar e tenho energia por assinatura." href="https://wa.me/5541995701636">Continuar no WhatsApp</a></div></div></div>
+    </div>
+  </section>
+
+  <section class="dy" id="duvidas" aria-labelledby="duvidas-h">
+    <div class="cx duv">
+      <div data-sobe><span class="eyebrow"><i style="background:var(--a)">?</i>Dúvidas</span><h2 class="h-sec" id="duvidas-h">Perguntas sobre a energia</h2><p class="lede">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p><div class="botoes"><a class="bt bt--linha" data-zap="Olá! Preciso de ajuda com a energia por assinatura." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></div></div>
+      <div class="faq" data-sobe><div class="faq__item" id="d1"><h3>Quem eu chamo quando falta luz?</h3><p>A distribuidora da sua cidade, como hoje. Os fios e a manutenção continuam com ela.</p></div><div class="faq__item" id="d2"><h3>Quando vem a primeira conta com desconto?</h3><p>Pode levar até 90 dias depois da assinatura.</p></div><div class="faq__item" id="d3"><h3>Vou receber uma ou duas contas?</h3><p>Depende da empresa parceira que atende a sua região. O atendente explica antes de você assinar.</p></div><div class="faq__item" id="d4"><h3>Por que a conta não zera?</h3><p>O custo mínimo da ligação e a iluminação pública continuam. O desconto vale para a energia consumida.</p></div><div class="faq__item" id="d5"><h3>Preciso pagar a conta enquanto espero?</h3><p>Sim. Pague normalmente até os créditos entrarem.</p></div><div class="faq__item" id="d6"><h3>O desconto é igual todo mês?</h3><p>O percentual vem na sua proposta. O valor em reais muda com o seu consumo.</p></div><div class="faq__item" id="d7"><h3>Como recebo o Cashback da energia?</h3><p>10% da nova conta, uma vez, via PIX na sua conta bancária, em até 7 dias depois da biometria do contrato.</p></div></div>
+    </div>
+  </section>
+
+  <section class="dy" aria-labelledby="ou-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow">Outros assuntos</span><h2 class="h-sec h-sec--m" id="ou-h">Precisa de outra ajuda?</h2><p>Escolha o assunto.</p></div></div>
+      <div class="aj-nav aj-nav--4" data-sobe><a class="is-net" href="/ajuda/internet"><img src="/img/3d-g/wifi.webp" alt="" width="200" height="200" loading="lazy"><b>Internet</b><span>Wi-Fi, modem, técnico e conta</span></a><a class="is-cel" href="/ajuda/celular"><img src="/img/3d-g/celular.webp" alt="" width="200" height="200" loading="lazy"><b>Celular</b><span>Chip, 5G e portabilidade</span></a><a class="is-marca" href="/ajuda/biometria"><img src="/img/3d-g/escudo.webp" alt="" width="200" height="200" loading="lazy"><b>Biometria</b><span>Passo a passo pelo celular</span></a><a class="is-marca" href="/ajuda/suporte"><img src="/img/3d-g/conversa.webp" alt="" width="200" height="200" loading="lazy"><b>Suporte</b><span>Atendimento 24 horas</span></a></div>
+    </div>
+  </section>
+
+  <section class="dy fim-sec" aria-labelledby="fim-h">
+    <div class="cx"><div class="fim" data-sobe><div class="fim__obj" aria-hidden="true"><div class="obj"><img src="/img/3d-g/conversa.webp" alt="" width="720" height="720"></div></div><div class="fim__txt"><h2 id="fim-h">Prefere falar com uma pessoa?</h2><p>A gente responde no WhatsApp, 24 horas, e acompanha até resolver.</p><div class="botoes"><a class="bt bt--ouro" data-zap="Olá! Preciso de ajuda com a energia por assinatura." href="https://wa.me/5541995701636">Chamar no WhatsApp<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div></div></div></div>
   </section>
 </main>
 
@@ -196,6 +237,7 @@
 <script src="/js/vendor/ScrollTrigger.min.js"></script>
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
+<script src="/js/ajuda.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>
