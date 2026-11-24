@@ -682,6 +682,41 @@
 })();
 /* atalhos para o campo de CEP do topo */
 document.querySelectorAll('a[href="#cep-topo"]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); const f = document.querySelector('#cep-topo'); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => f.querySelector('input[name=cep]').focus({ preventScroll: true }), 500); }));
+/* menu: clicar num item com submenu abre as opções e nunca sai da página (celular, tablet e desktop).
+   No computador, passar o mouse também abre (CSS do kit). O href fica só para quem está sem JavaScript. */
+(() => {
+  const nav = document.querySelector('header.nav'); if (!nav) return;
+  const itens = [...nav.querySelectorAll('.nav__item')].filter((i) => i.querySelector('.nav__menu'));
+  const largo = matchMedia('(min-width: 1024px)');
+  const link = (i) => i.querySelector('.nav__link');
+  const estado = (i, v) => { i.classList.toggle('is-open', v && largo.matches); i.classList.toggle('is-expanded', v && !largo.matches); link(i).setAttribute('aria-expanded', String(v)); };
+  const aberto = (i) => i.classList.contains('is-open') || i.classList.contains('is-expanded');
+  const fecha = (menos) => itens.forEach((i) => i !== menos && aberto(i) && estado(i, false));
+  itens.forEach((i, n) => {
+    const m = i.querySelector('.nav__menu'); m.id = m.id || 'menu-' + n;
+    const l = link(i); l.setAttribute('role', 'button'); l.setAttribute('aria-expanded', 'false'); l.setAttribute('aria-controls', m.id);
+    l.addEventListener('keydown', (e) => { if (e.key === ' ') { e.preventDefault(); l.click(); } });
+    // mouse: ao sair do item, o painel fecha, mesmo que tenha sido clicado
+    i.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') fecha(i); });
+    i.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse' && largo.matches) { estado(i, false); if (document.activeElement === l) l.blur(); } });
+  });
+  // captura: passa na frente do kit, que fecharia o menu do celular ao tocar num link
+  nav.addEventListener('click', (e) => {
+    if (e.target.closest('.nav__toggle')) { fecha(); return; }
+    const alvo = e.target.closest('.nav__links .nav__link, .nav__expand'), i = alvo && alvo.closest('.nav__item');
+    if (!i || !itens.includes(i) || e.ctrlKey || e.metaKey) return;
+    e.preventDefault(); e.stopPropagation();
+    const v = !aberto(i); fecha(i); estado(i, v);
+    if (!v && largo.matches) link(i).blur();
+    if (v && !largo.matches) { const cx = nav.querySelector('.nav__links'); cx.scrollTop += i.getBoundingClientRect().top - cx.getBoundingClientRect().top - 12; }
+  }, true);
+  document.addEventListener('pointerdown', (e) => { if (largo.matches && !e.target.closest('.nav__item')) fecha(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fecha(); });
+  largo.addEventListener('change', () => fecha());
+  // a setinha do kit vira só desenho: o item inteiro é o botão
+  document.addEventListener('DOMContentLoaded', () => nav.querySelectorAll('.nav__expand').forEach((b) => { b.tabIndex = -1; b.setAttribute('aria-hidden', 'true'); }));
+})();
+
 /* carrossel de destaques no menu */
 document.querySelectorAll('[data-slides]').forEach((m) => {
   const sl = [...m.querySelectorAll('.ms__sl')], pt = m.querySelector('.ms__pontos'); let k = 0, t;

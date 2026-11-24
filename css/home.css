@@ -1735,3 +1735,14 @@ header.nav.nav--topo { border-bottom-color: transparent; }
 header.nav.nav--topo::before { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
 header.nav.nav--topo:has(.nav__item:hover, .nav__item:focus-within, .nav__item.is-open)::before { background: rgb(246 245 239 / .72); -webkit-backdrop-filter: saturate(1.7) blur(18px); backdrop-filter: saturate(1.7) blur(18px); }
 header.nav.nav--topo.is-open::before { background: var(--creme); }
+
+/* ---------- 23/11: menu: o item com submenu abre as opções no clique ---------- */
+@media (min-width: 1024px) {
+  html .nav .nav__item.is-open > .nav__menu { opacity: 1; visibility: visible; transform: none; transition: none; }
+  .nav__item.is-open > .nav__link .chev { transform: rotate(180deg); }
+  .nav__item.is-open > .nav__link::before { transform: scaleX(1); transform-origin: left; }
+}
+@media (max-width: 1023px) {
+  .nav.is-open .nav__link { justify-content: flex-start; }
+  .nav.is-open .nav__item.is-expanded > .nav__link { font-weight: 700; }
+}
