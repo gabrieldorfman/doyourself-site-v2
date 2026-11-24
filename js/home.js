@@ -201,7 +201,7 @@
       sim.classList.toggle('is-ok', ok);
       const novo = ok ? `Seu desconto é de <b>${s.pct}%</b>` : 'Digite o valor da sua conta para ver o seu desconto';
       if (novo !== rot) { out.rot.innerHTML = novo; rot = novo; }
-      out.antes.textContent = ok ? DY.brl(s.conta) : '';
+      out.de.innerHTML = ok ? `Sua conta cai de <s>${DY.brl(s.conta)}</s> para:` : 'Sua nova conta fica em:';
       out.nova.textContent = DY.brl(ok ? s.comDesconto : 0); out.mes.textContent = DY.brl(ok ? s.economiaMes : 0);
       out.ano.textContent = DY.brl(ok ? s.economiaMes * 12 : 0); out.cb.textContent = DY.brl(ok ? s.cashback : 0);
       ir.href = '/contratar?origem=energia' + (ok ? '&conta=' + v : '');
