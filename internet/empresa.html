@@ -45,7 +45,7 @@
 <script src="/js/config.js"></script>
 </head>
 <body>
-<!-- Do Yourself v2 · Internet fibra para empresa (/internet/empresa): por enquanto só o topo; as próximas seções entram depois -->
+<!-- Do Yourself v2 · Internet fibra para empresa (/internet/empresa) -->
 <!--#menu-->
 <header class="nav">
   <div class="wrap nav__bar">
@@ -92,20 +92,249 @@
 </header>
 <!--/menu-->
 
-<main id="top">
-  <section class="topo topo--pg topo--so topo--emp" aria-labelledby="hero-h" data-bar-hero>
+<main id="top" class="pg-emp">
+  <section class="topo topo--pg topo--emp" aria-labelledby="hero-h" data-bar-hero>
     <div class="topo__painel">
       <div class="cx topo__grid">
         <div class="topo__txt">
           <span class="etq etq--emp">Internet fibra para empresa</span>
-          <h1 id="hero-h">Internet fibra para o seu <em>CNPJ</em></h1>
-          <p class="lede">Fibra até dentro da empresa, instalação grátis, atendimento humano 24 horas e metade de uma mensalidade de volta no PIX.</p>
-          <div class="botoes"><a class="bt bt--emp" href="/#planos-empresa">Ver planos para empresa<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" data-zap="Olá! Quero internet fibra para a minha empresa." href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
+          <h1 id="hero-h">Internet fibra para a sua empresa <em>não parar</em></h1>
+          <p class="lede">Planos no CNPJ a partir de <b data-int-min="empresa">R$ 89,99</b> por mês, com a fibra até dentro da empresa, instalação grátis e metade de uma mensalidade de volta no PIX.</p>
+          <ul class="pg-chips">
+            <li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Sem franquia de dados</li>
+            <li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Modem Wi-Fi sem custo</li>
+            <li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Para CNPJ e MEI</li>
+          </ul>
         </div>
         <div class="topo__cena hx" aria-hidden="true">
           <span class="hx__luz"></span>
           <div class="obj obj--x"><img src="/img/3d-g/predio.webp" alt="" width="720" height="720"></div>
-          <span class="tag tag--a"><i></i><span>Planos no CNPJ<small>com a fibra até a empresa</small></span></span><span class="tag tag--b"><i></i><span>Cashback no PIX<small>50% de uma mensalidade</small></span></span>
+          <span class="tag tag--a"><i></i><span>Instalação grátis<small>em até 48 horas</small></span></span><span class="tag tag--b"><i></i><span>Cashback no PIX<small>50% de uma mensalidade</small></span></span>
+        </div>
+      </div>
+    </div>
+    <div class="cx topo__cep" id="cep-topo" data-bar-lead>
+      <form class="cep" data-cep="internet" data-para="empresa" novalidate>
+        <p class="cep__t">Veja se a fibra chega na sua empresa</p>
+        <div class="cep__modo" data-modo="cep">
+          <div class="cep__linha">
+            <label class="cep__f cep__f--cep"><span>CEP</span><input name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-label="CEP"><i class="cep__ok" aria-hidden="true"></i></label>
+            <div class="cep__f cep__f--num"><span>Número</span><input name="numero" inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 120" aria-label="Número do imóvel"><label class="cep__sn"><input type="checkbox" data-sn><i aria-hidden="true"></i>Sem número</label></div>
+          </div>
+          <p class="cep__end" aria-live="polite" hidden></p>
+        </div>
+        <div class="cep__modo" data-modo="rua" hidden>
+          <div class="cep__linha">
+            <label class="cep__f cep__f--uf"><span>Estado</span><select data-uf aria-label="Estado"></select></label>
+            <label class="cep__f cep__f--cid"><span>Cidade</span><input data-cidade list="cidades-topo" autocomplete="address-level2" placeholder="Ex.: Curitiba" aria-label="Cidade"></label>
+            <datalist id="cidades-topo"></datalist>
+          </div>
+          <div class="cep__linha">
+            <div class="cep__f cep__f--rua"><span>Rua</span><input data-rua role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug-topo" autocomplete="off" placeholder="Ex.: Rua das Palmeiras" aria-label="Nome da rua"><ul class="cep__sug" id="sug-topo" role="listbox" hidden></ul></div>
+            <div class="cep__f cep__f--num"><span>Número</span><input data-num-rua inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 120" aria-label="Número do imóvel"><label class="cep__sn"><input type="checkbox" data-sn><i aria-hidden="true"></i>Sem número</label></div>
+          </div>
+          <button type="button" data-buscar hidden></button>
+          <ul class="cep__res"></ul>
+        </div>
+        <p class="cep__erro" role="status" aria-live="polite"></p>
+        <div class="cep__acoes">
+          <button class="cep__nao" type="button" aria-expanded="false">Não sei meu CEP</button>
+          <button class="cep__btn" type="submit">Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        </div>
+        <div class="cep__zap"><span>Prefiro falar com um atendente</span><a class="cep__zapbt" data-zap="Olá! Vim pelo site da Do Yourself e quero falar com um atendente." href="https://wa.me/5541995701636"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.3-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.5-.6-2.7-1.2-4.4-3.9-4.6-4.1-.1-.2-1.1-1.4-1.1-2.7s.7-1.9.9-2.2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.1 1.4 1.8 1 .9 1.8 1.2 2.1 1.3.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.1.1.6-.1 1.2z"/></svg>Conversar no WhatsApp</a></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="dy emp-planos" id="planos-empresa" aria-labelledby="planos-emp-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><h2 class="h-sec h-sec--m" id="planos-emp-h">Planos de internet para empresas</h2><p>Planos no CNPJ, no débito em conta. No boleto ou no PIX, R$ 10 a mais por mês.</p></div></div>
+      <div class="emp-uf">Preços de
+        <label class="regiao__sel"><span data-uf-nome>Paraná</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3"/></svg><select data-uf-sel aria-label="Trocar o estado dos preços"></select></label></div>
+      <div class="sub" data-emp>
+        <div class="mil mil--emp pc--emp is-dest" data-emp-dest data-sobe></div>
+        <p class="sub__rot sub__rot--emp" data-sobe>Outros planos para empresa</p>
+        <div class="trilho">
+          <div class="cards cards--emp" aria-live="polite"></div>
+          <div class="dica" aria-hidden="true">Arraste para ver os outros planos<svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></div>
+          <div class="pontos"></div>
+        </div>
+        <p class="emp__nota">Instalação grátis em até 48 horas. Modem Wi-Fi incluso, sem custo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy emp-exp" aria-labelledby="exp-emp-h">
+    <div class="cx">
+      <article class="feat feat--emp feat--inv" data-sobe>
+        <div class="feat__painel">
+          <div class="feat__jan">
+            <div class="feat__jan-topo"><span>O que vem no plano para empresa</span><span class="feat__chip">No CNPJ</span></div>
+            <ul class="feat__lista"><li><img src="/img/3d-g/predio.webp" alt=""><div><b>No CNPJ, inclusive MEI</b><p>Contrato no nome da empresa, no endereço que você quiser.</p></div></li><li><img src="/img/3d-g/instalacao.webp" alt=""><div><b>Antivírus e apps para a equipe</b><p>Ferramentas para o negócio no lugar do streaming.</p></div></li><li><img src="/img/3d-g/calendario.webp" alt=""><div><b>Instalação grátis em até 48 horas</b><p>A fibra e o modem Wi-Fi, sem custo e sem obra.</p></div></li><li><img src="/img/3d-g/wifi.webp" alt=""><div><b>Funciona com tudo da empresa</b><p>Maquininha, sistema na nuvem, WhatsApp Business e VPN.</p></div></li></ul>
+          </div>
+        </div>
+        <div class="feat__txt">
+          <span class="feat__eyebrow">O que muda no plano para empresa</span>
+          <h2 class="feat__h" id="exp-emp-h">Feito para quem vende, atende e trabalha conectado</h2>
+          <p class="feat__lede">O plano é contratado no CNPJ e troca o streaming por ferramentas para o negócio. A conexão funciona com os sistemas da sua empresa sem você configurar nada.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="dy porque porque--emp" aria-labelledby="porque-emp-h">
+    <div class="cx">
+      <div class="porque__topo" data-sobe>
+        <span class="eyebrow eyebrow--emp">Por que contratar com a gente</span>
+        <h2 class="h-sec h-sec--m" id="porque-emp-h">Internet parada é venda perdida</h2>
+        <p class="lede">Quando a internet cai, a maquininha para, o sistema sai do ar e o cliente vai embora. Com fibra estável, a sua empresa não passa por isso e não tem esse prejuízo.</p>
+      </div>
+      <div class="perfis" data-sobe>
+        <div class="perfil"><img src="/img/3d-g/predio.webp" alt=""><span class="perfil__t">Estabilidade</span><b>Sistemas sempre no ar</b><p>Maquininha, sistema de vendas e WhatsApp da empresa funcionando o dia todo.</p></div>
+        <div class="perfil"><img src="/img/3d-g/escudo.webp" alt=""><span class="perfil__t">Segurança</span><b>Antivírus incluso</b><p>Nos planos de 600 e 1.000 Mega: proteção contra links maliciosos e golpes.</p></div>
+        <div class="perfil"><img src="/img/3d-g/pino.webp" alt=""><span class="perfil__t">Equipe na rua</span><b>Gestão de equipe externa</b><p>No 1.000 Mega: localização em tempo real, botão SOS e rotina da equipe.</p></div>
+        <div class="perfil"><img src="/img/3d-g/wifi.webp" alt=""><span class="perfil__t">Nuvem</span><b>Upload de 50%</b><p>Envie arquivos, faça backup e videochamadas sem travar.</p></div>
+      </div>
+      <div class="nos nos--emp" data-sobe>
+        <div class="nos__cab"><img src="/img/3d-g/conversa.webp" alt=""><div><p class="nos__eyebrow">O que só a Do Yourself te dá</p><h3>Um contato só para luz, internet e celular</h3></div></div>
+        <div class="nos__cmp">
+          <ul class="nos__col nos__col--eles"><li class="nos__t">Contratando direto</li><li>Um número diferente para cada serviço</li><li>Central com menu, fila e protocolo</li><li>Explicar tudo de novo a cada contato</li><li>Nenhum dinheiro de volta</li></ul>
+          <ul class="nos__col nos__col--nos"><li class="nos__t">Com a Do Yourself</li><li><b>Um WhatsApp só</b> para todos os serviços</li><li><b>Atendimento 24 horas</b>, de gente que acompanha até resolver</li><li><b>Seu cadastro já está com a gente</b>: é só dizer o que precisa</li><li><b>50% de volta no PIX</b>, metade de uma mensalidade</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="dy duo-sec" id="wi-fi" aria-labelledby="duo-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe>
+        <div><span class="eyebrow eyebrow--emp">O modem que vem no plano</span><h2 class="h-sec h-sec--m" id="duo-h"><span class="nw">Wi-Fi 5</span> ou <span class="nw">Wi-Fi 6:</span> o modem acompanha o plano</h2><p>Vem em comodato, sem custo, e o técnico já deixa tudo configurado.</p></div>
+      </div>
+      <div class="duo" data-sobe>
+        <article class="duo__c">
+          <div class="duo__obj"><img src="/img/3d-g/modem5.webp" alt="Modem Wi-Fi 5" width="720" height="720" loading="lazy"></div>
+          <p class="duo__g">Wi-Fi <b>5</b></p>
+          <p class="duo__p">Nos planos até 600 Mega</p>
+          <dl class="duo__l">
+            <div><dt>Redes</dt><dd>2,4 GHz e 5 GHz</dd></div>
+            <div><dt>Ideal para</dt><dd>Maquininhas, sistema de vendas e videochamadas</dd></div>
+            <div><dt>Entradas</dt><dd>4 de rede, USB e 2 de telefone</dd></div>
+          </dl>
+        </article>
+        <article class="duo__c duo__c--6">
+          <span class="duo__selo">No plano da oferta do mês</span>
+          <div class="duo__obj"><img src="/img/3d-g/modem6.webp" alt="Modem Wi-Fi 6" width="720" height="720" loading="lazy"></div>
+          <p class="duo__g">Wi-Fi <b>6</b></p>
+          <p class="duo__p">No plano de 1.000 Mega</p>
+          <dl class="duo__l">
+            <div><dt>Redes</dt><dd>2,4 GHz e 5 GHz, com a tecnologia Wi-Fi 6</dd></div>
+            <div><dt>Ideal para</dt><dd>Equipe grande, câmeras e clientes conectados ao mesmo tempo</dd></div>
+            <div><dt>Entradas</dt><dd>4 de rede, 1 de 2,5 Gbps, USB e 2 de telefone</dd></div>
+          </dl>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="jornada jornada--net" id="instalacao" aria-labelledby="como-h" data-jornada>
+    <div class="jo__pista">
+      <div class="jo__fixo">
+        <div class="cx jo__grade">
+          <div class="jo__esq">
+            <span class="etq etq--emp">Como contratar</span>
+            <h2 class="jo__h" id="como-h">Da consulta ao Cashback no PIX, em 5 passos</h2>
+            <ol class="jo__passos">
+            <li class="jo__p is-on" data-i="0"><button type="button" aria-controls="jo-palco"><span class="jo__n">1</span><span class="jo__t">Consulte o seu CEP</span></button><p>Digite o CEP e o número da empresa. O site mostra os planos da sua região.</p></li>
+            <li class="jo__p" data-i="1"><button type="button" aria-controls="jo-palco"><span class="jo__n">2</span><span class="jo__t">Escolha o plano</span></button><p>Escolha a velocidade que atende a sua equipe.</p></li>
+            <li class="jo__p" data-i="2"><button type="button" aria-controls="jo-palco"><span class="jo__n">3</span><span class="jo__t">Confirme pelo WhatsApp</span></button><p>A gente confere os dados da empresa numa conversa só. O responsável confirma a identidade com a biometria, pelo celular.</p></li>
+            <li class="jo__p" data-i="3"><button type="button" aria-controls="jo-palco"><span class="jo__n">4</span><span class="jo__t">Receba o técnico</span></button><p>A instalação é grátis, em até 48 horas, no horário combinado. O técnico testa a velocidade na hora.</p></li>
+            <li class="jo__p" data-i="4"><button type="button" aria-controls="jo-palco"><span class="jo__n">5</span><span class="jo__t">Receba o Cashback no PIX</span></button><p>Com o contrato concluído, metade de uma mensalidade volta via PIX na sua conta bancária em até 7 dias, uma única vez.</p></li>
+            </ol>
+          </div>
+          <div class="jo__palco" id="jo-palco" aria-live="polite">
+            <div class="jo__cena jo__cena--1 is-on" data-c="0">
+              <img class="jo__obj" src="/img/3d-g/pino.webp" alt="">
+              <div class="jo__ui jo__ui--cep">
+                <p class="jo__rot">Veja se a fibra chega na sua empresa</p>
+                <div class="jo__campos"><span><small>CEP</small>80250-000</span><span><small>Número</small>120</span></div>
+                <span class="jo__bt">Ver ofertas →</span>
+                <p class="jo__ok"><i></i>Fibra disponível no seu endereço</p>
+              </div>
+            </div>
+            <div class="jo__cena jo__cena--2" data-c="1">
+              <img class="jo__obj" src="/img/3d-g/controle.webp" alt="">
+              <div class="jo__ui jo__ui--itens">
+                <p class="jo__rot">Monte o seu plano</p>
+                <span class="jo__item is-sel"><i class="net"></i>Internet 1.000 Mega<b>✓</b></span>
+                <span class="jo__item is-sel"><i class="net"></i>Gestão de equipe externa<b>✓</b></span>
+                <span class="jo__item is-sel"><i class="net"></i>Débito em conta<b>✓</b></span>
+                <p class="jo__ok"><i></i>R$ 99,99 por mês</p>
+              </div>
+            </div>
+            <div class="jo__cena jo__cena--3" data-c="2">
+              <img class="jo__obj" src="/img/3d-g/conversa.webp" alt="">
+              <div class="jo__ui jo__ui--chat">
+                <p class="jo__rot"><i class="jo__dot"></i>Do Yourself <small>online agora</small></p>
+                <span class="jo__msg jo__msg--eu">Oi! Quero o 1.000 Mega para a minha empresa.</span>
+                <span class="jo__msg">Perfeito! Confere os dados da empresa e faz a biometria pelo link que te mandei.</span>
+                <span class="jo__msg jo__msg--eu">Feito ✅</span>
+              </div>
+            </div>
+            <div class="jo__cena jo__cena--4" data-c="3">
+              <img class="jo__obj" src="/img/3d-g/instalacao.webp" alt="">
+              <div class="jo__ui jo__ui--agenda">
+                <p class="jo__rot">Escolha o melhor horário</p>
+                <div class="jo__dias"><span><small>Qua</small>19</span><span class="is-sel"><small>Qui</small>20</span><span><small>Sex</small>21</span></div>
+                <div class="jo__horas"><span class="is-sel">Manhã</span><span>Tarde</span></div>
+                <p class="jo__ok"><i></i>Velocidade testada na instalação</p>
+              </div>
+            </div>
+            <div class="jo__cena jo__cena--5" data-c="4">
+              <img class="jo__obj" src="/img/3d-g/cashback.webp" alt="">
+              <div class="jo__ui jo__ui--pix">
+                <p class="jo__rot">Notificação do banco</p>
+                <div class="jo__notif"><span class="jo__pix">PIX</span><div><b>PIX recebido</b><small>Cashback Do Yourself</small></div><strong>R$ 49,99</strong></div>
+                <p class="jo__ok"><i></i>Em até 7 dias depois do contrato</p>
+              </div>
+            </div>
+            <span class="jo__selo" data-jo-selo>Passo 1 de 5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy" id="duvidas" aria-labelledby="duvidas-h">
+    <div class="cx duv">
+      <div data-sobe>
+        <span class="eyebrow"><i style="background:var(--emp)">?</i>Dúvidas</span>
+        <h2 class="h-sec" id="duvidas-h">Perguntas sobre a internet para empresa</h2>
+        <p class="lede">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p>
+        <div class="botoes"><a class="bt bt--linha" data-zap="Olá! Tenho uma dúvida sobre a internet fibra para empresa." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></div>
+      </div>
+      <div class="faq" data-sobe>
+        <div class="faq__item"><h3>MEI pode contratar?</h3><p>Pode. O MEI tem CNPJ e contrata os mesmos planos, com os mesmos preços.</p></div>
+        <div class="faq__item"><h3>A internet pode ser instalada em outro endereço?</h3><p>Pode. A instalação não precisa ser no endereço do cadastro do CNPJ. Cada CNPJ pode ter até 2 contratos, inclusive matriz e filial.</p></div>
+        <div class="faq__item"><h3>A VPN e os sistemas da empresa funcionam?</h3><p>Sim. Os planos usam IP dinâmico, e a VPN funciona normalmente: é só seguir as orientações da sua área de TI.</p></div>
+        <div class="faq__item"><h3>A internet tem limite de dados?</h3><p>Não. Os planos não têm franquia: a empresa usa à vontade.</p></div>
+        <div class="faq__item"><h3>Os planos para empresa têm streaming?</h3><p>Não. No lugar do streaming vêm ferramentas para o negócio, que mudam conforme o plano.</p></div>
+        <div class="faq__item"><h3>Quais as formas de pagamento?</h3><p>Débito em conta, com os preços que aparecem no site, nos bancos Banco do Brasil, Bradesco, C6 Bank, Inter, Itaú, Nubank e Santander. No boleto ou no PIX, a mensalidade fica R$ 10 mais cara.</p></div>
+        <div class="faq__item"><h3>Tem fidelidade?</h3><p>Sim. Os planos no CNPJ têm fidelidade de 24 meses.</p></div>
+        <div class="faq__item"><h3>E se a fibra não chegar na minha empresa?</h3><p>Existe o <a href="/internet/wttx">WTTx</a>, a internet sem fio pela rede 4G para CNPJ. Chame no WhatsApp e a gente consulta a cobertura.</p></div>
+        <div class="faq__item"><h3>Quando recebo o Cashback?</h3><p>Em até 7 dias depois que o contrato é concluído, via PIX na sua conta bancária. É pago uma vez: 50% de uma mensalidade do plano.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy fim-sec" aria-labelledby="fim-h">
+    <div class="cx">
+      <div class="fim" data-sobe>
+        <div class="fim__obj" aria-hidden="true"><div class="obj"><img src="/img/3d-g/predio.webp" alt="" width="720" height="720"></div></div>
+        <div class="fim__txt">
+          <h2 id="fim-h">Qual plano serve para a sua empresa?</h2>
+          <p>Conte quantas pessoas e quais sistemas você usa. A gente indica o plano certo pelo WhatsApp, a qualquer hora.</p>
+          <div class="botoes"><a class="bt bt--ouro" data-zap="Olá! Quero ajuda para escolher a internet da minha empresa." href="https://wa.me/5541995701636">Pedir ajuda no WhatsApp<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha-claro" href="#planos-empresa">Ver os planos</a></div>
         </div>
       </div>
     </div>

@@ -495,7 +495,13 @@
   }
   const precosNet = () => Object.fromEntries([...casa(), ...emp()].map((p) => [p.id, p.opcoes[opIdx(p)].preco]));
   function desenhaNet(anim, antigos) {
-    if (!net) { blocoEmp(); return; }
+    if (!net) { // página sem os planos de casa
+      blocoEmp();
+      $$('[data-uf-nome]').forEach((n) => (n.textContent = DY.UFS[DY.uf]));
+      $$('[data-uf-sel]').forEach((s) => (s.value = DY.uf));
+      if (anim) { contar(document, antigos || {}); if (temGsap && emp_) gsap.fromTo([...$$('.pc', emp_), $('[data-emp-dest]')].filter(Boolean), { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .5, stagger: .05, ease: 'power3.out', clearProps: 'transform,opacity,visibility' }); }
+      return;
+    }
     const todos = casa();
     const destaque = ofertaCasa(todos);
     const lista = todos.filter((p) => p !== destaque && p.id !== '2000');

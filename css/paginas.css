@@ -417,3 +417,15 @@ main > section.fim-sec { padding-top: 24px; }
 }
 @media (max-width: 619px) { .atalhos2--net { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
 @media (min-width: 620px) { .atalhos2--net { margin-top: 40px; } }
+
+/* ---------- /internet/empresa: as peças de internet no azul-acinzentado ---------- */
+.pg-emp { --net: #2c4a66; --net-ink: #2c4a66; --net-a: #eef1f5; --net-b: #cdd9e5; --net-noite: #15232f; }
+.pg-emp .jornada--net .jo__p.is-feito::before { background: rgb(44 74 102 / .4); }
+.pg-emp .jornada--net .jo__cena--2 { --jo-g: radial-gradient(130% 120% at 100% 0%, #a7b9cd, #cfdae6 45%, #eef2f6); }
+.pg-emp .jornada--net { background: #f3f6f9; }
+.pg-emp .fim { background: radial-gradient(60% 90% at 0% 0%, #44698f 0%, transparent 70%), linear-gradient(160deg, #2c4a66 0%, #15232f 100%); }
+.pg-emp .faq a { color: var(--wtx); font-weight: 600; }
+.emp-uf { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; font-size: 15px; color: var(--cinza); }
+.emp-uf { white-space: nowrap; }
+@media (max-width: 619px) { .emp-uf .regiao__sel { flex: none; width: auto; } }
+@media (max-width: 619px) { .mil__info li { min-width: 0; padding-inline: 9px; } .mil__info li b { font-size: 12.5px; letter-spacing: -.02em; } }
