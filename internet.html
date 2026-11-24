@@ -45,7 +45,7 @@
 <script src="/js/config.js"></script>
 </head>
 <body>
-<!-- Do Yourself v2 · Internet fibra (/internet): por enquanto só o topo; as próximas seções entram depois -->
+<!-- Do Yourself v2 · Internet fibra (/internet): página geral (casa, empresa e WTTx) -->
 <!--#menu-->
 <header class="nav">
   <div class="wrap nav__bar">
@@ -93,19 +93,226 @@
 <!--/menu-->
 
 <main id="top">
-  <section class="topo topo--pg topo--so topo--net" aria-labelledby="hero-h" data-bar-hero>
+  <section class="topo topo--pg topo--net" aria-labelledby="hero-h" data-bar-hero>
     <div class="topo__painel">
       <div class="cx topo__grid">
         <div class="topo__txt">
-          <span class="etq etq--net">Internet fibra</span>
-          <h1 id="hero-h">Internet fibra para <em>casa e empresa</em></h1>
-          <p class="lede">Planos para CPF e CNPJ com a fibra até dentro do imóvel, instalação grátis e Cashback no PIX. Onde a fibra ainda não chega, tem o WTTx.</p>
-          <div class="botoes"><a class="bt bt--net" href="/internet/casa">Planos para casa<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" href="/internet/empresa">Planos para empresa</a></div>
+          <span class="etq etq--net">Internet</span>
+          <h1 id="hero-h">A internet certa para a sua <em>casa ou empresa</em></h1>
+          <p class="lede">Fibra no CPF ou no CNPJ, e internet sem fio 4G para a empresa onde a fibra não chega. Em todas, metade de uma mensalidade volta no PIX.</p>
+          <ul class="hx-l" aria-label="Escolha a sua internet">
+            <li><a href="/internet/casa">Casa<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg></a></li>
+            <li><a href="/internet/empresa">Empresa<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg></a></li>
+            <li><a href="/internet/wttx">WTTx<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg></a></li>
+          </ul>
         </div>
         <div class="topo__cena hx" aria-hidden="true">
           <span class="hx__luz"></span>
           <div class="obj obj--x"><img src="/img/3d-g/wifi.webp" alt="" width="720" height="720"></div>
-          <span class="tag tag--a"><i></i><span>Instalação grátis<small>em até 48 horas</small></span></span><span class="tag tag--b"><i></i><span>Cashback no PIX<small>50% de uma mensalidade</small></span></span>
+          <span class="tag tag--a"><i></i><span>Instalação grátis<small>em até 48 horas, na fibra</small></span></span><span class="tag tag--b"><i></i><span>Cashback no PIX<small>50% de uma mensalidade</small></span></span>
+        </div>
+      </div>
+    </div>
+    <div class="cx topo__cep" id="cep-topo" data-bar-lead>
+      <form class="cep" data-cep="internet" novalidate>
+        <p class="cep__t">Veja o que chega no seu endereço</p>
+        <div class="cep__modo" data-modo="cep">
+          <div class="cep__linha">
+            <label class="cep__f cep__f--cep"><span>CEP</span><input name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-label="CEP"><i class="cep__ok" aria-hidden="true"></i></label>
+            <div class="cep__f cep__f--num"><span>Número</span><input name="numero" inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 120" aria-label="Número do imóvel"><label class="cep__sn"><input type="checkbox" data-sn><i aria-hidden="true"></i>Sem número</label></div>
+          </div>
+          <p class="cep__end" aria-live="polite" hidden></p>
+        </div>
+        <div class="cep__modo" data-modo="rua" hidden>
+          <div class="cep__linha">
+            <label class="cep__f cep__f--uf"><span>Estado</span><select data-uf aria-label="Estado"></select></label>
+            <label class="cep__f cep__f--cid"><span>Cidade</span><input data-cidade list="cidades-topo" autocomplete="address-level2" placeholder="Ex.: Curitiba" aria-label="Cidade"></label>
+            <datalist id="cidades-topo"></datalist>
+          </div>
+          <div class="cep__linha">
+            <div class="cep__f cep__f--rua"><span>Rua</span><input data-rua role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug-topo" autocomplete="off" placeholder="Ex.: Rua das Palmeiras" aria-label="Nome da rua"><ul class="cep__sug" id="sug-topo" role="listbox" hidden></ul></div>
+            <div class="cep__f cep__f--num"><span>Número</span><input data-num-rua inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 120" aria-label="Número do imóvel"><label class="cep__sn"><input type="checkbox" data-sn><i aria-hidden="true"></i>Sem número</label></div>
+          </div>
+          <button type="button" data-buscar hidden></button>
+          <ul class="cep__res"></ul>
+        </div>
+        <p class="cep__erro" role="status" aria-live="polite"></p>
+        <div class="cep__acoes">
+          <button class="cep__nao" type="button" aria-expanded="false">Não sei meu CEP</button>
+          <button class="cep__btn" type="submit">Ver ofertas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        </div>
+        <div class="cep__zap"><span>Prefiro falar com um atendente</span><a class="cep__zapbt" data-zap="Olá! Vim pelo site da Do Yourself e quero falar com um atendente." href="https://wa.me/5541995701636"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.3-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.5-.6-2.7-1.2-4.4-3.9-4.6-4.1-.1-.2-1.1-1.4-1.1-2.7s.7-1.9.9-2.2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.1 1.4 1.8 1 .9 1.8 1.2 2.1 1.3.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.1.1.6-.1 1.2z"/></svg>Conversar no WhatsApp</a></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="dy tri-sec" id="escolha" aria-labelledby="tri-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><h2 class="h-sec h-sec--m" id="tri-h">Qual internet é para você?</h2><p>Escolha uma para ver os planos e todos os detalhes.</p></div></div>
+      <div class="tri" data-sobe>
+        <a class="tri__c tri__c--casa" href="/internet/casa">
+          <span class="tri__quem">CPF</span>
+          <span class="tri__obj" aria-hidden="true"><img src="/img/3d-g/casa.webp" alt="" width="720" height="720" loading="lazy"></span>
+          <h3>Internet para casa</h3>
+          <p class="tri__txt">Fibra até dentro de casa, para a família toda usar ao mesmo tempo.</p>
+          <ul class="checks"><li><span>Sem franquia de dados</span></li><li><span>Streaming em alguns planos</span></li><li><span>Modem Wi-Fi sem custo</span></li></ul>
+          <p class="tri__preco"><small>A partir de</small><b data-int-min="casa">R$ 89,99</b><small>/mês</small></p>
+          <p class="tri__cb"><b>Cashback</b> a partir de <b data-int-cb="casa">R$ 44,99</b></p>
+          <span class="bt bt--net">Ver planos para casa<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+        </a>
+        <a class="tri__c tri__c--empresa" href="/internet/empresa">
+          <span class="tri__quem">CNPJ</span>
+          <span class="tri__obj" aria-hidden="true"><img src="/img/3d-g/predio.webp" alt="" width="720" height="720" loading="lazy"></span>
+          <h3>Internet para empresa</h3>
+          <p class="tri__txt">Fibra para vender, atender e trabalhar conectado.</p>
+          <ul class="checks"><li><span>Sem franquia de dados</span></li><li><span>Instalação grátis em até 48 horas</span></li><li><span>Modem Wi-Fi sem custo</span></li></ul>
+          <p class="tri__preco"><small>A partir de</small><b data-int-min="empresa">R$ 89,99</b><small>/mês</small></p>
+          <p class="tri__cb"><b>Cashback</b> a partir de <b data-int-cb="empresa">R$ 44,99</b></p>
+          <span class="bt bt--emp">Ver planos para empresa<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+        </a>
+        <a class="tri__c tri__c--wttx" href="/internet/wttx">
+          <span class="tri__quem">Só CNPJ</span>
+          <span class="tri__obj" aria-hidden="true"><img src="/img/3d-g/torre.webp" alt="" width="720" height="720" loading="lazy"></span>
+          <h3>WTTx</h3>
+          <p class="tri__txt">Internet sem fio pela rede 4G, onde a fibra não chega.</p>
+          <ul class="checks"><li><span>Sem cabo, obra ou técnico</span></li><li><span>Modem com chip incluso</span></li><li><span>7 dias para testar a cobertura</span></li></ul>
+          <p class="tri__preco"><small>A partir de</small><b data-int-min="wttx">R$ 49,99</b><small>/mês</small></p>
+          <p class="tri__cb"><b>Cashback</b> a partir de <b data-int-cb="wttx">R$ 24,99</b></p>
+          <span class="bt bt--wtx">Conhecer o WTTx<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy duo-sec" id="diferenca" aria-labelledby="dif-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><h2 class="h-sec h-sec--m" id="dif-h">Fibra ou WTTx: qual é a diferença?</h2><p>Se a fibra chega no seu endereço, ela é mais rápida e não tem franquia. Se não chega, o WTTx conecta a sua empresa.</p></div></div>
+      <div class="duo" data-sobe>
+        <article class="duo__c duo__c--6">
+          <div class="duo__obj" aria-hidden="true"><img src="/img/3d-g/modem6.webp" alt="" loading="lazy"></div>
+          <h3 class="duo__g">Fibra</h3><p class="duo__p">Para casa (CPF) e empresa (CNPJ)</p>
+          <dl class="duo__l"><div><dt>Chega por</dt><dd>Cabo de fibra, até dentro do imóvel</dd></div><div><dt>Velocidade</dt><dd>De <span data-int-vel>500</span> a 1.000 Mega, conforme o plano</dd></div><div><dt>Franquia</dt><dd>Não tem: use à vontade</dd></div><div><dt>Instalação</dt><dd>Técnico grátis, em até 48 horas</dd></div><div><dt>Ideal para</dt><dd>Vídeos, jogos, trabalho e muitos aparelhos</dd></div></dl>
+        </article>
+        <article class="duo__c duo__c--w">
+          <div class="duo__obj" aria-hidden="true"><img src="/img/3d-g/modem.webp" alt="" loading="lazy"></div>
+          <h3 class="duo__g">WTTx</h3><p class="duo__p">Só para empresa (CNPJ)</p>
+          <dl class="duo__l"><div><dt>Chega por</dt><dd>Sinal 4G, sem nenhum cabo</dd></div><div><dt>Velocidade</dt><dd>2 ou 5 Mbps, conforme o plano</dd></div><div><dt>Franquia</dt><dd>De 40 a 500 GB por mês</dd></div><div><dt>Instalação</dt><dd>Não precisa: ligue na tomada</dd></div><div><dt>Ideal para</dt><dd>Maquininhas, notebooks e câmeras onde não há fibra</dd></div></dl>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="jornada jornada--net" id="instalacao" aria-labelledby="como-h" data-jornada>
+    <div class="jo__pista">
+      <div class="jo__fixo">
+        <div class="cx jo__grade">
+          <div class="jo__esq">
+            <span class="etq etq--net">Como contratar</span>
+            <h2 class="jo__h" id="como-h">Da consulta ao Cashback no PIX, em 5 passos</h2>
+            <ol class="jo__passos">
+            <li class="jo__p is-on" data-i="0"><button type="button" aria-controls="jo-palco"><span class="jo__n">1</span><span class="jo__t">Consulte o seu CEP</span></button><p>Digite o CEP e o número do imóvel. O site mostra os planos da sua região.</p></li>
+            <li class="jo__p" data-i="1"><button type="button" aria-controls="jo-palco"><span class="jo__n">2</span><span class="jo__t">Escolha o plano</span></button><p>Para casa no CPF, ou para a empresa no CNPJ.</p></li>
+            <li class="jo__p" data-i="2"><button type="button" aria-controls="jo-palco"><span class="jo__n">3</span><span class="jo__t">Confirme pelo WhatsApp</span></button><p>A gente confere os seus dados numa conversa só. Você confirma a identidade com a biometria, pelo celular.</p></li>
+            <li class="jo__p" data-i="3"><button type="button" aria-controls="jo-palco"><span class="jo__n">4</span><span class="jo__t">Comece a usar</span></button><p>Na fibra, a instalação é grátis, em até 48 horas, e o técnico testa a velocidade na hora. No WTTx não tem técnico: é só ligar o modem na tomada.</p></li>
+            <li class="jo__p" data-i="4"><button type="button" aria-controls="jo-palco"><span class="jo__n">5</span><span class="jo__t">Receba o Cashback no PIX</span></button><p>Com o contrato concluído, metade de uma mensalidade cai no seu PIX em até 7 dias, uma única vez.</p></li>
+            </ol>
+          </div>
+          <div class="jo__palco" id="jo-palco" aria-live="polite">
+            <div class="jo__cena jo__cena--1 is-on" data-c="0">
+              <img class="jo__obj" src="/img/3d-g/pino.webp" alt="">
+              <div class="jo__ui jo__ui--cep">
+                <p class="jo__rot">Veja se a fibra chega no seu endereço</p>
+                <div class="jo__campos"><span><small>CEP</small>80250-000</span><span><small>Número</small>120</span></div>
+                <span class="jo__bt">Ver ofertas →</span>
+                <p class="jo__ok"><i></i>Fibra disponível no seu endereço</p>
+              </div>
+            </div>
+            <div class="jo__cena jo__cena--2" data-c="1">
+              <img class="jo__obj" src="/img/3d-g/controle.webp" alt="">
+              <div class="jo__ui jo__ui--itens">
+                <p class="jo__rot">Monte o seu plano</p>
+                <span class="jo__item is-sel"><i class="net"></i>Internet 1.000 Mega<b>✓</b></span>
+                <span class="jo__item is-sel"><i class="net"></i>NoPing grátis por 6 meses<b>✓</b></span>
+                <span class="jo__item is-sel"><i class="net"></i>Débito em conta<b>✓</b></span>
+                <p class="jo__ok"><i></i>R$ 99,99 por mês</p>
+              </div>
+            </div>
+            <div class="jo__cena jo__cena--3" data-c="2">
+              <img class="jo__obj" src="/img/3d-g/conversa.webp" alt="">
+              <div class="jo__ui jo__ui--chat">
+                <p class="jo__rot"><i class="jo__dot"></i>Do Yourself <small>online agora</small></p>
+                <span class="jo__msg jo__msg--eu">Oi! Quero o 1.000 Mega com NoPing.</span>
+                <span class="jo__msg">Perfeito! Confere os seus dados e faz a biometria pelo link que te mandei.</span>
+                <span class="jo__msg jo__msg--eu">Feito ✅</span>
+              </div>
+            </div>
+            <div class="jo__cena jo__cena--4" data-c="3">
+              <img class="jo__obj" src="/img/3d-g/instalacao.webp" alt="">
+              <div class="jo__ui jo__ui--agenda">
+                <p class="jo__rot">Escolha o melhor horário</p>
+                <div class="jo__dias"><span><small>Qua</small>19</span><span class="is-sel"><small>Qui</small>20</span><span><small>Sex</small>21</span></div>
+                <div class="jo__horas"><span class="is-sel">Manhã</span><span>Tarde</span></div>
+                <p class="jo__ok"><i></i>Velocidade testada na instalação</p>
+              </div>
+            </div>
+            <div class="jo__cena jo__cena--5" data-c="4">
+              <img class="jo__obj" src="/img/3d-g/cashback.webp" alt="">
+              <div class="jo__ui jo__ui--pix">
+                <p class="jo__rot">Notificação do banco</p>
+                <div class="jo__notif"><span class="jo__pix">PIX</span><div><b>PIX recebido</b><small>Cashback Do Yourself</small></div><strong>R$ 49,99</strong></div>
+                <p class="jo__ok"><i></i>Em até 7 dias depois do contrato</p>
+              </div>
+            </div>
+            <span class="jo__selo" data-jo-selo>Passo 1 de 5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy atalhos-sec" aria-labelledby="mais-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><h2 class="h-sec h-sec--m" id="mais-h">Saiba mais sobre internet</h2></div></div>
+      <nav class="atalhos2 atalhos2--net" aria-labelledby="mais-h" data-sobe>
+        <a class="ata ata--net" href="/internet/wi-fi"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/wifi.webp" alt="" loading="lazy"></span><span class="ata__tx"><b>Wi-Fi 5, 6 e 7</b><small>Qual é a diferença</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--net" href="/internet/gamer"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/controle.webp" alt="" loading="lazy"></span><span class="ata__tx"><b>Internet gamer</b><small>Menos atraso nos jogos</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--net" href="/internet/home-office"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/predio.webp" alt="" loading="lazy"></span><span class="ata__tx"><b>Home office</b><small>Estável para trabalhar</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--net" href="/internet/streaming"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/tv.webp" alt="" loading="lazy"></span><span class="ata__tx"><b>Streaming</b><small>Planos com aplicativos</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--net" href="/aplicativos"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/celular.webp" alt="" loading="lazy"></span><span class="ata__tx"><b>Aplicativos</b><small>O que vem em cada plano</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--marca" href="/ajuda/biometria"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/escudo.webp" alt="" loading="lazy"></span><span class="ata__tx"><b>Biometria</b><small>Como fazer pelo celular</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--marca" href="/ajuda/internet"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/info.webp" alt="" loading="lazy"></span><span class="ata__tx"><b>Ajuda com a internet</b><small>Modem, Wi-Fi e velocidade</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+        <a class="ata ata--marca" href="/ajuda/suporte"><span class="ata__painel" aria-hidden="true"><img src="/img/3d-g/conversa.webp" alt="" loading="lazy"></span><span class="ata__tx"><b>Suporte 24 horas</b><small>Pelo WhatsApp</small></span><span class="ata__seta" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a>
+      </nav>
+    </div>
+  </section>
+
+  <section class="dy" id="duvidas" aria-labelledby="duvidas-h">
+    <div class="cx duv">
+      <div data-sobe>
+        <span class="eyebrow"><i style="background:var(--net)">?</i>Dúvidas</span>
+        <h2 class="h-sec" id="duvidas-h">Perguntas sobre internet</h2>
+        <p class="lede">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p>
+        <div class="botoes"><a class="bt bt--linha" data-zap="Olá! Tenho uma dúvida sobre internet." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></div>
+      </div>
+      <div class="faq" data-sobe>
+        <div class="faq__item"><h3>Como sei se a fibra chega no meu endereço?</h3><p>Consulte o CEP e o número no alto desta página. A nossa equipe confirma a disponibilidade pelo WhatsApp.</p></div>
+        <div class="faq__item"><h3>E se a fibra não chegar?</h3><p>Para empresas, existe o WTTx, a internet sem fio pela rede 4G. Chame no WhatsApp e a gente consulta a cobertura.</p></div>
+        <div class="faq__item"><h3>Posso contratar o WTTx no CPF?</h3><p>Não. O WTTx é só para CNPJ. No CPF, temos os planos de fibra.</p></div>
+        <div class="faq__item"><h3>Qual é a diferença entre franquia e velocidade?</h3><p>Franquia é quanto você pode usar no mês. Velocidade é a rapidez da navegação. A fibra não tem franquia. O WTTx tem de 40 a 500 GB por mês.</p></div>
+        <div class="faq__item"><h3>Preciso pagar pela instalação ou pelo modem?</h3><p>Não. Na fibra, a instalação é grátis e o modem vem em comodato. No WTTx, o modem com chip já vem no plano. Se cancelar, você devolve o modem.</p></div>
+        <div class="faq__item"><h3>Quando recebo o Cashback?</h3><p>Em até 7 dias depois que o contrato é concluído, via PIX na sua conta bancária. É pago uma vez: 50% de uma mensalidade, na fibra ou no WTTx.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy fim-sec" aria-labelledby="fim-h">
+    <div class="cx">
+      <div class="fim" data-sobe>
+        <div class="fim__obj" aria-hidden="true"><div class="obj"><img src="/img/3d-g/conversa.webp" alt="" width="720" height="720"></div></div>
+        <div class="fim__txt">
+          <h2 id="fim-h">Ainda não sabe qual escolher?</h2>
+          <p>Conte onde e como você usa a internet. A gente indica o plano certo pelo WhatsApp, a qualquer hora.</p>
+          <div class="botoes"><a class="bt bt--ouro" data-zap="Olá! Quero ajuda para escolher a minha internet." href="https://wa.me/5541995701636">Pedir ajuda no WhatsApp<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha-claro" href="#escolha">Ver as opções</a></div>
         </div>
       </div>
     </div>

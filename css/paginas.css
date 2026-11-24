@@ -376,3 +376,44 @@ main > section.fim-sec { padding-top: 24px; }
   .hx .tag--a { top: 6%; } .hx .tag--b { bottom: 4%; }
 }
 .nw { white-space: nowrap; }
+
+/* ---------- /internet: escolha entre casa, empresa e WTTx ---------- */
+.tri { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; }
+.tri__c { --c: var(--net); --f: var(--net-b); position: relative; display: flex; flex-direction: column; padding: 28px; border-radius: var(--raio-g); border: 1px solid #e1e9f2; color: var(--tinta); text-decoration: none; background: radial-gradient(90% 50% at 100% 0%, var(--f) 0%, transparent 75%), #fff; transition: transform .3s, box-shadow .3s, border-color .3s; }
+.tri__c--empresa { --c: var(--emp); --f: #cdd9e5; }
+.tri__c--wttx { --c: var(--wtx); --f: #d3d8f7; }
+.tri__c:hover { transform: translateY(-6px); border-color: var(--c); box-shadow: 0 40px 60px -44px rgb(15 34 56 / .5); }
+.tri__c:focus-visible { outline: 3px solid var(--c); outline-offset: 3px; }
+.tri__quem { position: absolute; left: 24px; top: 24px; padding: 7px 14px; border-radius: 999px; background: var(--c); color: #fff; font-size: 13px; font-weight: 700; }
+.tri__obj { display: grid; place-items: center; height: 190px; margin-bottom: 12px; }
+.tri__obj img { width: auto; height: 190px; object-fit: contain; filter: drop-shadow(0 24px 28px rgb(15 34 56 / .2)); transition: transform .4s; }
+.tri__c:hover .tri__obj img { transform: translateY(-6px) rotate(-2deg); }
+.tri__c h3 { margin: 0; font: 500 28px/1.1 var(--font-display); letter-spacing: -.03em; }
+.tri__txt { margin: 8px 0 0; font-size: 16px; line-height: 1.5; color: var(--cinza); }
+.tri__c .checks { margin: 18px 0 22px; gap: 10px; }
+.tri__preco { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; margin: auto 0 0; }
+.tri__preco small { font-size: 14px; color: var(--cinza); }
+.tri__preco small:first-child { flex-basis: 100%; }
+.tri__preco b { font: 500 38px/1 var(--font-display); letter-spacing: -.035em; color: var(--c); white-space: nowrap; }
+.tri__cb { width: fit-content; margin: 12px 0 20px; padding: 7px 12px; border-radius: 999px; background: #C6F2DD; color: #064A2D; font-size: 13.5px; }
+.tri__cb b { white-space: nowrap; }
+.tri__c .bt { width: 100%; justify-content: center; }
+.duo__c--w { background: radial-gradient(80% 60% at 100% 0%, #d3d8f7 0%, transparent 70%), #fff; }
+.duo__c--w .duo__p { color: var(--wtx-ink); }
+#diferenca .duo__g { font-size: 34px; font-weight: 500; }
+@media (max-width: 1123px) {
+  .tri { grid-template-columns: 1fr; max-width: 720px; margin-inline: auto; }
+  .tri__c { display: grid; grid-template-columns: 200px 1fr; column-gap: 24px; }
+  .tri__c > * { grid-column: 2; }
+  .tri__c > .tri__quem { grid-column: 1 / -1; }
+  .tri__obj { grid-column: 1; grid-row: 1 / 8; align-self: center; }
+}
+@media (max-width: 619px) {
+  .tri { gap: 16px; margin-top: 28px; }
+  .tri__c { display: flex; padding: 22px 20px; border-radius: 26px; }
+  .tri__quem { left: 20px; top: 20px; }
+  .tri__obj { height: 130px; align-self: flex-end; margin-bottom: 4px; } .tri__obj img { height: 130px; }
+  .tri__c h3 { font-size: 25px; }
+}
+@media (max-width: 619px) { .atalhos2--net { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+@media (min-width: 620px) { .atalhos2--net { margin-top: 40px; } }

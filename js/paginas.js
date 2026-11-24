@@ -16,6 +16,14 @@
       const tag = el.closest('.tag'); if (tag) tag.hidden = v === null;
       if (v !== null) el.textContent = DY.brl(DY.cashbackCentavos(Math.round(v * 100), 50));
     });
+    // página geral de internet: "a partir de" de cada serviço no estado escolhido
+    if (document.querySelector('[data-int-min]')) {
+      const fibra = (l) => Math.min(...l.map((x) => x.opcoes[0].preco));
+      const min = { casa: fibra(lista), empresa: fibra(DY.catalogo.empresa[DY.blocoInternet(DY.uf)]), wttx: Math.min(...DY.wttx.map((x) => x.preco)) };
+      document.querySelectorAll('[data-int-min]').forEach((el) => { el.textContent = DY.brl(Math.round(min[el.dataset.intMin] * 100)); });
+      document.querySelectorAll('[data-int-cb]').forEach((el) => { el.textContent = DY.brl(DY.cashbackCentavos(Math.round(min[el.dataset.intCb] * 100), 50)); });
+      document.querySelectorAll('[data-int-vel]').forEach((el) => { el.textContent = Math.min(...lista.map((x) => +x.id)); });
+    }
   };
   precos(); document.addEventListener('dy:planos', precos);
 
