@@ -104,8 +104,8 @@
   DY.salvarPedido = async function (pedido) {
     try { await sb('rpc/registrar_pedido_site', { p_pedido: pedido }); return true; }
     catch (e) {
-      // Modo demonstração: guarda só no navegador para conferência (sem banco configurado)
-      try { localStorage.setItem('dy_ultimo_pedido_demo', JSON.stringify({ ...pedido, cpf: pedido.cpf ? '***' : '', cnpj: pedido.cnpj ? '***' : '' })); } catch (er) { /* sem storage */ }
+      // Modo demonstração: guarda só o número e os produtos, sem nenhum dado pessoal (sem banco configurado)
+      try { localStorage.setItem('dy_ultimo_pedido_demo', JSON.stringify({ id: pedido.id, etapa: pedido.etapa, itens: pedido.itens })); } catch (er) { /* sem storage */ }
       if (window.console) console.info('[Do Yourself] Pedido em modo demonstração (Supabase não configurado):', pedido.id, pedido.etapa);
       return false;
     }

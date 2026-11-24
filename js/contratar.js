@@ -1,1204 +1,452 @@
-/* ============================================================
-   Do Yourself — fluxo de contratação
-   Endereço → Consulta → Seu combo (produto a produto) → Resumo →
-   Contato → Cadastro → Pagamento → Pedido criado (WhatsApp)
-   Regras do Gabriel (out/2026):
-   · origem=internet → Internet primeiro · origem=celular → Celular primeiro
-   · origem=energia → Energia primeiro · home/combo → Internet → Celular → Energia
-   · pelo menos 1 produto para seguir · dados vão para o banco; no WhatsApp só os produtos + nº do pedido
-   ============================================================ */
+/* Do Yourself v2 — fluxo de contratação (/contratar)
+   endereço → consulta → serviços → um produto por vez → resumo → contato → dados → pagamento (só com internet) → pedido
+   Preços e regras: js/config.js. Máscaras, validações e envio do pedido: js/pedido.js.
+   O pedido recomeça se a página for atualizada. Nenhum dado pessoal vai para a URL nem fica salvo no navegador. */
 (function () {
-  const { brl, centavos, cashbackCentavos, img, logos, mascara, validar, so } = DY;
-  const $ = (s, r = document) => r.querySelector(s);
-  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const CHECK = '<svg viewBox="0 0 14 14"><path d="M2 7.5 5.5 11 12 3.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const XIS = '<svg viewBox="0 0 14 14"><path d="M3.5 3.5l7 7m0-7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
-  const reduzir = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const espera = (ms) => new Promise((r) => setTimeout(r, reduzir ? Math.min(ms, 150) : ms));
-
-  /* ---------- Estado ---------- */
-  const q = new URLSearchParams(location.search);
-  const origem = ['internet', 'celular', 'energia', 'combo', 'home'].includes(q.get('origem')) ? q.get('origem') : 'home';
-  const ORDENS = { internet: ['internet', 'celular', 'energia'], celular: ['celular', 'internet', 'energia'], energia: ['energia', 'internet', 'celular'], home: ['internet', 'celular', 'energia'], combo: ['internet', 'celular', 'energia'] };
-  const st = {
-    id: DY.novoIdPedido(), origem,
-    end: { cep: '', logradouro: '', bairro: '', cidade: '', uf: '', numero: '', comp: '' },
-    fibra: 'talvez', ordem: ORDENS[origem].slice(), idx: 0,
-    // undefined = ainda não decidiu · null = pulou · objeto = adicionou
-    esc: { internet: undefined, celular: undefined, energia: undefined },
-    rasc: { internet: null, celular: null, energia: null },   // seleção em andamento na tela do produto
-    // casa/empresa e CPF/CNPJ: o cliente escolhe em cada produto (só vem marcado quando a página de origem já disse)
-    para: { internet: ['casa', 'empresa'].includes(q.get('para')) ? q.get('para') : (origem === 'internet' && q.get('plano') ? 'casa' : ''), celular: ['cpf', 'cnpj'].includes(q.get('para')) ? q.get('para') : '', energia: '' },
-    contato: { nome: '', telefone: '' }, cad: { email: '', cpf: '', cnpj: '', consent: false },
-    pag: { tipo: '', banco: '' },
-    sel: [],   // serviços marcados na tela "Disponível no seu endereço"
-  };
-  // Planos de internet: casa ou empresa (o estado é confirmado pelo CEP na consulta)
-  const PARA0 = { ...st.para };
-  DY.definirPlanos({ tipo: st.para.internet || 'casa' });
-  // Plano vindo do card da Home já chega pré-selecionado
-  if (origem === 'internet' && q.get('plano')) {
-    const p = DY.planosInternet.find((x) => x.id === q.get('plano'));
-    if (p) { const oi = Math.max(0, p.opcoes.findIndex((o) => o.nome === q.get('opcao'))); st.rasc.internet = { id: p.id, op: oi }; }
-  }
-  // Celular: CPF (planos controle) ou CNPJ (empresariais); portabilidade é o padrão (muda o preço no CPF)
-  st.porta = q.get('numero') !== 'novo';
-  if (st.para.celular) DY.definirPlanos({ celular: st.para.celular });
-  // conta de luz digitada no simulador (ou escolhida no combo)
-  if (+q.get('conta') >= DY.energia.minimo) st.rasc.energia = { conta: +q.get('conta') };
-  if (origem === 'celular' && q.get('plano')) {
-    const p = DY.planosCelular.find((x) => x.id === q.get('plano'));
-    if (p) st.rasc.celular = { id: p.id, linhas: Math.max(1, Math.min(99, +q.get('linhas') || 1)) };
-  }
-
-  // Combo montado em /combo: serviços, plano de internet e linhas já chegam marcados
-  const SERV = (q.get('servicos') || '').split(',').filter((x) => ['energia', 'internet', 'celular'].includes(x));
-  if (origem === 'combo' && SERV.length) {
-    const pn = st.para.internet && DY.planosInternet.find((x) => x.id === q.get('plano'));
-    if (pn && SERV.includes('internet')) st.rasc.internet = { id: pn.id, op: 0 };
-    if (SERV.includes('celular')) {
-      st.para.celular = PARA0.celular = 'cnpj'; DY.definirPlanos({ celular: 'cnpj' });
-      const pc = DY.planosCelular.find((x) => x.id === q.get('cel'));
-      if (pc) st.rasc.celular = { id: pc.id, linhas: Math.max(1, Math.min(DY.linhasEspecial, +q.get('linhas') || 1)) };
-    }
-  }
-
-  /* ---------- Pedido em andamento salvo no navegador (sem CPF, CNPJ nem e-mail) ---------- */
-  const CHAVE_ANDAMENTO = 'dy_andamento';
-  // O pedido sempre recomeça ao atualizar a página (nada do combo fica salvo no navegador)
-  const limparAndamento = () => { try { sessionStorage.removeItem(CHAVE_ANDAMENTO); } catch (er) { /* */ } };
-  limparAndamento();
-  const retomar = null;
-  const salvarAndamento = () => {};
-  // Voltar até o endereço também zera o combo
-  function zerarPedido() {
-    Object.assign(st.esc, { internet: undefined, celular: undefined, energia: undefined });
-    Object.assign(st.rasc, { internet: null, celular: null, energia: null });
-    st.pag = { tipo: '', banco: '' }; st.idx = 0; st.editando = false; st.ordem = ORDENS[origem].slice(); st.sel = []; st.para = { ...PARA0 };
-    $$('[data-banco], [data-pag]').forEach((x) => x.setAttribute('aria-checked', 'false'));
-  }
-
-  /* ---------- Navegação entre telas (com o botão Voltar do celular funcionando) ---------- */
-  const NOMES = { 1: 'Endereço', 2: 'Seu combo', 3: 'Seus dados', 4: 'Pagamento' };
-  let telaAtual = 'endereco';
-  const gs = !reduzir && window.gsap ? window.gsap : null;
-  if (gs) document.documentElement.classList.add('com-gsap');
-  function entrar(el, voltando) {
-    if (!gs || !el) return;
-    gs.fromTo(el, { x: voltando ? -64 : 64, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: 0.45, ease: 'power3.out', clearProps: 'transform,opacity,visibility' });
-  }
-  function mostrar(nome, { voltando = false, empurrar = true } = {}) {
-    if (nome === 'endereco' && voltando) zerarPedido();
-    fecharResumo(false);
-    $$('.tela').forEach((t) => { t.hidden = t.dataset.tela !== nome; t.classList.toggle('voltando', voltando); });
-    const tela = $(`.tela[data-tela="${nome}"]`);
-    entrar(tela, voltando);
-    telaAtual = nome;
-    $('#fluxo').classList.toggle('largo', nome === 'combo');
-    $('#fluxo').classList.toggle('largo-disp', nome === 'disponivel');
-    document.body.classList.toggle('pg-fim', nome === 'fim');
-    $('[data-progresso]').hidden = nome === 'fim';
-    atualizarProgresso();
-    dock.hidden = ['endereco', 'consulta', 'fim'].includes(nome);
-    document.body.classList.toggle('com-dock', !dock.hidden);
-    atualizarCarrinho();
-    if (nome === 'pagamento') atualizarPagamento();
-    syncDock();
-    if (empurrar) history.pushState({ tela: nome, idx: st.idx }, '', '#' + nome);
-    salvarAndamento();
-    window.scrollTo({ top: 0, behavior: reduzir ? 'auto' : 'smooth' });
-    if (nome === 'resumo' && !matchMedia('(min-width: 768px)').matches) setTimeout(() => { const t = $('#h-resumo'); if (t) rolarPara(t, { modo: 'topo', folga: 18 }); }, 480);
-    const foco = tela.querySelector('[tabindex="-1"]');
-    if (foco) setTimeout(() => foco.focus({ preventScroll: true }), 60);
-  }
-  function atualizarProgresso() {
-    const tela = $(`.tela[data-tela="${telaAtual}"]`);
-    const etapa = +tela.dataset.etapa || 4;
-    let parcial = 50;
-    if (telaAtual === 'endereco') parcial = 40; if (telaAtual === 'consulta') parcial = 85;
-    if (telaAtual === 'disponivel') parcial = 10;
-    if (telaAtual === 'combo') parcial = 20 + (st.idx / st.ordem.length) * 60; if (telaAtual === 'resumo') parcial = 90;
-    if (telaAtual === 'contato') parcial = 45; if (telaAtual === 'cadastro') parcial = 85;
-    if (telaAtual === 'pagamento') parcial = st.pag.tipo ? 85 : 45;
-    $$('.progresso__barras li').forEach((li) => {
-      const n = +li.dataset.etapa;
-      li.classList.toggle('feita', n < etapa); li.classList.toggle('atual', n === etapa);
-      li.style.setProperty('--parcial', parcial + '%');
-    });
-    $('[data-progresso-nome]').textContent = NOMES[etapa];
-    $('[data-progresso-num]').textContent = etapa + ' de 4';
-  }
-  window.addEventListener('popstate', (e) => {
-    const s = e.state;
-    if (!s) return mostrar('endereco', { voltando: true, empurrar: false });
-    if (s.tela === 'consulta') { history.back(); return; } // não repete a animação de consulta
-    if (s.tela === 'fim' || telaAtual === 'fim') { history.forward(); return; }
-    if (s.tela === 'combo') { st.idx = s.idx || 0; renderProduto(true); }
-    mostrar(s.tela, { voltando: true, empurrar: false });
-  });
-  document.addEventListener('click', (e) => { if (e.target.closest('[data-voltar]')) history.back(); });
-  const abrirBusca = location.hash === '#buscar-cep';
-  history.replaceState({ tela: 'endereco' }, '', location.pathname + location.search);
-
-  /* ---------- Helpers de campo ---------- */
-  function marcar(grupo, erro, mostrarErro = true) {
-    const g = typeof grupo === 'string' ? $(`[data-grupo="${grupo}"]`) : grupo;
-    const c = g.querySelector('.campo'); const ico = c.querySelector('.campo__ico'); const msg = g.querySelector('.campo__msg:not(.dica)');
-    c.classList.toggle('valido', !erro);
-    c.classList.toggle('invalido', !!erro && mostrarErro);
-    ico.innerHTML = erro ? XIS : CHECK;
-    if (msg) msg.textContent = erro && mostrarErro ? erro : '';
-    const input = c.querySelector('input,select'); if (input) input.setAttribute('aria-invalid', !!erro && mostrarErro);
-    return !erro;
-  }
-  function limpar(grupo) {
-    const g = typeof grupo === 'string' ? $(`[data-grupo="${grupo}"]`) : grupo;
-    const c = g.querySelector('.campo'); c.classList.remove('valido', 'invalido');
-    const msg = g.querySelector('.campo__msg:not(.dica)'); if (msg) msg.textContent = '';
-  }
-  // Campo com máscara + validação: mostra erro ao sair do campo; mostra ✓ assim que fica certo
-  // "gabriel DORFMAN da silva" → "Gabriel Dorfman da Silva" (de, da, do, das, dos, e ficam minúsculos)
-  const MINUSC = new Set(['de', 'da', 'do', 'das', 'dos', 'e']);
-  function nomeProprio(v) {
-    let k = 0;
-    return v.replace(/\s{2,}/g, ' ').replace(/^\s+/, '').replace(/[^\s]+/g, (w) => { const l = w.toLocaleLowerCase('pt-BR'); const i = k++; return i > 0 && MINUSC.has(l) ? l : l.charAt(0).toLocaleUpperCase('pt-BR') + l.slice(1); });
-  }
-  function ligarCampo(nome, { masc, val, depois }) {
-    const g = $(`[data-grupo="${nome}"]`); const input = g.querySelector('input');
-    let tocado = false;
-    const rodar = (forcar) => {
-      const erro = val(input.value);
-      if (!erro) marcar(g, '');
-      else if (tocado || forcar) marcar(g, erro);
-      else limpar(g);
-      depois && depois(!erro);
-      return !erro;
-    };
-    input.addEventListener('input', () => { if (masc) { const a = input.selectionStart, n0 = input.value.length; input.value = masc(input.value); const d = input.value.length - n0; try { input.setSelectionRange(a + d, a + d); } catch (er) { /* tipos sem seleção */ } } rodar(false); });
-    input.addEventListener('blur', () => { if (input.value) tocado = true; rodar(false); });
-    g.validarAgora = () => { tocado = true; return rodar(true); };
-    return g;
-  }
-  function revelar(el, abrir) {
-    if (!el.querySelector(':scope > .revela__in')) {
-      const w = document.createElement('div'); w.className = 'revela__in';
-      if (el.classList.contains('form__linha')) { w.classList.add('form__linha'); el.classList.remove('form__linha'); }
-      while (el.firstChild) w.appendChild(el.firstChild);
-      el.appendChild(w);
-    }
-    el.classList.toggle('aberto', abrir);
-    $$('input:not([readonly]),select,button', el).forEach((i) => (abrir ? i.removeAttribute('tabindex') : i.setAttribute('tabindex', '-1')));
-    el.setAttribute('aria-hidden', !abrir);
-  }
-  const toast = (() => { const t = $('[data-toast]'); let h; return (msg) => { t.textContent = msg; t.classList.add('on'); clearTimeout(h); h = setTimeout(() => t.classList.remove('on'), 3200); }; })();
-
-  /* =========================================================
-     1 · ENDEREÇO
-     ========================================================= */
-  const fEnd = $('[data-form="endereco"]');
-  const inCep = $('#f-cep'), inLog = $('#f-logradouro'), inNum = $('#f-numero');
-  const blocoEnd = $('[data-revela-endereco]');
-  const gCep = $('[data-grupo="cep"]');
-  revelar(blocoEnd, false);
-  let cepBuscado = '';
-
-  async function consultarCep() {
-    const cep = so(inCep.value);
-    if (cep.length !== 8) { cepBuscado = ''; revelar(blocoEnd, false); limpar(gCep); checarEnd(); return; }
-    if (cep === cepBuscado) return;
-    cepBuscado = cep;
-    gCep.querySelector('.campo').classList.add('carregando');
-    const r = await DY.buscarCep(cep);
-    gCep.querySelector('.campo').classList.remove('carregando');
-    if (so(inCep.value) !== cep) return;
-    if (!r) { cepBuscado = ''; marcar(gCep, 'Não encontramos esse CEP. Confira os números ou toque em “Não sei o meu CEP”.'); revelar(blocoEnd, false); checarEnd(); return; }
-    marcar(gCep, '');
-    Object.assign(st.end, { cep, ...r });
-    const campoLog = inLog.closest('.campo');
-    if (r.logradouro) {
-      inLog.value = r.logradouro; inLog.readOnly = true; inLog.tabIndex = -1; campoLog.classList.add('travado', 'valido'); campoLog.querySelector('.campo__ico').innerHTML = CHECK;
-      campoLog.querySelector('label').textContent = 'Endereço';
-    } else { // CEP geral da cidade: a pessoa digita a rua
-      inLog.value = ''; inLog.readOnly = false; inLog.removeAttribute('tabindex'); campoLog.classList.remove('travado', 'valido');
-      campoLog.querySelector('label').textContent = 'Rua ou avenida';
-    }
-    $('[data-bairro]').textContent = [r.bairro, r.cidade && `${r.cidade}/${r.uf}`].filter(Boolean).join(' · ');
-    revelar(blocoEnd, true); avisoFaixa.hidden = true; if (inNum.value) agendarFaixa();
-    setTimeout(() => (r.logradouro ? inNum : inLog).focus(), 260);
-    checarEnd();
-  }
-  inCep.addEventListener('input', () => { inCep.value = mascara.cep(inCep.value); gCep.querySelector('.campo').classList.remove('invalido'); gCep.querySelector('.campo__msg').textContent = ''; consultarCep(); });
-  // espera um instante: se a pessoa tocou em "Não sei o meu CEP", o aviso não aparece (e o botão não pula de lugar)
-  inCep.addEventListener('blur', () => setTimeout(() => { if (gCep.hidden || !busca.hidden) return; if (inCep.value && so(inCep.value).length < 8) marcar(gCep, validar.cep(inCep.value)); }, 250));
-  inLog.addEventListener('input', () => { const c = inLog.closest('.campo'); const ok = inLog.value.trim().length >= 3; c.classList.toggle('valido', ok); c.querySelector('.campo__ico').innerHTML = CHECK; checarEnd(); });
-
-  ligarCampo('numero', { masc: (v) => v.replace(/[^\dsSnN/]/g, '').toUpperCase().slice(0, 6), val: validar.numero, depois: () => { checarEnd(); agendarFaixa(); } });
-  /* Número fora da faixa do CEP (ruas com mais de um CEP): avisa e oferece o CEP certo */
-  const avisoFaixa = $('[data-aviso-faixa]'); const cacheRua = {}; let tFaixa;
-  function agendarFaixa() { clearTimeout(tFaixa); avisoFaixa.hidden = true; tFaixa = setTimeout(checarFaixa, 600); }
-  async function checarFaixa() {
-    const n = parseInt(so(inNum.value), 10); const e = st.end;
-    if (!n || !e.uf || !e.cidade || !inLog.readOnly || !inLog.value) return;
-    const chave = [e.uf, e.cidade, inLog.value].join('|');
-    try {
-      if (!cacheRua[chave]) cacheRua[chave] = await (await fetch(`https://viacep.com.br/ws/${e.uf}/${encodeURIComponent(e.cidade)}/${encodeURIComponent(tirarTipo(inLog.value))}/json/`)).json();
-    } catch (er) { return; }
-    const lista = (Array.isArray(cacheRua[chave]) ? cacheRua[chave] : []).filter((d) => semAcento(d.logradouro) === semAcento(inLog.value));
-    if (lista.length < 2 || so(inNum.value) !== String(n)) return;
-    const atual = lista.find((d) => so(d.cep) === so(inCep.value));
-    if (!atual || faixaInclui(atual.complemento, n) !== false) return;
-    const certo = lista.find((d) => faixaInclui(d.complemento, n) === true); if (!certo) return;
-    avisoFaixa.innerHTML = `<span>O número <b>${n}</b> fica em outro CEP dessa rua: <b>${certo.cep}</b> (${certo.bairro}).</span><button type="button" class="ct-link" data-usar-cep="${so(certo.cep)}">Usar este CEP</button>`;
-    avisoFaixa.hidden = false;
-  }
-  avisoFaixa.addEventListener('click', (ev) => {
-    const b = ev.target.closest('[data-usar-cep]'); if (!b) return;
-    const num = inNum.value; avisoFaixa.hidden = true;
-    inCep.value = mascara.cep(b.dataset.usarCep);
-    consultarCep().then(() => { inNum.value = num; inNum.dispatchEvent(new Event('input', { bubbles: true })); checarEnd(); });
-  });
-  $('#f-comp').addEventListener('input', () => { const c = $('#f-comp').closest('.campo'); const ok = !!$('#f-comp').value.trim(); c.classList.toggle('valido', ok); c.querySelector('.campo__ico').innerHTML = CHECK; });
-  function endOk() {
-    return so(inCep.value).length === 8 && cepBuscado && inLog.value.trim().length >= 3 && !validar.numero(inNum.value);
-  }
-  function checarEnd() { fEnd.querySelector('[data-continuar]').disabled = !endOk(); }
-  fEnd.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (!endOk()) return;
-    Object.assign(st.end, { logradouro: inLog.value.trim(), numero: inNum.value.trim(), comp: $('#f-comp').value.trim() });
-    try { sessionStorage.setItem('dy_endereco', JSON.stringify({ cep: st.end.cep, numero: st.end.numero, logradouro: st.end.logradouro, bairro: st.end.bairro, cidade: st.end.cidade, uf: st.end.uf })); } catch (er) { /* modo privado */ }
-    rodarConsulta();
-  });
-  // Ativa o botão mesmo sem precisar sair do campo
-  fEnd.addEventListener('input', checarEnd);
-
-  /* Não sei o meu CEP */
-  const UFS = [['AC', 'Acre'], ['AL', 'Alagoas'], ['AP', 'Amapá'], ['AM', 'Amazonas'], ['BA', 'Bahia'], ['CE', 'Ceará'], ['DF', 'Distrito Federal'], ['ES', 'Espírito Santo'], ['GO', 'Goiás'], ['MA', 'Maranhão'], ['MT', 'Mato Grosso'], ['MS', 'Mato Grosso do Sul'], ['MG', 'Minas Gerais'], ['PA', 'Pará'], ['PB', 'Paraíba'], ['PR', 'Paraná'], ['PE', 'Pernambuco'], ['PI', 'Piauí'], ['RJ', 'Rio de Janeiro'], ['RN', 'Rio Grande do Norte'], ['RS', 'Rio Grande do Sul'], ['RO', 'Rondônia'], ['RR', 'Roraima'], ['SC', 'Santa Catarina'], ['SP', 'São Paulo'], ['SE', 'Sergipe'], ['TO', 'Tocantins']];
-  const busca = $('[data-busca-cep]'), selUf = $('#f-uf'), inCid = $('#f-cidade'), inRua = $('#f-rua'), sug = $('[data-sugestoes]');
-  selUf.innerHTML = '<option value="" disabled selected hidden></option>' + UFS.map(([s, n]) => `<option value="${s}">${n}</option>`).join('');
-  const inRuaNum = $('#f-rua-num');
-  const btnNaoSei = $('[data-nao-sei-cep]');
-  function abrirBuscaCep(abrir) {
-    busca.hidden = !abrir;
-    // com a busca aberta, o campo de CEP some (e é limpo) para não misturar as duas formas
-    gCep.hidden = abrir;
-    if (abrir) { inCep.value = ''; cepBuscado = ''; limpar(gCep); revelar(blocoEnd, false); checarEnd(); }
-    btnNaoSei.textContent = abrir ? 'Fechar a busca e digitar o CEP' : 'Não sei o meu CEP';
-    if (abrir) selUf.focus(); else inCep.focus();
-  }
-  btnNaoSei.addEventListener('click', () => abrirBuscaCep(busca.hidden));
-  selUf.addEventListener('change', async () => {
-    selUf.closest('.campo').classList.add('valido'); selUf.closest('.campo').querySelector('.campo__ico').innerHTML = CHECK;
-    inCid.disabled = false; inCid.value = ''; inRua.disabled = true; inRua.value = ''; inRuaNum.disabled = true; inRuaNum.value = ''; sug.innerHTML = ''; ruaEscolhida = null; ultimaLista = [];
-    inCid.focus();
-    try {
-      const r = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selUf.value}/municipios?orderBy=nome`);
-      $('#l-cidades').innerHTML = (await r.json()).map((c) => `<option value="${c.nome}">`).join('');
-    } catch (er) { /* sem lista, o campo continua livre */ }
-  });
-  inCid.addEventListener('input', () => { const ok = inCid.value.trim().length >= 3; inRua.disabled = !ok; inRuaNum.disabled = !ok; inCid.closest('.campo').classList.toggle('valido', ok); inCid.closest('.campo').querySelector('.campo__ico').innerHTML = CHECK; });
-
-  // "Rua Paulo Setúbal, 315" ou "Rua Paulo Setúbal 315": o número vai para o campo Número
-  function separarNumero() {
-    const m = inRua.value.match(/^(.*?\D)[\s,]+(?:n[º°o.]?\s*)?(\d{1,6})\s*$/i);
-    if (m && m[1].trim().length >= 3) { inRua.value = m[1].replace(/[\s,]+$/, ''); inRuaNum.value = m[2]; }
-  }
-  const tirarTipo = (r) => r.replace(/^(rua|r\.|avenida|av\.?|travessa|tv\.?|alameda|al\.?|rodovia|rod\.?|estrada|praça|pça\.?)\s+/i, '').trim();
-  // Faixas do Correios: "até 1239/1240", "de 1241/1242 a 3519/3520", "de 3521/3522 ao fim", "lado par/ímpar"
-  function faixaInclui(comp, n) {
-    const c = String(comp || '').toLowerCase().trim();
-    if (!/^(até|de |lado)/.test(c)) return null; // sem faixa (rua de CEP único)
-    const par = /lado par/.test(c), impar = /lado ímpar|lado impar/.test(c);
-    if ((par && n % 2) || (impar && !(n % 2))) return false;
-    let m;
-    if ((m = c.match(/^até\s+(\d+)(?:\/(\d+))?/))) return n <= +(m[2] || m[1]);
-    if ((m = c.match(/^de\s+(\d+)(?:\/\d+)?\s+(?:a|à)\s+(\d+)(?:\/(\d+))?/))) return n >= +m[1] && n <= +(m[3] || m[2]);
-    if ((m = c.match(/^de\s+(\d+)(?:\/\d+)?\s+ao fim/))) return n >= +m[1];
-    return par || impar ? true : null;
-  }
-  // 1º a pessoa escolhe o nome da rua (sem CEP, sem faixa); 2º digita o número; aí aparece o CEP certo
+  const { brl, centavos: c, cashbackCentavos: cbk, mascara, validar, so } = DY, E = DY.energia;
+  const $ = (s, e = document) => e.querySelector(s), $$ = (s, e = document) => [...e.querySelectorAll(s)];
+  const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches, gs = !calmo && window.gsap;
+  const espera = (ms) => new Promise((r) => setTimeout(r, calmo ? Math.min(ms, 150) : ms));
+  const mil = (n) => Number(n).toLocaleString('pt-BR'), limita = (n, a, b) => Math.max(a, Math.min(b, n));
+  const esc = (t) => String(t || '').replace(/[&<>"']/g, (x) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[x]));
   const semAcento = (t) => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
-  let tRua, ultimaLista = [], pedidoRua = 0, ruaEscolhida = null;
-  function nomesDeRua() {
-    const m = new Map();
-    ultimaLista.forEach((d) => { const k = semAcento(d.logradouro); if (!m.has(k)) m.set(k, { nome: d.logradouro, bairros: new Set() }); m.get(k).bairros.add(d.bairro); });
-    return [...m.entries()].map(([k, v]) => ({ k, nome: v.nome, bairros: [...v.bairros].filter(Boolean) }));
-  }
-  function mostrarSugestoes() {
-    if (!ultimaLista.length) return;
-    const nomes = nomesDeRua();
-    if (!ruaEscolhida && nomes.length === 1 && semAcento(tirarTipo(inRua.value)) && semAcento(nomes[0].nome).includes(semAcento(tirarTipo(inRua.value)))) {
-      // uma rua só com esse nome: já vale como escolhida quando houver número
-      if (so(inRuaNum.value)) ruaEscolhida = nomes[0].k;
-    }
-    if (!ruaEscolhida) {
-      sug.innerHTML = nomes.slice(0, 20).map((r) => `<button type="button" class="sugestao sugestao--rua" role="option" data-rua="${r.k}"><b>${r.nome}</b><span>${inCid.value.trim()}/${selUf.value}</span></button>`).join('');
-      return;
-    }
-    const daRua = ultimaLista.filter((d) => semAcento(d.logradouro) === ruaEscolhida);
-    const n = parseInt(so(inRuaNum.value), 10);
-    if (!n) { sug.innerHTML = '<p class="dy-apoio sug-dica">Agora digite o <b>número do imóvel</b> para encontrarmos o seu CEP.</p>'; return; }
-    const certos = daRua.filter((d) => faixaInclui(d.complemento, n) === true);
-    const melhor = certos.length ? certos : daRua.filter((d) => faixaInclui(d.complemento, n) === null);
-    if (!melhor.length) { sug.innerHTML = '<p class="dy-apoio sug-dica">Não encontramos um CEP para esse número nessa rua. Confira o número digitado.</p>'; return; }
-    sug.innerHTML = melhor.slice(0, 5).map((d) => `<button type="button" class="sugestao sugestao--certa" role="option" data-cep="${so(d.cep)}"><span class="sugestao__selo">CEP do seu endereço</span><b>${d.logradouro}, ${n}</b><span>${d.bairro} · ${d.localidade}/${d.uf}</span><span class="sugestao__cep">CEP ${d.cep}</span><span class="sugestao__usar">Usar este CEP →</span></button>`).join('');
-  }
-  async function buscarRua() {
-    separarNumero();
-    const rua = tirarTipo(inRua.value.trim());
-    if (rua.length < 3) { sug.innerHTML = ''; ultimaLista = []; return; }
-    const meu = ++pedidoRua;
-    try {
-      const lista = await (await fetch(`https://viacep.com.br/ws/${selUf.value}/${encodeURIComponent(inCid.value.trim())}/${encodeURIComponent(rua)}/json/`)).json();
-      if (meu !== pedidoRua) return;
-      ultimaLista = Array.isArray(lista) ? lista : [];
-      if (!ultimaLista.length) { sug.innerHTML = '<p class="dy-apoio sug-dica">Não achamos uma rua com esse nome nessa cidade. Confira a grafia.</p>'; return; }
-      mostrarSugestoes();
-    } catch (er) { if (meu === pedidoRua) sug.innerHTML = '<p class="dy-apoio sug-dica">Não conseguimos buscar agora. Tente de novo em instantes.</p>'; }
-  }
-  inRua.addEventListener('input', () => { ruaEscolhida = null; clearTimeout(tRua); tRua = setTimeout(buscarRua, 380); });
-  inRua.addEventListener('blur', () => { const antes = inRuaNum.value; separarNumero(); if (inRuaNum.value !== antes) mostrarSugestoes(); });
-  inRuaNum.addEventListener('input', () => { inRuaNum.value = so(inRuaNum.value).slice(0, 6); const c = inRuaNum.closest('.campo'); c.classList.toggle('valido', !!inRuaNum.value); c.querySelector('.campo__ico').innerHTML = CHECK; mostrarSugestoes(); });
-  inRuaNum.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); const nomes = nomesDeRua(); if (!ruaEscolhida && nomes.length === 1) { ruaEscolhida = nomes[0].k; mostrarSugestoes(); } const b = $('.sugestao--certa', sug); if (b) b.click(); } });
-  sug.addEventListener('click', (e) => {
-    const r = e.target.closest('[data-rua]');
-    if (r) {
-      ruaEscolhida = r.dataset.rua; inRua.value = r.querySelector('b').textContent;
-      inRua.closest('.campo').classList.add('valido'); inRua.closest('.campo').querySelector('.campo__ico').innerHTML = CHECK;
-      mostrarSugestoes(); if (!so(inRuaNum.value)) inRuaNum.focus();
-      return;
-    }
-    const b = e.target.closest('[data-cep]'); if (!b) return;
-    const num = so(inRuaNum.value);
-    abrirBuscaCep(false);
-    inCep.value = mascara.cep(b.dataset.cep);
-    consultarCep().then(() => { if (num) { inNum.value = num; inNum.dispatchEvent(new Event('input', { bubbles: true })); checarEnd(); } });
-  });
+  const q = new URLSearchParams(location.search);
+  const ORDEM = ['energia', 'internet', 'celular'];
+  const S = {
+    energia: { k: 'luz', t: 'Desconto na conta de luz', curto: 'Energia', art: 'a energia', img: '/img/3d-g/lampada.webp', cb: '10% da nova conta de luz', marco: 'depois da biometria do contrato' },
+    internet: { k: 'net', t: 'Internet fibra', curto: 'Internet', art: 'a internet', img: '/img/3d-g/modem6.webp', cb: '50% de uma mensalidade', marco: 'depois da instalação' },
+    celular: { k: 'cel', t: 'Plano de celular', curto: 'Celular', art: 'o celular', img: '/img/3d-g/celular.webp', cb: '100% de uma mensalidade por linha', marco: 'depois do chip ativado' },
+  };
+  const LOGO = { 'GloboPlay': ['/img/apps/globoplay.png', 'Globoplay'], 'Paramount+': ['/img/apps/paramount-44.svg', 'Paramount+'], 'HBO Max': ['/img/apps/hbo-max.png', 'HBO Max'], 'YouTube Premium': ['/img/apps/youtube-premium-logo.svg', 'YouTube Premium'] };
+  const nomeOp = (o) => (o.nome === 'Somente Internet' ? 'Só internet' : (LOGO[o.nome] || [0, o.nome])[1]);
 
-  // Pré-preenchimento: vindo da Home (sessionStorage) ou pela URL
-  (function preencher() {
-    if (retomar) return;
-    // Veio de "Não sei o meu CEP" (home, combo, energia, internet, celular): abre direto a busca pelo endereço
-    if (abrirBusca && !q.get('cep')) { abrirBuscaCep(true); return; }
-    let salvo = null; try { salvo = JSON.parse(sessionStorage.getItem('dy_endereco') || 'null'); } catch (er) { /* */ }
-    const cep = so(q.get('cep') || (salvo && salvo.cep) || ''); const num = q.get('numero') || (salvo && salvo.numero) || '';
-    if (cep.length === 8) { inCep.value = mascara.cep(cep); if (num) { inNum.value = num; } consultarCep().then(() => { if (num) $('[data-grupo="numero"]').validarAgora(); }); }
-    else if (abrirBusca) abrirBuscaCep(true);
-    else setTimeout(() => inCep.focus(), 300);
+  /* ---------- estado ---------- */
+  const st = {
+    id: DY.novoIdPedido(), origem: ['internet', 'celular', 'energia', 'combo', 'home'].includes(q.get('origem')) ? q.get('origem') : 'home',
+    end: { cep: '', logradouro: '', bairro: '', cidade: '', uf: '', numero: '', comp: '' }, modo: location.hash === '#buscar-cep' ? 'rua' : 'cep', achou: false,
+    rua: { uf: DY.uf, cidade: '', nome: '', num: '' }, fibra: 'talvez', disp: {}, sel: [], idx: 0, editando: false, todosNet: false, todosCel: false,
+    luz: { conta: 0, tit: '' }, net: { id: '', op: 0, para: '' }, cel: { id: '80', n: 1, tipo: '', porta: null }, ok: {},
+    nome: '', tel: '', email: '', cpf: '', cnpj: '', aceite: false, pag: { tipo: 'debito', banco: '' },
+  };
+  (function daUrl() {
+    const para = q.get('para'), conta = parseFloat(q.get('conta')), n = parseInt(q.get('linhas'), 10), plano = q.get('plano') || '', cel = q.get('cel') || (st.origem === 'celular' ? plano : '');
+    if (conta >= E.minimo) st.luz.conta = conta;
+    if (st.origem !== 'celular') { if (['casa', 'empresa'].includes(para)) st.net.para = para; else if (/^e\d/.test(plano)) st.net.para = 'empresa'; else if (plano) st.net.para = 'casa'; st.net.id = plano; if (plano === '2000') st.todosNet = true; }
+    st.opcaoUrl = q.get('opcao');
+    if ([...DY.planosCnpj, ...DY.celularPorta].some((p) => p.id === cel)) st.cel.id = cel;
+    if (n > 0) st.cel.n = Math.min(n, DY.linhasEspecial);
+    const sv = (q.get('servicos') || '').split(',').filter((x) => ORDEM.includes(x));
+    if (st.origem === 'combo') st.sel = sv.length ? sv : conta || plano || n ? [conta && 'energia', plano && 'internet', n && 'celular'].filter(Boolean) : ['energia', 'internet'];
+    else if (ORDEM.includes(st.origem)) st.sel = [st.origem];
+    let salvo = null; try { salvo = JSON.parse(sessionStorage.getItem('dy_endereco') || 'null'); } catch (e) { /* */ }
+    const cep = so(q.get('cep') || (salvo && salvo.cep)); if (cep.length === 8) { st.end.cep = cep; st.end.numero = (q.get('numero') || (salvo && salvo.numero) || '').slice(0, 6); st.modo = 'cep'; }
   })();
 
-  /* =========================================================
-     2 · CONSULTANDO
-     ========================================================= */
-  async function rodarConsulta() {
-    // Preços do estado do endereço (internet muda por bloco de estados; celular no PR/SC)
-    DY.definirPlanos({ uf: st.end.uf, tipo: st.para.internet || 'casa' });
-    DY.salvarLocal(st.end.uf, st.end.cidade);
-    ['internet', 'celular'].forEach((k) => { const lista = k === 'internet' ? DY.planosInternet : DY.planosCelular; if (st.rasc[k] && !lista.some((p) => p.id === st.rasc[k].id)) st.rasc[k] = null; if (st.esc[k] && !lista.some((p) => p.id === st.esc[k].id)) st.esc[k] = undefined; });
-    mostrar('consulta');
-    const box = $('.consulta'); box.classList.remove('ok', 'alerta');
-    const titulo = $('[data-consulta-titulo]'); const res = $('[data-consulta-resultado]');
-    titulo.textContent = 'Consultando o seu endereço…'; res.hidden = true; res.innerHTML = '';
-    $('[data-consulta-end]').textContent = `${st.end.logradouro}, ${st.end.numero}${st.end.comp ? ' · ' + st.end.comp : ''} — ${st.end.cidade}/${st.end.uf}`;
-    const passos = $$('[data-consulta-passos] li'); passos.forEach((p) => p.className = '');
-    passos[0].classList.add('rodando'); await espera(500); passos[0].className = 'feito';
-    passos[1].classList.add('rodando');
-    const [fibra] = await Promise.all([DY.consultarViabilidade(st.end.cep, st.end.numero), espera(1500)]);
-    st.fibra = fibra; passos[1].className = 'feito';
-    passos[2].classList.add('rodando'); await espera(700); passos[2].className = 'feito';
+  /* ---------- planos ---------- */
+  const planosNet = () => DY.catalogo[st.net.para || 'casa'][DY.blocoInternet(st.end.uf || DY.uf)];
+  const planosCel = () => DY.celularCnpj(['PR', 'SC'].includes(st.end.uf || DY.uf));
+  const oferta = (l) => l.find((p) => p.selo === 'OFERTA DO MÊS') || l[0];
+  const pNet = () => { const l = planosNet(); return l.find((p) => p.id === st.net.id) || l.find((p) => so(p.id) === so(st.net.id)) || oferta(l); };
+  const pCel = () => { const l = [...planosCel(), ...(st.cel.porta === false ? [] : DY.celularPorta)]; return l.find((p) => p.id === st.cel.id) || oferta(l); };
+  const opNet = (p) => (p.opcoes[st.net.op] ? st.net.op : 0);
+  const maxLinhas = () => (st.cel.tipo === 'mei' ? 3 : DY.linhasEspecial);
+  const pronto = { energia: () => !!st.luz.tit && st.luz.conta >= E.minimo, internet: () => !!st.net.para, celular: () => !!st.cel.tipo && st.cel.porta !== null };
 
-    // O que existe no endereço: fibra (Supabase), celular (todo o Brasil), energia (regiões atendidas)
-    st.disp = { internet: fibra, celular: 'sim', energia: DY.energia.atende(st.end.uf) ? 'sim' : 'nao' };
-    st.ordem = ORDENS[origem].filter((p) => st.disp[p] !== 'nao');
-    st.idx = 0;
-    box.classList.add('ok');
-    titulo.textContent = 'Endereço verificado!';
-    res.innerHTML = '<p class="consulta__indo"><span class="pt-indo" aria-hidden="true"></span>Vendo o que chega aí…</p>';
-    res.hidden = false;
-    titulo.focus({ preventScroll: true });
-    await espera(1100);
-    if (telaAtual !== 'consulta') return;
-    renderDisponivel();
-    history.replaceState({ tela: 'endereco' }, '');
-    mostrar('disponivel');
+  /* itens do pedido: só o que já foi confirmado */
+  function itens() {
+    return ORDEM.filter(tem).map((s) => {
+      if (s === 'energia') { const e = E.simular(st.luz.conta), t = st.luz.tit.toUpperCase(); return { produto: s, titulo: S[s].t, sub: `No ${t} · simulação com ${e.pct}% de desconto`, antes: e.conta, mensal: e.comDesconto, cashback: e.cashback, conta_luz: e.conta, estimativa_desconto_pct: e.pct, titular: st.luz.tit, linhaZap: `Desconto na conta de luz, para uma conta de ${brl(e.conta)} (${t})` }; }
+      if (s === 'internet') { const p = pNet(), o = p.opcoes[opNet(p)], v = c(o.preco), doc = st.net.para === 'empresa' ? 'CNPJ' : 'CPF', mais = o.nome === 'Somente Internet' ? '' : ' com ' + nomeOp(o); return { produto: s, titulo: `Internet fibra de ${mil(p.num)} Mega${mais}`, sub: `No ${doc} · Wi-Fi e instalação inclusos`, mensal: v, cashback: cbk(v, 50), plano: p.id, opcao: o.nome, para: st.net.para, titular: doc.toLowerCase(), linhaZap: `Internet fibra de ${mil(p.num)} Mega${mais}, ${brl(v)} por mês no débito em conta (${doc})` }; }
+      const p = pCel(), u = c(p.preco), t = u * st.cel.n, doc = st.cel.tipo === 'mei' ? 'MEI' : 'CNPJ', l = `${st.cel.n} ${st.cel.n > 1 ? 'linhas' : 'linha'}`, num = st.cel.porta ? 'com portabilidade' : 'com número novo';
+      return { produto: s, titulo: `${l} de celular de ${p.gb} GB`, sub: `No ${doc} · ${num} · ${brl(u)} por linha`, mensal: t, cashback: cbk(t, 100), plano: p.id, linhas: st.cel.n, para: st.cel.tipo, portabilidade: st.cel.porta, titular: 'cnpj', linhaZap: `${l} de celular de ${p.gb} GB ${num}, ${brl(u)} cada, total de ${brl(t)} por mês (${doc})` };
+    });
+  }
+  const tem = (s) => !!st.ok[s] && pronto[s](), boleto = () => st.pag.tipo === 'boleto' && tem('internet');
+  const mes = (i) => i.mensal + (i.produto === 'internet' && boleto() ? DY.boletoPix * 100 : 0);
+  const soma = (l, f) => l.reduce((a, i) => a + f(i), 0);
+  const precisaCnpj = () => tem('celular') || (tem('internet') && st.net.para === 'empresa') || (tem('energia') && st.luz.tit === 'cnpj');
+
+  /* ---------- resumo ---------- */
+  function htmlResumo({ editar = true } = {}) {
+    const l = itens(); if (!l.length) return '<p class="rs__vazio">Escolha um serviço para começar.</p>';
+    const tel = l.filter((i) => i.produto !== 'energia');
+    return `<ul class="rs">${l.map((i) => `<li data-s="${S[i.produto].k}"><img src="${S[i.produto].img}" alt="" width="64" height="64"><div class="rs__tx"><b>${i.titulo}</b><small>${i.sub}</small></div>
+      <p class="rs__v">${i.antes ? `<s>${brl(i.antes)}</s>` : ''}<b>${i.produto === 'energia' ? 'cerca de ' : ''}${brl(mes(i))}</b><small>/mês</small><em>Cashback ${brl(i.cashback)}</em></p>
+      ${editar ? `<p class="rs__a"><button type="button" data-editar="${i.produto}">Alterar</button><button type="button" data-remover="${i.produto}">Remover</button></p>` : ''}</li>`).join('')}</ul>
+      <div class="rs__cb"><span>Cashback total</span><b>${brl(soma(l, (i) => i.cashback))}</b><small>Pago uma vez, via PIX na sua conta bancária, em até 7 dias depois que cada contrato é concluído. <button type="button" data-cb>Como funciona</button></small></div>
+      ${tel.length ? `<p class="rs__t"><span>${tel.length > 1 ? 'Internet e celular' : S[tel[0].produto].curto}<small>${tel.some((i) => i.produto === 'internet') ? (boleto() ? 'Internet no boleto ou PIX' : 'Internet no débito em conta') : 'Valor das linhas'}</small></span><b>${brl(soma(tel, mes))}<small>/mês</small></b></p>` : ''}
+      ${tem('energia') ? `<p class="rs__t"><span>Conta de luz<small>Estimativa, depende da sua fatura</small></span><b>${brl(l.find((i) => i.produto === 'energia').mensal)}<small>/mês</small></b></p>` : ''}`;
+  }
+  function atualiza() {
+    const l = itens(), lado = $('[data-lado]'), semLado = ['endereco', 'consulta', 'servicos', 'resumo', 'fim'].includes(tela);
+    lado.hidden = semLado || !l.length; document.body.classList.toggle('com-lado', !lado.hidden);
+    if (!lado.hidden) lado.innerHTML = `<h2>Seu pedido</h2>${htmlResumo()}<p class="lado__n">Nada é cobrado agora.</p>`;
+    const r = $('[data-abrir-resumo]'); r.hidden = semLado || !l.length; $('[data-rod-v]').textContent = 'Cashback ' + brl(soma(l, (i) => i.cashback));
+    $('[data-jan-resumo]').innerHTML = htmlResumo();
   }
 
-  /* =========================================================
-     2b · DISPONÍVEL NO ENDEREÇO
-     ========================================================= */
-  function areaVisivel() {
-    const topoEl = $('.ct-topo'); let topo = topoEl ? topoEl.offsetHeight : 64;
-    const desk = matchMedia('(min-width: 768px)').matches; const dockEl = $('[data-dock]'); const carEl = $('[data-carrinho]');
-    if (desk && dockEl && !dockEl.hidden && carEl && !carEl.hidden) topo += dockEl.offsetHeight + 16;
-    const baixo = !desk && dockEl && !dockEl.hidden ? dockEl.offsetHeight : 0;
-    const alt = window.visualViewport ? window.visualViewport.height : innerHeight;   // com o teclado aberto, a área é menor
-    return { topo, livre: Math.max(120, alt - topo - baixo) };
+  /* ---------- navegação ---------- */
+  let tela = 'endereco', T = {};
+  const etapas = () => ['Endereço', 'Serviços', 'Seus dados', ...(st.sel.length && !st.sel.includes('internet') ? [] : ['Pagamento'])];
+  const ETAPA = { endereco: 0, consulta: 0, servicos: 1, produto: 1, resumo: 1, contato: 2, dados: 2, pagamento: 3, fim: 9 };
+  function progresso() {
+    const e = etapas(), n = ETAPA[tela], parte = { endereco: .4, consulta: .85, servicos: .2, produto: .3 + .5 * (st.idx / Math.max(1, st.sel.length)), resumo: .9, contato: .35, dados: .75, pagamento: .6 }[tela] || 1;
+    $('[data-etapas]').innerHTML = e.map((t, i) => `<li class="${i < n ? 'is-feita' : i === n ? 'is-atual' : ''}"${i === n ? ' aria-current="step"' : ''}><i>${i < n ? '' : i + 1}</i>${t}</li>`).join('');
+    $('[data-etapas]').hidden = n === 9; $('[data-barra]').style.width = n === 9 ? '100%' : ((Math.min(n, e.length - 1) + parte) / e.length) * 100 + '%';
   }
-  // modo 'centro': centraliza o elemento na área livre; 'topo': encosta logo abaixo do menu
-  function rolarPara(el, { modo = 'centro', folga = 14 } = {}) {
-    if (!el) return;
-    const r = el.getBoundingClientRect(); const { topo, livre } = areaVisivel();
-    const alvo = modo === 'topo' || r.height > livre - 24 ? scrollY + r.top - topo - folga : scrollY + r.top - topo - (livre - r.height) / 2;
-    if (Math.abs(alvo - scrollY) > 6) window.scrollTo({ top: Math.max(0, alvo), behavior: reduzir ? 'auto' : 'smooth' });
+  function mostra(nome, { volta = false, empurra = true } = {}) {
+    $$('dialog[open]').forEach((d) => d.close());
+    if (nome === 'endereco' && volta) { st.ok = {}; st.idx = 0; st.editando = false; }
+    tela = nome; document.body.dataset.t = nome;
+    const el = $('[data-tela]'); el.innerHTML = T[nome].html(); if (T[nome].liga) T[nome].liga(el);
+    botao(); atualiza(); progresso();
+    if (empurra) history.pushState({ t: nome, i: st.idx }, '', location.pathname + location.search);
+    scrollTo({ top: 0, behavior: 'instant' });
+    if (gs) gs.fromTo(el.children, { x: volta ? -36 : 36, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: .45, stagger: .05, ease: 'power3.out', clearProps: 'all' });
+    const h = $('h1', el); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); }
   }
-  const ORDEM_FIXA = ['energia', 'internet', 'celular'];
-  function faixa(lista, f) { const v = lista.map(f); return [Math.min(...v), Math.max(...v)]; }
-  function infoDisponivel() {
-    const net = DY.planosInternet, cel = [...DY.celularCpf, ...DY.planosCnpj];
-    const [vMin, vMax] = faixa(net, (p) => +p.num);
-    const precosNet = net.flatMap((p) => p.opcoes.map((o) => centavos(o.preco)));
-    const [gMin, gMax] = faixa(cel, (p) => +p.num);
-    const [cMin, cMax] = faixa(cel, (p) => centavos(p.preco));
-    const ex = DY.energia.simular(500);
-    return {
-      energia: { tit: 'Desconto de até 30% na Conta de Luz', ico: 'hero-lampada.svg', preco: 'Economize até <b>30%</b> todo mês',
-        itens: ['Sem obra e sem placas', 'Sem investimento', 'Continua com a mesma distribuidora'],
-        cb: `Volta <b>10% da nova conta</b>. Ex.: conta de R$ 500 → volta <b>${brl(ex.cashback)}</b>` },
-      internet: { tit: 'Internet Fibra Óptica', ico: 'hero-wifi.svg', preco: `${vMin} a ${vMax} Mega · a partir de <b>${brl(Math.min(...precosNet))}/mês</b>`,
-        itens: ['Wi-Fi incluso', 'Instalação gratuita', 'Streaming em alguns planos'],
-        cb: `Volta <b>50% do valor do plano</b>: de ${brl(cashbackCentavos(Math.min(...precosNet), 50))} a <b>${brl(cashbackCentavos(Math.max(...precosNet), 50))}</b>` },
-      celular: { tit: 'Plano de Celular', ico: 'hero-celular-5g.svg', preco: `${gMin} a ${gMax} GB · a partir de <b>${brl(cMin)}/mês</b> por linha`,
-        itens: ['Ligações ilimitadas para todo o Brasil', 'Portabilidade grátis', 'Planos controle (CPF) e empresariais (CNPJ)'],
-        cb: `Volta <b>100% do valor do plano</b>: ${brl(cMin)} a <b>${brl(cMax)}</b> por linha` },
-    };
+  function botao() {
+    const t = T[tela], b = $('[data-ir]'), r = $('[data-rod]'); r.hidden = !t.bt; if (!t.bt) return;
+    b.innerHTML = `${t.bt()}<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5"/></svg>`; b.disabled = t.pode ? !t.pode() : false;
   }
-  const ICO_OK = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7.5 5.5 11 12 3.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  function renderDisponivel() {
-    $('[data-disp-end]').innerHTML = `${st.end.logradouro}, ${st.end.numero} — ${st.end.cidade}/${st.end.uf} · <button class="ct-link disp-alterar" type="button" data-voltar>Alterar endereço</button>`;
-    // pré-seleção: quem veio da página de um serviço já chega com ele marcado; do Combo, todos
-    if (!st.sel.length) st.sel = origem === 'combo' ? (SERV.length ? SERV.slice() : ORDEM_FIXA.slice()) : ['internet', 'celular', 'energia'].includes(origem) ? [origem] : [];
-    st.sel = st.sel.filter((p) => st.disp[p] !== 'nao');
-    const info = infoDisponivel();
-    $('[data-disp]').innerHTML = ORDEM_FIXA.map((p, k) => {
-      const i = info[p]; const d = st.disp[p]; const on = st.sel.includes(p);
-      const anim = `animate__animated animate__zoomIn" style="animation-delay:${0.25 + k * 0.22}s`;
-      const topo = `<div class="disp-linha"><span class="item-combo__ico i-${p}"><img src="${img('icones/' + i.ico)}" alt=""></span><b class="disp-tit">${i.tit}</b></div>`;
-      if (d === 'nao') return `<div class="item-combo disp-item i-${p} disp-item--nao ${anim}">${topo}<p class="disp-nao">${p === 'internet' ? 'Ainda não temos fibra no seu endereço.' : 'Ainda não atende a sua região.'}</p></div>`;
-      return `<button class="item-combo disp-item i-${p}${on ? ' disp-item--on' : ''} ${anim}" type="button" role="checkbox" aria-checked="${on}" data-sel="${p}">
-        ${topo}
-        <p class="disp-preco">${i.preco}</p>
-        <ul class="disp-lista">${i.itens.map((t) => `<li>${ICO_OK}${t}</li>`).join('')}</ul>
-        <p class="disp-cb">${i.cb}</p>
-        ${p === 'internet' && d === 'talvez' ? '<p class="disp-talvez">A fibra no seu número é confirmada no WhatsApp, antes de qualquer contrato.</p>' : ''}
-        <span class="disp-quero"><span class="disp-quero__marca" aria-hidden="true">${ICO_OK}</span><span class="disp-quero__txt">${on ? 'Incluído no pedido' : 'Quero este'}</span></span>
-      </button>`;
-    }).join('');
-    atualizarMontar();
-  }
-  function atualizarMontar() {
-    const n = st.sel.length; const b = $('[data-montar]');
-    const nenhumDisp = !ORDEM_FIXA.some((p) => st.disp[p] !== 'nao');
-    b.disabled = !n && !nenhumDisp;
-    b.innerHTML = nenhumDisp ? 'Falar no WhatsApp' : !n ? 'Marque os serviços que você quer' : (n === 1 ? 'Ver os planos deste serviço' : `Montar meu combo com ${n} serviços`) + ' <span class="seta-dir" aria-hidden="true">→</span>';
-    $('[data-disp-dica]').textContent = n ? 'Você pode mudar depois, no resumo do pedido.' : 'Toque nos cards para escolher um, dois ou os três.';
-  }
-  $('[data-disp]').addEventListener('click', (e) => {
-    const b = e.target.closest('[data-sel]'); if (!b) return;
-    const p = b.dataset.sel; const on = !st.sel.includes(p);
-    st.sel = on ? [...st.sel, p] : st.sel.filter((x) => x !== p);
-    b.classList.toggle('disp-item--on', on); b.setAttribute('aria-checked', on);
-    $('.disp-quero__txt', b).textContent = on ? 'Incluído no pedido' : 'Quero este';
-    if (gs && on) gs.fromTo($('.disp-quero__marca', b), { scale: 0.4 }, { scale: 1, duration: 0.35, ease: 'back.out(2.5)' });
-    atualizarMontar();
-    const cards = $$('[data-sel]', $('[data-disp]'));
-    const empilhado = cards.length > 1 && cards[1].getBoundingClientRect().top > cards[0].getBoundingClientRect().top + 20;
-    // celular: o card tocado vai para o centro (e já aparece um pedaço do próximo); no último, mostra também o botão
-    if (on && empilhado) setTimeout(() => rolarPara(b), 150);
+  const acao = () => { const t = T[tela]; if (!t.ir) return; if (t.pode && !t.pode()) return; t.ir(); };
+  $('[data-ir]').addEventListener('click', acao);
+  addEventListener('popstate', (e) => {
+    const s = e.state || { t: 'endereco' };
+    if (tela === 'fim') { history.pushState({ t: 'fim' }, ''); return; }
+    if (s.t === 'produto' && !st.sel[s.i]) s.t = 'servicos';
+    if (s.t === 'servicos' && !st.disp.celular) s.t = 'endereco';
+    if (['resumo', 'contato', 'dados', 'pagamento', 'fim'].includes(s.t) && !itens().length) s.t = 'endereco';
+    if (s.t === 'pagamento' && !tem('internet')) s.t = 'resumo';
+    st.idx = s.i || 0; st.editando = false; mostra(s.t, { volta: true, empurra: false });
   });
-  $('[data-montar]').addEventListener('click', () => {
-    if (!ORDEM_FIXA.some((p) => st.disp[p] !== 'nao')) { location.href = DY.linkWhatsApp('Olá! Consultei meu endereço no site da Do Yourself e quero falar sobre as opções.'); return; }
-    if (!st.sel.length) return;
-    // a ordem das etapas segue a ordem dos cards: Energia, Internet, Celular
-    st.ordem = ORDEM_FIXA.filter((p) => st.sel.includes(p));
-    st.idx = 0; renderProduto(); mostrar('combo');
-  });
+  history.replaceState({ t: 'endereco' }, '', location.pathname + location.search);
+  const cab = (t, s, volta = true) => `<header class="cab">${volta ? '<button class="volta" type="button" data-volta><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10H4M9 5l-5 5 5 5"/></svg>Voltar</button>' : ''}<h1>${t}</h1>${s ? `<p>${s}</p>` : ''}</header>`;
+  const rola = (el, bloco = 'center') => { if (el) setTimeout(() => el.scrollIntoView({ block: bloco, behavior: calmo ? 'auto' : 'smooth' }), 120); };
 
-  /* =========================================================
-     3 · SEU COMBO — um produto por vez
-     ========================================================= */
-  const ROTULO = { internet: 'Internet Fibra', celular: 'Celular', energia: 'Energia Solar' };
-  const ICONE = { internet: 'icones/lista-wifi.svg', celular: 'icones/lista-celular.svg', energia: 'icones/lista-lampada.svg' };
-  const palco = $('[data-produto-palco]');
-  const temItens = () => Object.values(st.esc).some((v) => v);
-  const algumRascunho = () => Object.values(st.rasc).some((v) => v);
+  /* ---------- campos ---------- */
+  const campo = (id, rot, at = '', v = '', dica = '') => `<div class="cp" data-cp="${id}"><label class="cp__c"><input id="f-${id}" name="${id}" placeholder=" " value="${esc(v)}" aria-describedby="m-${id}" ${at}><span>${rot}</span><i class="cp__ok" aria-hidden="true"></i></label><p class="cp__m" id="m-${id}" data-dica="${esc(dica)}">${dica}</p></div>`;
+  function pinta(id, erro, mostra = true) {
+    const w = $(`[data-cp="${id}"]`); if (!w) return; const m = $('.cp__m', w), x = erro && mostra;
+    w.classList.toggle('is-ok', !erro); w.classList.toggle('is-erro', !!x); m.textContent = x ? erro : m.dataset.dica; m.setAttribute('role', x ? 'alert' : 'note'); $('input', w).setAttribute('aria-invalid', !!x);
+  }
+  function liga(id, { masc, val, guarda }) {
+    const i = $('#f-' + id); let tocado = false; if (!i) return;
+    const roda = () => { const e = val(i.value); pinta(id, e, tocado); guarda(i.value); botao(); };
+    i.addEventListener('input', () => { if (masc) { const fim = i.value.length - i.selectionStart; i.value = masc(i.value); const p = Math.max(0, i.value.length - fim); try { i.setSelectionRange(p, p); } catch (er) { /* */ } } roda(); });
+    i.addEventListener('blur', () => { if (i.value) tocado = true; roda(); });
+    if (i.value) roda();
+  }
+  const opcoes = (nome, rot, lista, v, cls = '') => `<div class="ops ${cls}" role="radiogroup" aria-label="${rot}" data-ops="${nome}">${lista.map(([k, t, s, img], i) => `<button type="button" role="radio" aria-checked="${v === k}" tabindex="${v === k || (!lista.some((x) => x[0] === v) && !i) ? 0 : -1}" data-v="${k}">${img ? `<img src="${img}" alt="">` : ''}<span><b>${t}</b>${s ? `<small>${s}</small>` : ''}</span></button>`).join('')}</div>`;
 
-  function renderPassos() {
-    $('[data-combo-passos]').innerHTML = st.ordem.map((p, i) => {
-      const cls = st.esc[p] ? 'adicionado' : st.esc[p] === null ? 'pulado' : i === st.idx ? 'atual' : '';
-      return `<span class="cp-pilula ${i === st.idx ? 'atual ' : ''}${cls}"><span class="n">${st.esc[p] ? CHECK : i + 1}</span>${ROTULO[p]}</span>`;
-    }).join('');
+  /* ========== 1. ENDEREÇO ========== */
+  const UFS = Object.entries(DY.UFS).sort((a, b) => a[1].localeCompare(b[1], 'pt-BR'));
+  let listaRua = [], pedRua = 0, tRua, ultimo = '';
+  const tiraTipo = (r) => r.replace(/^(rua|r\.|avenida|av\.?|travessa|tv\.?|alameda|al\.?|rodovia|rod\.?|estrada|praça|pça\.?)\s+/i, '').trim() || r.trim();
+  const viacep = async (uf, cid, rua) => { try { const l = await (await fetch(`https://viacep.com.br/ws/${uf}/${encodeURIComponent(cid)}/${encodeURIComponent(rua)}/json/`)).json(); return Array.isArray(l) ? l : []; } catch (e) { return null; } };
+  // faixa dos Correios: true = o número está nela, false = não está, null = rua sem faixa
+  function naFaixa(comp, n) {
+    const t = semAcento(comp); if (!/^(ate|de |lado)/.test(t)) return null;
+    const par = /lado par/.test(t), imp = /lado impar/.test(t); if ((par && n % 2) || (imp && !(n % 2))) return false; let m;
+    if ((m = t.match(/^ate\s+(\d+)(?:\/(\d+))?/))) return n <= +(m[2] || m[1]);
+    if ((m = t.match(/^de\s+(\d+)(?:\/\d+)?\s+a\s+(\d+)(?:\/(\d+))?/))) return n >= +m[1] && n <= +(m[3] || m[2]);
+    if ((m = t.match(/^de\s+(\d+)(?:\/\d+)?\s+ao fim/))) return n >= +m[1];
+    return par || imp ? true : null;
   }
-
-  function cabecalho(prod) {
-    const primeiro = st.idx === 0;
-    const qtd = st.ordem.length;
-    const textos = {
-      internet: primeiro
-        ? ['Escolha sua internet', 'Fibra óptica com Wi-Fi e instalação grátis. <b>50% da mensalidade volta para você.</b>']
-        : ['Quer internet fibra também?', ''],
-      celular: primeiro
-        ? ['Escolha seu plano de celular', 'Planos controle ou empresariais, com o seu número. <b>100% das linhas volta para você.</b>']
-        : ['Quer incluir celular?', 'Ligações ilimitadas e 5G. <b>100% das linhas volta para você.</b>'],
-      energia: primeiro
-        ? ['Quanto vem sua conta de luz?', 'Até 30% menos na conta, sem obra e sem placas. <b>10% da nova conta volta para você.</b>']
-        : ['E a conta de luz?', 'Até 30% menos na conta, sem obra. <b>10% da nova conta volta para você.</b>'],
-    };
-    const [t, s] = textos[prod];
-    return `<header class="produto__cab">
-      <h1 class="tela__titulo" id="h-combo" tabindex="-1">${t}</h1>${s ? `<p class="tela__sub">${s}</p>` : ''}</header>`;
-  }
-
-  function acoes(prod) {
-    const ultimo = st.idx === st.ordem.length - 1;
-    const rot = st.esc[prod] ? (ultimo ? 'Manter e ver o meu combo' : 'Manter e continuar') : (ultimo ? 'Adicionar e ver meu combo' : 'Adicionar e continuar');
-    return `<div class="produto__acoes">
-      <button class="dy-btn dy-btn--primario dy-btn--g dy-btn--bloco" type="button" data-add disabled>${rot} <span class="seta-dir" aria-hidden="true">→</span></button>
-      <button class="dy-btn dy-btn--fantasma" type="button" data-pular>${st.esc[prod] ? 'Tirar do combo' : 'Agora não, pular ' + (prod === 'energia' ? 'a energia' : prod === 'celular' ? 'o celular' : 'a internet')}</button>
-    </div>`;
-  }
-
-  function renderProduto(voltando) {
-    const prod = st.ordem[st.idx];
-    renderPassos();
-    const fn = { internet: htmlInternet, celular: htmlCelular, energia: htmlEnergia }[prod];
-    palco.innerHTML = `<div class="produto${voltando ? ' voltando' : ''}" data-prod="${prod}">${cabecalho(prod)}${fn()}${acoes(prod)}</div>`;
-    if (telaAtual === 'combo') entrar(palco.firstElementChild, voltando);
-    ({ internet: ligarInternet, celular: ligarCelular, energia: ligarEnergia }[prod])();
-    atualizarBotaoAdd();
-    atualizarCarrinho();
-  }
-
-  const { dots, ligarDots } = DY.ofertas;
-  const { centralizar, trazerParaMeio } = DY.ofertas;
-  // Depois de escolher: desce para a personalização (streaming ou linhas)
-  const descer = (el) => { if (el) setTimeout(() => trazerParaMeio(el), 120); };
-
-  const PERGUNTA = {
-    // CPF mostra os planos residenciais; CNPJ, os empresariais (plano de CPF não vai para CNPJ)
-    internet: ['A internet vai ficar no seu CPF ou no CNPJ?', [['casa', 'CPF', 'Casa ou apartamento', 'pessoa'], ['empresa', 'CNPJ', 'Empresa ou comércio', 'predio']]],
-    celular: ['As linhas vão ficar no seu CPF ou no CNPJ?', [['cpf', 'CPF', 'Para você e a sua família', 'pessoa'], ['cnpj', 'CNPJ', 'Empresa ou comércio', 'predio']]],
-    energia: ['A sua conta de luz hoje está no CPF ou no CNPJ?', [['cpf', 'CPF', 'Casa ou apartamento', 'pessoa'], ['cnpj', 'CNPJ', 'Condomínio, empresa ou comércio', 'predio']]],
-  };
-  const ICO_QUEM = {
-    pessoa: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c.8-3.6 3.8-6 7.5-6s6.7 2.4 7.5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
-    predio: '<svg viewBox="0 0 24 24"><path d="M4 21V5.5L12 3v18M12 8.5l8 2.5v10M2.5 21h19M7 8h2M7 11.5h2M7 15h2M15 13.5h2M15 17h2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  };
-  function htmlQuem(prod) {
-    const [tit, ops] = PERGUNTA[prod]; const v = st.para[prod];
-    return `<div class="ct-quem${v ? ' ct-quem--ok' : ''}"><p class="ct-quem__tit" id="q-${prod}">${tit}</p>
-      <div class="ct-quem__ops" role="radiogroup" aria-labelledby="q-${prod}" data-para="${prod}">${ops.map(([k, a, b, ico]) => `<button type="button" class="ct-quem__op" role="radio" aria-checked="${v === k}" data-v="${k}"><span class="ct-quem__marca" aria-hidden="true"></span><span class="ct-quem__ico" aria-hidden="true">${ICO_QUEM[ico]}</span><b>${a}</b><small>${b}</small></button>`).join('')}</div></div>`;
-  }
-  const faltaQuem = (prod) => !st.para[prod];
-  function beneficios(prod) {
-    const B = {
-      internet: st.para.internet === 'empresa'
-        ? [['instalacao.svg', 'Instalação grátis'], ['lista-wifi.svg', '100% fibra óptica'], ['modem.svg', 'Wi-Fi incluso']]
-        : [['instalacao.svg', 'Instalação grátis'], ['dif-tela.svg', 'Streaming incluso'], ['lista-wifi.svg', '100% fibra óptica']],
-      celular: [['ligacoes.svg', 'Ligações ilimitadas'], ['portabilidade.svg', 'Portabilidade grátis'], ['dados-moveis.svg', 'Apps sem gastar a internet']],
-    }[prod];
-    return `<ul class="energia-beneficios beneficios--${prod}">${B.map(([i, t]) => `<li><img src="${img('icones/' + i)}" alt="">${t}</li>`).join('')}</ul>`;
-  }
-
-  /* ----- Internet ----- */
-  function htmlInternet() {
-    if (faltaQuem('internet')) return beneficios('internet') + htmlQuem('internet');
-    const sel = st.rasc.internet || (st.esc.internet && { ...st.esc.internet });
-    const cards = DY.planosInternet.map((p) => { const on = !!(sel && sel.id === p.id); return DY.ofertas.internet(p, { on, op: on ? sel.op : 0 }); }).join('');
-    const pSel = sel && DY.planosInternet.find((x) => x.id === sel.id);
-    return `${beneficios('internet')}${htmlQuem('internet')}
-      <div><div class="ofertas" data-trilho>${cards}</div>${dots(DY.planosInternet.length)}</div>
-      <div data-pers-box>${pSel ? DY.ofertas.personaliza(pSel, sel.op) : ''}</div>
-      <p class="dy-apoio" style="text-align:center;margin-top:14px">Valores no débito automático.<br>Na forma de pagamento PIX ou BOLETO, o valor aumenta apenas R$ 10,00.</p>`;
-  }
-  function ligarInternet() {
-    ligarPara('internet'); if (faltaQuem('internet')) return;
-    const trilho = $('[data-trilho]', palco); ligarDots(trilho);
-    const box = $('[data-pers-box]', palco);
-    const pintarCard = (card, p, op) => {
-      const o = p.opcoes[op]; const preco = centavos(o.preco);
-      card.querySelector('[data-preco]').textContent = brl(preco);
-      const de = card.querySelector('[data-de]'); if (de) de.textContent = 'De ' + brl(centavos(o.de || p.de));
-      card.querySelector('[data-cb]').textContent = brl(cashbackCentavos(preco, 50));
-      card.querySelector('[data-preco-obs]').innerHTML = op > 0 && o.logo ? `<span class="oferta__extra">+ ${o.nome}</span>` : 'no débito automático';
-    };
-    const escolher = (card) => {
-      const p = DY.planosInternet.find((x) => x.id === card.dataset.id);
-      const mesmo = st.rasc.internet && st.rasc.internet.id === p.id;
-      const op = mesmo ? st.rasc.internet.op : 0;
-      st.rasc.internet = { id: p.id, op };
-      $$('.oferta', trilho).forEach((c) => {
-        const on = c === card; c.setAttribute('aria-checked', on); c.querySelector('.oferta__escolher').textContent = on ? 'Plano escolhido' : 'Escolher este plano';
-        if (!on) pintarCard(c, DY.planosInternet.find((x) => x.id === c.dataset.id), 0);
-      });
-      pintarCard(card, p, op);
-      if (!mesmo || !box.innerHTML.trim()) box.innerHTML = DY.ofertas.personaliza(p, op);
-      atualizarBotaoAdd(); atualizarCarrinho();
-      descer($('[data-personaliza]', box));
-    };
-    // Toque no card só centraliza; o botão "Escolher este plano" é que escolhe
-    // Toque no card marca e centraliza; se havia outro plano escolhido, ele é desfeito
-    const marcar = (card) => {
-      $$('.oferta', trilho).forEach((c) => c.classList.toggle('marcado', c === card));
-      const r = st.rasc.internet;
-      if (r && r.id !== card.dataset.id) {
-        st.rasc.internet = null; box.innerHTML = '';
-        $$('.oferta', trilho).forEach((c) => { c.setAttribute('aria-checked', 'false'); c.querySelector('.oferta__escolher').textContent = 'Escolher este plano'; pintarCard(c, DY.planosInternet.find((x) => x.id === c.dataset.id), 0); });
-        atualizarBotaoAdd(); atualizarCarrinho();
-      }
-      centralizar(card);
-    };
-    trilho.addEventListener('click', (e) => { const card = e.target.closest('.oferta'); if (!card) return; if (e.target.closest('.oferta__escolher')) { $$('.oferta', trilho).forEach((c) => c.classList.toggle('marcado', c === card)); escolher(card); } else marcar(card); });
-    trilho.addEventListener('keydown', (e) => { const card = e.target.closest('.oferta'); if (card && e.target === card && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); escolher(card); } });
-    box.addEventListener('click', (e) => {
-      const b = e.target.closest('.p-op'); if (!b || !st.rasc.internet) return;
-      const op = +b.dataset.op; st.rasc.internet.op = op;
-      $$('.p-op', box).forEach((x) => x.setAttribute('aria-checked', x === b));
-      const p = DY.planosInternet.find((x) => x.id === st.rasc.internet.id);
-      pintarCard($(`.oferta[data-id="${p.id}"]`, trilho), p, op);
-      atualizarBotaoAdd(); atualizarCarrinho();
-    });
-    const sel = trilho.querySelector('[aria-checked="true"].oferta') || trilho.querySelector('.destaque');
-    if (sel) requestAnimationFrame(() => { if (trilho.scrollWidth > trilho.clientWidth + 4) trilho.scrollLeft = sel.offsetLeft - (trilho.clientWidth - sel.offsetWidth) / 2; });
-  }
-  function ligarPara(prod) {
-    const seg = $(`[data-para="${prod}"]`, palco); if (!seg) return;
-    seg.addEventListener('click', (e) => {
-      const b = e.target.closest('[role="radio"]'); if (!b) return;
-      $$('[role="radio"]', seg).forEach((x) => x.setAttribute('aria-checked', x === b));
-      const antes = st.para[prod]; st.para[prod] = b.dataset.v;
-      if (prod === 'internet') {
-        // casa e empresa têm planos diferentes: troca a lista e limpa a escolha
-        DY.definirPlanos({ tipo: st.para.internet });
-        if (st.rasc.internet && !DY.planosInternet.some((p) => p.id === st.rasc.internet.id)) st.rasc.internet = null;
-      }
-      if (prod === 'celular') {
-        DY.definirPlanos({ celular: st.para.celular });
-        if (st.rasc.celular && !DY.planosCelular.some((p) => p.id === st.rasc.celular.id)) st.rasc.celular = null;
-      }
-      if (!antes || prod === 'internet' || prod === 'celular') {
-        // primeira escolha: mostra os planos (ou o campo da conta) logo abaixo da pergunta
-        const y = window.scrollY; renderProduto(); window.scrollTo(0, y);
-        const alvo = $(prod === 'energia' ? '[data-grupo="conta"]' : '[data-trilho]', palco);
-        if (alvo && !antes) {
-          if (gs) gs.from(alvo.parentElement, { y: 16, autoAlpha: 0, duration: 0.4, ease: 'power2.out', clearProps: 'all' });
-          // energia: a pergunta sobe e o campo da fatura fica logo abaixo; internet e celular: os cards dos planos vão para o centro
-          setTimeout(() => (prod === 'energia' ? rolarPara($('.ct-quem', palco), { modo: 'topo' }) : rolarPara($('.oferta', palco) || $('[data-trilho]', palco))), 60);
-          // energia: já abre o teclado no campo da fatura (a pergunta fica no topo e o campo logo abaixo, acima do teclado)
-          if (prod === 'energia') setTimeout(() => $('#f-conta', palco)?.focus({ preventScroll: true }), 120);
-        }
-      }
-    });
-  }
-
-  /* ----- Celular ----- */
-  function htmlCelular() {
-    if (faltaQuem('celular')) return beneficios('celular') + htmlQuem('celular');
-    const sel = st.rasc.celular || (st.esc.celular && { ...st.esc.celular });
-    const cpf = st.para.celular === 'cpf';
-    const cards = DY.planosCelular.map((p) => DY.ofertas.celular(p, { on: !!(sel && sel.id === p.id), porta: !cpf || st.porta })).join('');
-    const n = sel ? sel.linhas : 1;
-    // CPF: o preço e a internet mudam se a pessoa traz o número (portabilidade) ou pega um número novo
-    const porta = cpf ? `<div class="ct-porta" role="radiogroup" aria-label="Número da linha" data-porta-box>
-        <button type="button" role="radio" aria-checked="${st.porta}" data-porta="1"><b>Vou trazer o meu número</b><small>Portabilidade grátis · mais internet e menor preço</small></button>
-        <button type="button" role="radio" aria-checked="${!st.porta}" data-porta="0"><b>Quero um número novo</b><small>Linha nova, com chip enviado para você</small></button>
-      </div>` : '<p class="dy-apoio" style="text-align:center;margin:-4px 0 4px">Os planos “Só portabilidade” têm mais internet para quem traz o número de outra operadora.</p>';
-    return `${beneficios('celular')}${htmlQuem('celular')}${porta}
-      <div><div class="ofertas ofertas--cel" data-trilho>${cards}</div>${dots(DY.planosCelular.length)}</div>
-      <div class="linhas" data-linhas-box${sel ? '' : ' hidden'}>
-        <p class="linhas__titulo" id="lbl-linhas">Quantas linhas você quer?</p>
-        <div class="linhas__ctrl"><button type="button" data-l="-1" aria-label="Tirar uma linha">−</button><output aria-live="polite" aria-labelledby="lbl-linhas" data-l-qtd>${n}</output><button type="button" data-l="1" aria-label="Adicionar uma linha">+</button></div>
-        <p class="linhas__total" data-l-total>Escolha um plano acima para ver o total.</p>
-        <small data-l-nota></small>
-        <div class="porta"><img src="${img('icones/portabilidade.svg')}" alt=""><span><b>Portabilidade grátis</b>Traga o número que você já usa, de qualquer operadora, sem pagar nada. A gente cuida do pedido por você.</span></div>
-      </div>`;
-  }
-  const celPorta = () => st.para.celular !== 'cpf' || st.porta;
-  function atualizarLinhas() {
-    const box = $('[data-linhas-box]', palco); if (!box) return;
-    const r = st.rasc.celular; const n = r ? r.linhas : +$('[data-l-qtd]', box).textContent;
-    $('[data-l-qtd]', box).textContent = n;
-    $('[data-l="-1"]', box).disabled = n <= 1;
-    $('[data-l-nota]', box).textContent = st.para.celular === 'cnpj' ? 'Se a sua empresa for MEI, o limite é de 3 linhas por CNPJ. A partir de 10 linhas existem condições especiais — a gente te explica no WhatsApp.' : '';
-    if (r) {
-      const p = DY.planosCelular.find((x) => x.id === r.id); const total = centavos(DY.celPreco(p, celPorta())) * n;
-      $('[data-l-total]', box).innerHTML = `${n} ${n === 1 ? 'linha' : 'linhas'} de ${p.tipo === 'cpf' ? p.nome + ' · ' : ''}${DY.celGB(p, celPorta())} GB = <b>${brl(total)}/mês</b> · você recebe <b style="color:var(--marca-titulo)">${brl(cashbackCentavos(total, 100))}</b>`;
-    }
-  }
-  function ligarCelular() {
-    ligarPara('celular'); if (faltaQuem('celular')) return;
-    const pb = $('[data-porta-box]', palco);
-    if (pb) pb.addEventListener('click', (e) => {
-      const b = e.target.closest('[data-porta]'); if (!b) return;
-      st.porta = b.dataset.porta === '1';
-      const y = window.scrollY; renderProduto(); window.scrollTo(0, y);
-      atualizarBotaoAdd(); atualizarCarrinho();
-    });
-    const trilho = $('[data-trilho]', palco); ligarDots(trilho);
-    const escolher = (card) => {
-      const linhas = st.rasc.celular ? st.rasc.celular.linhas : +$('[data-l-qtd]', palco).textContent || 1;
-      st.rasc.celular = { id: card.dataset.id, linhas };
-      $$('.oferta', trilho).forEach((c) => { const on = c === card; c.setAttribute('aria-checked', on); c.querySelector('.oferta__escolher').textContent = on ? 'Plano escolhido' : 'Escolher este plano'; });
-      const box = $('[data-linhas-box]', palco); box.hidden = false;
-      atualizarLinhas(); atualizarBotaoAdd(); atualizarCarrinho();
-      descer(box);
-    };
-    const marcar = (card) => {
-      $$('.oferta', trilho).forEach((c) => c.classList.toggle('marcado', c === card));
-      const r = st.rasc.celular;
-      if (r && r.id !== card.dataset.id) {
-        st.rasc.celular = null; $('[data-l-qtd]', palco).textContent = r.linhas;
-        $$('.oferta', trilho).forEach((c) => { c.setAttribute('aria-checked', 'false'); c.querySelector('.oferta__escolher').textContent = 'Escolher este plano'; });
-        $('[data-linhas-box]', palco).hidden = true; atualizarBotaoAdd(); atualizarCarrinho();
-      }
-      centralizar(card);
-    };
-    trilho.addEventListener('click', (e) => { const c = e.target.closest('.oferta'); if (!c) return; if (e.target.closest('.oferta__escolher')) { $$('.oferta', trilho).forEach((x) => x.classList.toggle('marcado', x === c)); escolher(c); } else marcar(c); });
-    trilho.addEventListener('keydown', (e) => { const c = e.target.closest('.oferta'); if (c && e.target === c && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); escolher(c); } });
-    $('[data-linhas-box]', palco).addEventListener('click', (e) => {
-      const b = e.target.closest('[data-l]'); if (!b) return;
-      const atual = st.rasc.celular ? st.rasc.celular.linhas : +$('[data-l-qtd]', palco).textContent;
-      const n = Math.max(1, Math.min(99, atual + +b.dataset.l));
-      if (st.rasc.celular) st.rasc.celular.linhas = n; else $('[data-l-qtd]', palco).textContent = n;
-      atualizarLinhas(); atualizarCarrinho();
-    });
-    atualizarLinhas();
-    const sel = trilho.querySelector('[aria-checked="true"].oferta') || trilho.querySelector('.destaque');
-    if (sel) requestAnimationFrame(() => { if (trilho.scrollWidth > trilho.clientWidth + 4) trilho.scrollLeft = sel.offsetLeft - (trilho.clientWidth - sel.offsetWidth) / 2; });
-  }
-
-  /* ----- Energia ----- */
-  function htmlEnergia() {
-    const v = (st.rasc.energia || st.esc.energia || {}).conta;
-    const benef = `<ul class="energia-beneficios"><li><img src="${img('icones/hero-lampada.svg')}" alt="">Sem placas e sem obra</li><li><img src="${img('icones/cofrinho.svg')}" alt="">Sem investimento</li><li><img src="${img('icones/verificado.svg')}" alt="">Mesma distribuidora</li></ul>`;
-    if (faltaQuem('energia')) return `<div class="energia-sim">${benef}${htmlQuem('energia')}</div>`;
-    return `<div class="energia-sim">
-      ${benef}${htmlQuem('energia')}
-      <div class="campo-grupo" data-grupo="conta">
-        <div class="campo campo--moeda${v ? ' preenchido' : ''}">
-          <input id="f-conta" inputmode="numeric" placeholder="0,00" value="${v ? mascara.moeda(String(Math.round(v * 100))) : ''}" aria-describedby="m-conta">
-          <label for="f-conta">Valor médio da sua conta de luz</label>
-          <span class="campo__ico" aria-hidden="true"></span>
+  const sn = () => /^s/i.test(st.end.numero);
+  const endOk = () => st.achou && st.end.logradouro.trim().length >= 3 && !!st.end.numero.trim();
+  T.endereco = {
+    html: () => `${cab('Qual é o seu endereço?', 'Com ele, mostramos o que chega na sua rua e os preços do seu estado.', false)}
+      <form class="cx-f" data-form novalidate>
+        <div data-modo="cep"${st.modo === 'cep' ? '' : ' hidden'}>${campo('cep', 'CEP', 'inputmode="numeric" autocomplete="postal-code" maxlength="9"', mascara.cep(st.end.cep))}</div>
+        <div class="dupla" data-modo="rua"${st.modo === 'rua' ? '' : ' hidden'}>
+          <label class="cp__c cp__c--sel"><select id="f-uf">${UFS.map(([k, n]) => `<option value="${k}"${k === st.rua.uf ? ' selected' : ''}>${n}</option>`).join('')}</select><span>Estado</span></label>
+          <label class="cp__c"><input id="f-cidade" placeholder=" " list="l-cid" autocomplete="off" value="${esc(st.rua.cidade)}"><span>Cidade</span></label><datalist id="l-cid"></datalist>
+          <label class="cp__c"><input id="f-rua" placeholder=" " autocomplete="off" value="${esc(st.rua.nome)}"><span>Nome da rua</span></label>
+          <label class="cp__c"><input id="f-ruan" placeholder=" " inputmode="numeric" maxlength="6" autocomplete="off" value="${esc(st.rua.num)}"><span>Número</span></label>
+          <div class="sug" data-sug aria-live="polite"></div>
         </div>
-        <p class="campo__msg dica" id="m-conta">Use uma conta recente ou a média de gastos dos últimos 3 meses.</p>
-      </div>
-      <div class="chips" role="group" aria-label="Valores comuns">${[500, 800, 1500, 3000, 8000].map((x) => `<button type="button" class="chip-op" data-v="${x}" aria-pressed="false">R$ ${x.toLocaleString('pt-BR')}</button>`).join('')}</div>
-      <div data-energia-res></div>
-    </div>`;
-  }
-  function ligarEnergia() {
-    ligarPara('energia'); if (faltaQuem('energia')) return;
-    const input = $('#f-conta', palco); const res = $('[data-energia-res]', palco); const g = $('[data-grupo="conta"]', palco);
-    const calc = () => {
-      const reais = Number(so(input.value)) / 100;
-      input.closest('.campo').classList.toggle('preenchido', !!input.value);
-      $$('.chip-op', palco).forEach((c) => c.setAttribute('aria-pressed', +c.dataset.v === reais));
-      if (!reais) { st.rasc.energia = null; res.innerHTML = ''; limpar(g); atualizarBotaoAdd(); atualizarCarrinho(); return; }
-      const s = DY.energia.simular(reais);
-      if (!s.elegivel) {
-        st.rasc.energia = null; marcar(g, 'Para contas abaixo de R$ 500 a energia por assinatura ainda não compensa.', true);
-        res.innerHTML = `<div class="aviso aviso--neutro"><img src="${img('icones/aviso-info.svg')}" alt=""><span>Com uma conta abaixo de R$ 500 o desconto fica pequeno e a assinatura não vale a pena. Se você tiver outra unidade (comércio, casa de praia), conte para a gente no WhatsApp.</span></div>`;
-      } else {
-        marcar(g, '');
-        st.rasc.energia = { conta: reais };
-        res.innerHTML = `<div class="energia-res">
-          <p class="energia-res__tit"><span>Simulação do seu desconto</span><em>Estimativa</em></p>
-          <div class="energia-res__linha"><span>Sua fatura hoje</span><b><s>${brl(s.conta)}</s></b></div>
-          <div class="energia-res__linha nova"><span>Com o desconto de ${s.pct}%, sua fatura fica cerca de:</span><b>${brl(s.comDesconto)}<small class="mes">/mês</small></b></div>
-          <div class="energia-res__linha"><span>Economia estimada</span><b>${brl(s.economiaMes)} por mês<small>${brl(s.economiaMes * 12)} em um ano</small></b></div>
-          <hr>
-          <div class="oferta__cb"><span>Volta para você<br><small>cashback de 10% da nova conta, uma vez</small></span><b>${brl(s.cashback)}</b></div>
-          <div class="energia-res__aviso"><img src="${img('icones/aviso-info.svg')}" alt=""><span><b>Isto é uma simulação.</b> O desconto real é calculado com a sua fatura e enviado pelo WhatsApp para você aprovar antes de qualquer contrato.<br>A primeira fatura com desconto pode levar até 90 dias.</span></div>
-        </div>`;
+        <button class="link" type="button" data-troca>${st.modo === 'cep' ? 'Não sei meu CEP' : 'Sei meu CEP'}</button>
+        <div class="achado" data-achado hidden></div>
+        <p class="aviso" data-aviso hidden></p>
+      </form>
+      <ul class="garante"><li>Nada é cobrado agora</li><li>Leva poucos minutos</li><li>Você termina no WhatsApp, com uma pessoa</li></ul>`,
+    bt: () => 'Continuar', pode: endOk,
+    ir() {
+      st.end.logradouro = st.end.logradouro.trim();
+      try { sessionStorage.setItem('dy_endereco', JSON.stringify({ cep: st.end.cep, numero: st.end.numero })); } catch (e) { /* */ }
+      mostra('consulta', { empurra: false });
+    },
+    liga(el) {
+      const iCep = $('#f-cep'), ach = $('[data-achado]'), av = $('[data-aviso]');
+      $('[data-form]', el).addEventListener('submit', (e) => { e.preventDefault(); acao(); });
+      const desenhaAchado = (foco) => {
+        ach.hidden = !st.achou; av.hidden = true; if (!st.achou) { ach.innerHTML = ''; botao(); return; }
+        const e = st.end, livre = !e.travado;
+        ach.innerHTML = `<div class="achado__r"><i aria-hidden="true"></i><div>${livre ? '' : `<b>${esc(e.logradouro)}</b>`}<span>${esc([e.bairro, e.cidade && `${e.cidade}/${e.uf}`].filter(Boolean).join(' · '))}</span></div></div>
+          ${livre ? campo('log', 'Rua ou avenida', 'autocomplete="address-line1" maxlength="80"', e.logradouro) : ''}
+          <div class="dupla"><div class="cp cp--num" data-cp="num"><label class="cp__c"><input id="f-num" placeholder=" " inputmode="numeric" maxlength="6" autocomplete="off" value="${esc(e.numero)}"${sn() ? ' readonly' : ''} aria-describedby="m-num"><span>Número</span></label><label class="snum"><input type="checkbox" data-sn${sn() ? ' checked' : ''}><i aria-hidden="true"></i>Sem número</label><p class="cp__m" id="m-num" data-dica=""></p></div>
+          ${campo('comp', 'Complemento (opcional)', 'maxlength="40" autocomplete="address-line2"', e.comp)}</div>`;
+        liga('log', { val: (v) => (v.trim().length >= 3 ? '' : 'Escreva o nome da rua.'), guarda: (v) => (e.logradouro = v) });
+        liga('num', { masc: (v) => v.replace(/[^\dsn/]/gi, '').toUpperCase(), val: validar.numero, guarda: (v) => { e.numero = v; clearTimeout(tRua); av.hidden = true; tRua = setTimeout(confere, 600); } });
+        $('#f-comp').addEventListener('input', (x) => (e.comp = x.target.value.trim()));
+        $('[data-sn]').addEventListener('change', (x) => { const i = $('#f-num'); i.value = x.target.checked ? 'S/N' : ''; i.readOnly = x.target.checked; i.dispatchEvent(new Event('input')); if (!x.target.checked) i.focus(); });
+        if (foco) { const i = $(livre ? '#f-log' : '#f-num'); if (livre || !e.numero) i.focus(); rola(ach); }
+        botao();
+      };
+      // rua com mais de um CEP: avisa quando o número é de outro CEP
+      async function confere() {
+        const e = st.end, n = parseInt(so(e.numero), 10); if (!n || !e.travado) return;
+        const l = ((await viacep(e.uf, e.cidade, tiraTipo(e.logradouro))) || []).filter((d) => semAcento(d.logradouro) === semAcento(e.logradouro));
+        if (tela !== 'endereco' || so(e.numero) !== String(n) || l.length < 2) return;
+        const meu = l.find((d) => so(d.cep) === e.cep); if (!meu || naFaixa(meu.complemento, n) !== false) return;
+        const bom = l.find((d) => naFaixa(d.complemento, n) === true); if (!bom) return;
+        av.hidden = false; av.innerHTML = `O número <b>${n}</b> fica em outro CEP dessa rua: <b>${bom.cep}</b>, ${esc(bom.bairro)}. <button class="link" type="button" data-cep="${so(bom.cep)}">Usar este CEP</button>`;
       }
-      atualizarBotaoAdd(); atualizarCarrinho();
-    };
-    const mostrarSim = () => { const box = $('.energia-res', res) || $('.aviso', res); if (box) rolarPara(box, { modo: box.classList.contains('energia-res') && !matchMedia('(min-width: 768px)').matches ? 'topo' : 'centro', folga: 12 }); };
-    let tSim;
-    input.addEventListener('input', () => { input.value = mascara.moeda(input.value); calc(); clearTimeout(tSim); tSim = setTimeout(mostrarSim, 1400); });
-    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); clearTimeout(tSim); input.blur(); setTimeout(mostrarSim, 250); } });
-    $$('.chip-op', palco).forEach((c) => c.addEventListener('click', () => { input.value = mascara.moeda(String(c.dataset.v * 100)); calc(); clearTimeout(tSim); if (document.activeElement === input) input.blur(); setTimeout(mostrarSim, 150); }));
-    // celular: quando o teclado abre, garante o campo visível
-    if (window.visualViewport) { const vv = window.visualViewport; const garantir = () => { if (document.activeElement === input) rolarPara($('.ct-quem', palco) || input, { modo: 'topo' }); }; vv.addEventListener('resize', garantir); }
-    if (input.value) calc();
-  }
-
-  function atualizarBotaoAdd() {
-    const prod = st.ordem[st.idx]; const b = $('[data-add]', palco); if (!b) return;
-    b.disabled = !st.rasc[prod];
-  }
-
-  palco.addEventListener('click', (e) => {
-    const prod = st.ordem[st.idx];
-    if (e.target.closest('[data-add]')) {
-      if (!st.rasc[prod]) return;
-      st.esc[prod] = { ...st.rasc[prod] };
-      if (prod === 'celular') { st.esc.celular.para = st.para.celular; st.esc.celular.porta = st.porta; }
-      if (prod === 'internet') st.esc.internet.para = st.para.internet;
-      if (prod === 'energia') st.esc.energia.para = st.para.energia;
-      pulsar(); avancarProduto();
-    } else if (e.target.closest('[data-pular]')) {
-      st.esc[prod] = null; st.rasc[prod] = null; avancarProduto();
-    }
-  });
-  function avancarProduto() {
-    atualizarCarrinho();
-    if (st.editando) { st.editando = false; renderResumo(); mostrar('resumo'); return; }
-    if (st.idx < st.ordem.length - 1) { st.idx++; renderProduto(); history.pushState({ tela: 'combo', idx: st.idx }, '', '#combo'); window.scrollTo({ top: 0, behavior: reduzir ? 'auto' : 'smooth' }); atualizarProgresso(); setTimeout(() => $('#h-combo').focus({ preventScroll: true }), 60); }
-    else { renderResumo(); mostrar('resumo'); }
-  }
-
-  /* ---------- Itens do combo (para resumo, carrinho, banco e WhatsApp) ---------- */
-  function itens(fonte = 'esc') {
-    const lista = [];
-    const ordem = ['internet', 'celular', 'energia'];
-    ordem.forEach((prod) => {
-      const v = fonte === 'misto' ? (st.esc[prod] === undefined ? st.rasc[prod] : st.esc[prod]) : st.esc[prod];
-      if (!v) return;
-      if (prod === 'internet') {
-        const p = DY.planosInternet.find((x) => x.id === v.id); const o = p.opcoes[v.op];
-        const preco = centavos(o.preco); const nome = p.num + ' Mega';
-        const extra = o.nome !== 'Somente Internet' ? ' + ' + o.nome : '';
-        lista.push({ produto: 'internet', titulo: 'Internet Fibra ' + nome + extra, detalhe: brl(preco) + '/mês · ' + (v.para === 'empresa' ? 'no CNPJ' : 'no CPF'), mensal: preco, cashback: cashbackCentavos(preco, 50), sub: (o.nome !== 'Somente Internet' ? o.nome + ' incluso · ' : '') + ((v.para || st.para.internet) === 'empresa' ? 'No CNPJ' : 'No CPF'), plano: p.id, opcao: o.nome, para: v.para || st.para.internet, titular: (v.para || st.para.internet) === 'empresa' ? 'cnpj' : 'cpf',
-          linhaZap: `Internet Fibra ${nome}${extra} no valor de ${brl(preco)}/mês${v.para === 'empresa' ? ' (no CNPJ)' : ''}` });
-      }
-      if (prod === 'celular') {
-        const lst = (v.para || st.para.celular) === 'cpf' ? DY.celularCpf : [...DY.planosCnpj, ...DY.celularPorta];
-        const p = lst.find((x) => x.id === v.id); if (!p) return;
-        const porta = p.tipo === 'cpf' ? (v.porta !== undefined ? v.porta : st.porta) : true;
-        const unit = centavos(DY.celPreco(p, porta)); const total = unit * v.linhas; const gb = DY.celGB(p, porta);
-        const para = v.para || st.para.celular;
-        const nome = p.tipo === 'cpf' ? `${p.nome} ${gb} GB` : `${gb} GB`;
-        const modo = p.tipo === 'cpf' || p.soPorta ? (porta ? ' · portabilidade' : ' · número novo') : '';
-        lista.push({ produto: 'celular', titulo: `${v.linhas} ${v.linhas === 1 ? 'linha' : 'linhas'} de celular ${nome}`, detalhe: `${brl(unit)} por linha · ${brl(total)}/mês · ${para === 'cnpj' ? 'CNPJ' : 'CPF'}${modo}`, mensal: total, cashback: cashbackCentavos(total, 100), sub: `${brl(unit)} por linha · ${para === 'cnpj' ? 'CNPJ' : 'CPF'}${modo}`, plano: p.id, linhas: v.linhas, para, portabilidade: porta,
-          linhaZap: `${v.linhas} ${v.linhas === 1 ? 'linha' : 'linhas'} de celular ${p.tipo === 'cpf' ? p.nome + ' ' : ''}de ${gb} GB (${brl(unit)} cada, total de ${brl(total)}/mês)${modo.replace(' · ', ', ')}${para === 'cnpj' ? ' para a minha empresa' : ''}` });
-      }
-      if (prod === 'energia') {
-        const s = DY.energia.simular(v.conta);
-        lista.push({ produto: 'energia', titulo: 'Energia Solar por Assinatura', detalhe: `Conta de ${brl(s.conta)} → cerca de ${brl(s.comDesconto)}`, mensal: s.comDesconto, cashback: s.cashback, conta_luz: s.conta, estimativa_desconto_pct: s.pct, titular: v.para || st.para.energia || 'cpf',
-          linhaZap: `Energia Solar para uma conta de luz de ${brl(s.conta)}` });
-      }
-    });
-    return lista;
-  }
-  const somaCb = (l) => l.reduce((a, i) => a + i.cashback, 0);
-  const noBoleto = () => st.pag.tipo === 'boleto';
-  const precoMes = (i) => i.mensal + (noBoleto() && i.produto !== 'energia' ? 1000 : 0);
-  const somaMes = (l) => l.reduce((a, i) => a + precoMes(i), 0);
-  function notaTotal(l) {
-    const tel = l.filter((i) => i.produto !== 'energia').map((i) => i.produto);
-    const nomes = tel.length === 2 ? 'Internet e celular' : tel[0] === 'internet' ? 'Internet' : tel[0] === 'celular' ? 'Celular' : '';
-    const forma = noBoleto() ? 'no boleto ou PIX (R$ 10,00 a mais por plano).' : 'no débito automático.';
-    return [nomes && `${nomes} ${forma}`, l.some((i) => i.produto === 'energia') && 'A conta de luz é uma estimativa e depende da sua fatura.'].filter(Boolean).join(' ');
-  }
-  const MES = '<i>/mês</i>';
-  // Resumo organizado: energia separada dos serviços de telecom, depois cashback e valor total
-  // Um card por serviço (energia laranja, internet azul, celular verde) com Alterar e Remover
-  const TIT = { energia: 'Desconto na Energia', internet: 'Internet Fibra', celular: 'Plano de Celular' };
-  const ICO = { energia: 'hero-lampada.svg', internet: 'hero-wifi.svg', celular: 'hero-celular-5g.svg' };
-  const ICO_LAPIS = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.7 3.3a1.6 1.6 0 0 1 2.3 0l1.7 1.7a1.6 1.6 0 0 1 0 2.3L7.5 16.5 3.5 17.5l1-4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
-  const ICO_LIXO = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 6h12M8 6V4.5h4V6M5.5 6l.8 10h7.4l.8-10M8.5 9v4.5M11.5 9v4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const separador = (t) => `<div class="rz-separador" role="separator"><span>${t}</span></div>`;
-  const LINK_CB = '<button type="button" class="rz-link-cb" data-como-cb>Como funciona o cashback?</button>';
-  function blocosResumo(l, antesDosTotais = '', { leitura = false } = {}) {
-    const chip = (v) => `<span class="rz-chip">Cashback <b>${brl(v)}</b></span>`;
-    const cab = (p) => `<div class="rz-sec__cab"><h3><span class="rz-ico"><img src="${img('icones/' + ICO[p])}" alt=""></span>${TIT[p]}</h3>
-      ${leitura ? '' : `<div class="rz-acoes"><button class="rz-btn" type="button" data-editar="${p}" aria-label="Alterar ${TIT[p]}" title="Alterar">${ICO_LAPIS}<span>Alterar</span></button><button class="rz-btn rz-btn--remover" type="button" data-remover="${p}" aria-label="Remover ${TIT[p]}" title="Remover">${ICO_LIXO}<span>Remover</span></button></div>`}</div>`;
-    const en = l.find((x) => x.produto === 'energia'); const tel = l.filter((x) => x.produto !== 'energia');
-    let h = '';
-    if (en) h += separador(`Conta de luz com desconto de ${en.estimativa_desconto_pct}%`) + `<section class="rz-sec rz-sec--energia">${cab('energia')}
-        <div class="rz-linha rz-linha--antiga"><span>Fatura atual · no ${en.titular === 'cnpj' ? 'CNPJ' : 'CPF'}</span><s>${brl(en.conta_luz)}</s></div>
-        <div class="rz-linha rz-linha--nova"><span>Fatura de luz com desconto<small>Simulação com ${en.estimativa_desconto_pct}% de desconto</small></span><b>${brl(en.mensal)}${MES}</b></div>
-        <div class="rz-linha rz-linha--cb"><span></span>${chip(en.cashback)}</div></section>`;
-    if (tel.length) h += separador(tel.length === 2 ? 'Internet e Celular' : tel[0].produto === 'internet' ? 'Internet Fibra' : 'Plano de celular') + tel.map((i) => `<section class="rz-sec rz-sec--${i.produto}">${cab(i.produto)}
-        <div class="rz-item"><div class="rz-item__nome"><b>${i.titulo}</b><span>${i.sub}</span></div><div class="rz-item__val"><b>${brl(precoMes(i))}${MES}</b>${chip(i.cashback)}</div></div></section>`).join('');
-    h += antesDosTotais;
-    h += separador('Cashback e valores por mês');
-    h += `<div class="rz-cbtotal"><div><span>Cashback total</span><b>${brl(somaCb(l))}</b></div><small>Enviamos esse valor em até 7 dias via PIX pra você após o contrato ser finalizado.</small>${LINK_CB}</div>`;
-    if (en) h += `<div class="rz-total rz-total--energia"><div><span>Conta de luz<br>(Estimada)</span><b>${brl(en.mensal)}${MES}</b></div><small>Valor estimado do desconto de ${en.estimativa_desconto_pct}% aplicado.<br>O valor real enviamos via WhatsApp para você aprovar.<br>A primeira fatura com desconto pode levar até 90 dias.</small></div>`;
-    if (tel.length) h += `<div class="rz-total"><div><span>${tel.length === 2 ? 'Internet e celular' : tel[0].produto === 'internet' ? 'Internet' : 'Celular'}</span><b>${brl(tel.reduce((a, i) => a + precoMes(i), 0))}${MES}</b></div><small>${noBoleto() ? 'Valor na forma de pagamento BOLETO ou PIX.<br>Já com o acréscimo de R$ 10,00 ao valor do plano.' : 'Valor na forma de pagamento Débito Automático.<br>Você pode alterar para BOLETO ou PIX, tendo um acréscimo de R$ 10,00 ao valor do plano.'}</small></div>`;
-    h += `<div class="rz-agora"><img src="img/icones/verificado.svg" alt=""><span><b>Nada é cobrado agora.</b><br>Antes de finalizar qualquer contrato, nossa equipe tira todas as suas dúvidas via WhatsApp.</span></div>`;
-    return h;
-  }
-
-
-  /* ---------- Barra do combo ---------- */
-  const car = $('[data-carrinho]');
-  const dock = $('[data-dock]'), dockIr = $('[data-dock-ir]'), dockRot = $('[data-dock-rot]');
-  const PRIM = '[data-continuar], [data-montar], [data-add], [data-ir-dados], [data-finalizar]';
-  // O botão fixo espelha (rótulo, ativo/inativo, carregando) o botão principal da tela visível
-  function alvoDock() { const t = $('.tela:not([hidden])'); return t ? $$(PRIM, t)[0] : null; }
-  function syncDock() {
-    const a = alvoDock();
-    dockIr.hidden = !a;
-    if (!a) return;
-    dockIr.disabled = a.disabled;
-    dockIr.classList.toggle('carregando', a.classList.contains('carregando'));
-    const t = a.textContent.replace('→', '').trim();
-    dockRot.textContent = /^Adicionar/.test(t) ? 'Adicionar' : /^Manter/.test(t) ? 'Continuar' : t === 'Gerar meu Pedido' ? 'Gerar Pedido' : /^Ver os planos/.test(t) ? 'Ver planos' : /^Montar meu combo/.test(t) ? 'Montar combo' : /^Marque/.test(t) ? 'Escolha acima' : t;
-  }
-  dockIr.addEventListener('click', () => { const a = alvoDock(); if (a && !a.disabled) a.click(); });
-  new MutationObserver(() => requestAnimationFrame(syncDock)).observe($('#fluxo'), { subtree: true, childList: true, attributes: true, attributeFilter: ['disabled', 'hidden', 'class'] });
-  function atualizarCarrinho() {
-    const l = itens('esc');
-    $('[data-carrinho-qtd]').textContent = l.length;
-    const telB = l.filter((i) => i.produto !== 'energia'); const enB = l.find((i) => i.produto === 'energia');
-    $('[data-carrinho-mensal]').textContent = brl(telB.length ? somaMes(telB) : enB ? enB.mensal : 0);
-    $('[data-carrinho-rot]').textContent = telB.length ? 'Valor dos planos' : 'Conta de luz estimada';
-    car.setAttribute('aria-label', `Ver resumo do pedido: ${l.length} ${l.length === 1 ? 'serviço' : 'serviços'}, cashback de ${brl(somaCb(l))}`);
-    car.hidden = !l.length;
-    const corpo = $('[data-rz-corpo]');
-    corpo.innerHTML = l.length ? blocosResumo(l) : '<p>Escolha pelo menos um serviço para montar o combo.</p>';
-    if (!l.length) fecharResumo(false);
-  }
-  function pulsar() { const q2 = $('[data-carrinho-qtd]'); q2.classList.remove('pulsar'); void q2.offsetWidth; q2.classList.add('pulsar'); }
-
-  /* ---------- Janela do resumo (fundo desfocado) ---------- */
-  const modal = $('[data-rz-modal]'), janela = $('.rz-modal__janela', modal);
-  let tlResumo = null;
-  function abrirResumo() {
-    atualizarCarrinho();
-    if (tlResumo) tlResumo.kill();
-    modal.hidden = false; document.body.classList.add('rz-aberto');
-    car.setAttribute('aria-expanded', 'true');
-    if (gs) {
-      tlResumo = gs.timeline({ defaults: { ease: 'power3.out' } })
-        .fromTo('.rz-modal__fundo', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.25 })
-        .fromTo(janela, { y: 40, autoAlpha: 0, scale: 0.97 }, { y: 0, autoAlpha: 1, scale: 1, duration: 0.4 }, 0)
-        .fromTo('.rz-modal__corpo > *', { y: 14, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.35, stagger: 0.06, clearProps: 'transform,opacity,visibility' }, 0.1);
-    }
-    setTimeout(() => janela.focus(), 30);
-  }
-  function fecharResumo(devolverFoco = true) {
-    if (!modal || modal.hidden) return;
-    if (tlResumo) tlResumo.kill();
-    const fim = () => { modal.hidden = true; document.body.classList.remove('rz-aberto'); car.setAttribute('aria-expanded', 'false'); gs && gs.set([janela, '.rz-modal__fundo'], { clearProps: 'all' }); if (devolverFoco && !car.hidden) car.focus(); };
-    if (gs && devolverFoco) {
-      tlResumo = gs.timeline({ defaults: { duration: 0.22, ease: 'power2.in' }, onComplete: fim })
-        .to(janela, { y: 30, autoAlpha: 0 })
-        .to('.rz-modal__fundo', { autoAlpha: 0 }, 0);
-    } else fim();
-  }
-  $('[data-carrinho-toggle]').addEventListener('click', abrirResumo);
-  const comoCb = $('[data-como-cb-modal]');
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('[data-como-cb]')) { comoCb.hidden = false; if (gs) gs.fromTo('.cb-info__caixa', { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.3, ease: 'power2.out' }); setTimeout(() => $('[data-como-cb-fechar]').focus(), 30); return; }
-    if (e.target.closest('[data-como-cb-fechar]') || e.target === comoCb) comoCb.hidden = true;
-  });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !comoCb.hidden) { e.stopImmediatePropagation(); comoCb.hidden = true; } }, true);
-  modal.addEventListener('click', (e) => { if (e.target.closest('[data-rz-fechar]')) fecharResumo(); });
-  document.addEventListener('keydown', (e) => {
-    if (modal.hidden || !$('[data-rz-confirma]').hidden) return;
-    if (e.key === 'Escape') fecharResumo();
-    if (e.key === 'Tab') { // foco preso dentro da janela
-      const f = $$('button, [href], [tabindex]:not([tabindex="-1"])', janela); if (!f.length) return;
-      if (e.shiftKey && document.activeElement === f[0]) { f[f.length - 1].focus(); e.preventDefault(); }
-      else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { f[0].focus(); e.preventDefault(); }
-    }
-  });
-
-  /* =========================================================
-     4 · RESUMO
-     ========================================================= */
-  function renderResumo() {
-    const l = itens();
-    const faltam = ['energia', 'internet', 'celular'].filter((p) => !st.esc[p] && (st.disp || {})[p] !== 'nao');
-    const ico = { internet: 'hero-wifi.svg', celular: 'hero-celular-5g.svg', energia: 'hero-lampada.svg' };
-    const faltaHtml = faltam.length ? '<p class="rz-falta-tit">Quer incluir mais algum?</p>' + faltam.map((p) => `<div class="item-combo item-combo--vazio"><span class="item-combo__ico i-${p}"><img src="${img('icones/' + ico[p])}" alt=""></span>
-        <span class="item-combo__txt"><b>${{ internet: 'Internet Fibra', celular: 'Planos de Celular', energia: 'Desconto na Conta de Luz' }[p]}</b><span>${{ internet: '50% do valor do plano volta para você', celular: '100% do valor do plano volta para você', energia: '10% da nova conta de luz volta para você' }[p]}</span></span>
-        <button class="item-combo__acao" type="button" data-editar="${p}">+ Adicionar</button></div>`).join('') : '';
-    $('[data-resumo]').innerHTML = l.length ? blocosResumo(l, faltaHtml)
-      : '<div class="aviso aviso--info"><img src="img/icones/aviso-info.svg" alt=""><span>O seu pedido está vazio. Para seguir, escolha <b>pelo menos um serviço</b> abaixo.</span></div>' + faltaHtml;
-    $('[data-ir-dados]').disabled = !l.length;
-    atualizarCarrinho();
-  }
-  /* Alterar / Remover (tela Seu combo e janela do resumo) */
-  function editarProduto(p) {
-    fecharResumo(false);
-    if (!st.ordem.includes(p)) st.ordem.push(p);
-    st.idx = st.ordem.indexOf(p); if (st.esc[p]) st.rasc[p] = { ...st.esc[p] };
-    // no meio do combo, só pula para o produto; depois do resumo, volta para o resumo ao terminar
-    st.editando = telaAtual !== 'combo';
-    renderProduto(); if (telaAtual === 'combo') { history.pushState({ tela: 'combo', idx: st.idx }, '', '#combo'); window.scrollTo({ top: 0, behavior: reduzir ? 'auto' : 'smooth' }); atualizarProgresso(); } else mostrar('combo');
-  }
-  const confirma = $('[data-rz-confirma]');
-  let removendo = null;
-  function pedirRemocao(p) {
-    const i = itens('esc').find((x) => x.produto === p); if (!i) return;
-    removendo = p;
-    $('[data-confirma-txt]').innerHTML = `Você deseja remover <b>${i.titulo}</b> do seu pedido?`;
-    confirma.hidden = false;
-    if (gs) gs.fromTo('.rz-confirma__caixa', { scale: 0.92, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.25, ease: 'back.out(1.6)' });
-    setTimeout(() => $('[data-confirma-nao]').focus(), 30);
-  }
-  function fecharConfirma() { confirma.hidden = true; const p = removendo; removendo = null; const b = p && $(`[data-remover="${p}"]`); if (b && b.offsetParent) b.focus(); }
-  function remover(p) {
-    if (st.esc[p]) st.esc[p] = null; st.rasc[p] = null;
-    toast(`${TIT[p]} removido do pedido.`);
-    if (telaAtual === 'combo' && st.ordem[st.idx] === p) renderProduto();
-    if (telaAtual === 'resumo') renderResumo();
-    atualizarCarrinho();
-    if (!modal.hidden && !itens('esc').length) fecharResumo();
-  }
-  $('[data-confirma-nao]').addEventListener('click', fecharConfirma);
-  $('[data-confirma-sim]').addEventListener('click', () => { const p = removendo; confirma.hidden = true; removendo = null; if (p) remover(p); });
-  confirma.addEventListener('click', (e) => { if (e.target === confirma) fecharConfirma(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !confirma.hidden) { e.stopImmediatePropagation(); fecharConfirma(); } }, true);
-  document.addEventListener('click', (e) => {
-    const ed = e.target.closest('[data-resumo] [data-editar], [data-rz-modal] [data-editar]'); if (ed) { editarProduto(ed.dataset.editar); return; }
-    const rm = e.target.closest('[data-remover]'); if (rm) pedirRemocao(rm.dataset.remover);
-  });
-  $('[data-ir-dados]').addEventListener('click', () => {
-    if (!temItens()) { toast('Escolha pelo menos um serviço para continuar.'); return; }
-    mostrar('contato');
-  });
-
-  /* =========================================================
-     5 · CONTATO   6 · CADASTRO
-     ========================================================= */
-  const fCont = $('[data-form="contato"]'), fCad = $('[data-form="cadastro"]');
-  const okCont = () => !validar.nome($('#f-nome').value) && !validar.telefone($('#f-telefone').value);
-  const precisaCnpj = () => !!((st.esc.celular && st.esc.celular.para === 'cnpj') || (st.esc.internet && st.esc.internet.para === 'empresa') || (st.esc.energia && st.esc.energia.para === 'cnpj'));
-  const okCad = () => !validar.email($('#f-email').value) && !validar.cpf($('#f-cpf').value) && (!precisaCnpj() || !validar.cnpj($('#f-cnpj').value)) && st.cad.consent;
-  ligarCampo('nome', { masc: nomeProprio, val: validar.nome, depois: () => (fCont.querySelector('[data-continuar]').disabled = !okCont()) });
-  ligarCampo('telefone', { masc: mascara.telefone, val: validar.telefone, depois: () => (fCont.querySelector('[data-continuar]').disabled = !okCont()) });
-  const chkCad = () => (fCad.querySelector('[data-continuar]').disabled = !okCad());
-  ligarCampo('email', { val: validar.email, depois: chkCad });
-  ligarCampo('cpf', { masc: mascara.cpf, val: validar.cpf, depois: chkCad });
-  ligarCampo('cnpj', { masc: mascara.cnpj, val: validar.cnpj, depois: chkCad });
-  $('[data-consentimento]').addEventListener('click', (e) => {
-    if (e.target.closest('a')) return;
-    st.cad.consent = !st.cad.consent; e.currentTarget.setAttribute('aria-checked', st.cad.consent); chkCad();
-  });
-  const blocoCnpj = $('[data-revela-cnpj]'); revelar(blocoCnpj, false);
-
-  fCont.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const a = $('[data-grupo="nome"]').validarAgora(), b = $('[data-grupo="telefone"]').validarAgora();
-    if (!a || !b) return;
-    st.contato = { nome: $('#f-nome').value.trim().replace(/\s+/g, ' '), telefone: so($('#f-telefone').value) };
-    DY.salvarPedido(montarPedido('contato')); // já guarda o contato, mesmo que a pessoa pare aqui
-    revelar(blocoCnpj, precisaCnpj());
-    chkCad();
-    mostrar('cadastro');
-  });
-  fCad.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const ok = [$('[data-grupo="email"]').validarAgora(), $('[data-grupo="cpf"]').validarAgora(), !precisaCnpj() || $('[data-grupo="cnpj"]').validarAgora()].every(Boolean);
-    if (!ok || !st.cad.consent) { if (!st.cad.consent) toast('Para seguir, marque a autorização de uso dos dados.'); return; }
-    st.cad = { ...st.cad, email: $('#f-email').value.trim().toLowerCase(), cpf: so($('#f-cpf').value), cnpj: precisaCnpj() ? so($('#f-cnpj').value) : '' };
-    DY.salvarPedido(montarPedido('cadastro'));
-    mostrar('pagamento');
-  });
-
-  /* =========================================================
-     7 · PAGAMENTO
-     ========================================================= */
-  const blocoBancos = $('[data-revela-bancos]'); revelar(blocoBancos, false);
-  const grade = $('[data-bancos]');
-  grade.innerHTML = DY.bancosDebito.map(([c, n, s]) => `<button type="button" class="banco" role="radio" aria-checked="false" data-banco="${n}"><span class="banco__sigla" aria-hidden="true">${s}</span>${n}</button>`).join('');
-  const chkPag = () => { $('[data-finalizar]').disabled = !(st.pag.tipo === 'boleto' || (st.pag.tipo === 'debito' && st.pag.banco)); atualizarProgresso(); };
-  $('[data-pagamentos]').addEventListener('click', (e) => {
-    const b = e.target.closest('[data-pag]'); if (!b) return;
-    $$('[data-pag]').forEach((x) => x.setAttribute('aria-checked', x === b));
-    st.pag.tipo = b.dataset.pag; revelar(blocoBancos, st.pag.tipo === 'debito'); atualizarCarrinho();
-    if (st.pag.tipo === 'debito') setTimeout(() => (matchMedia('(min-width: 768px)').matches ? blocoBancos.scrollIntoView({ block: 'nearest', behavior: reduzir ? 'auto' : 'smooth' }) : rolarPara($('[data-pag="boleto"]'), { modo: 'topo', folga: 16 })), 260);
-    chkPag();
-  });
-  grade.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-banco]'); if (!b) return;
-    $$('[data-banco]', grade).forEach((x) => x.setAttribute('aria-checked', x === b));
-    st.pag.banco = b.dataset.banco; chkPag();
-    $('[data-finalizar]').scrollIntoView({ block: 'nearest', behavior: reduzir ? 'auto' : 'smooth' });
-  });
-
-  function valoresPagamento() {
-    const l = itens().filter((i) => i.produto !== 'energia');
-    const debito = l.reduce((a, i) => a + i.mensal, 0);
-    return { debito, boleto: debito + l.length * 1000, planos: l.length };
-  }
-  function atualizarPagamento() {
-    const v = valoresPagamento();
-    $$('[data-pag-valor]').forEach((e) => { e.hidden = !v.planos; e.textContent = brl(v[e.dataset.pagValor]) + '/mês'; });
-    // deixa claro o que entra no valor da forma de pagamento
-    const tel = itens().filter((i) => i.produto !== 'energia').map((i) => i.produto); const temEn = itens().some((i) => i.produto === 'energia');
-    const oq = $('[data-pag-oque]');
-    const pn = (st.contato.nome || '').trim().split(/\s+/)[0];
-    $('#h-pagamento').textContent = pn ? `${pn}, como prefere pagar?` : 'Como prefere pagar?';
-    if (oq) oq.hidden = true;
-    const eco = $('[data-pag-eco]'); if (eco) { eco.hidden = !v.planos; eco.textContent = `Você economiza ${brl(v.boleto - v.debito)} por mês`; }
-    const sm = $('[data-pag="boleto"] small');
-    if (sm) sm.textContent = v.planos ? (v.planos === 1 ? 'O valor aumenta apenas R$ 10,00.' : 'O valor aumenta apenas R$ 10,00 por plano.') : 'Você paga todo mês, até o vencimento.';
-    // Débito automático já vem marcado: é o mais barato e o mais usado
-    if (!st.pag.tipo) { const d = $('[data-pag="debito"]'); $$('[data-pag]').forEach((x) => x.setAttribute('aria-checked', x === d)); st.pag.tipo = 'debito'; revelar(blocoBancos, true); chkPag(); atualizarCarrinho(); }
-  }
-  function montarPedido(etapa) {
-    const l = itens();
-    const utm = {}; ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'gclid', 'fbclid'].forEach((k) => q.get(k) && (utm[k] = q.get(k)));
-    return {
-      id: st.id, etapa, origem: st.origem, atualizado_em: new Date().toISOString(),
-      endereco: { ...st.end }, fibra_viabilidade: st.fibra,
-      itens: l.map(({ linhaZap, ...resto }) => resto), cashback_total_centavos: somaCb(l),
-      nome: st.contato.nome, telefone: st.contato.telefone, email: st.cad.email, cpf: st.cad.cpf, cnpj: st.cad.cnpj,
-      consentimento: st.cad.consent, pagamento: { ...st.pag, mensal_centavos: st.pag.tipo ? valoresPagamento()[st.pag.tipo] : null }, utm,
-    };
-  }
-
-  $('[data-finalizar]').addEventListener('click', async (e) => {
-    const b = e.currentTarget; if (b.disabled) return;
-    b.classList.add('carregando'); b.disabled = true;
-    const pedido = montarPedido('pedido_criado');
-    await Promise.all([DY.salvarPedido(pedido), espera(700)]);
-    b.classList.remove('carregando');
-    const l = itens();
-    const msg = DY.mensagemPedido({ id: st.id, itens: l })
-      .replace('Meu pedido é', `Forma de pagamento: ${st.pag.tipo === 'debito' ? 'Débito automático (' + st.pag.banco + ')' : 'Boleto ou PIX'}${valoresPagamento().planos ? ' — total de ' + brl(valoresPagamento()[st.pag.tipo]) + '/mês' : ''}\nMeu pedido é`);
-    $$('[data-zap-pedido]').forEach((a) => (a.href = DY.linkWhatsApp(msg)));
-    $('[data-num-pedido]').textContent = st.id;
-    // Resumo do pedido realizado: o mesmo da tela "Seu combo", sem os botões de alterar/remover
-    $('[data-fim-blocos]').innerHTML = `<p class="fim-resumo__tit">Resumo do seu pedido</p>${blocosResumo(l, '', { leitura: true })}${st.pag.tipo ? `<p class="fim-resumo__pag">Forma de pagamento escolhida:<br><b>${st.pag.tipo === 'boleto' ? 'Boleto ou PIX' : 'Débito automático' + (st.pag.banco ? ' · ' + st.pag.banco : '')}</b></p>` : ''}`;
-    $('[data-copiar]').onclick = async () => {
-      try { await navigator.clipboard.writeText(msg); toast('Mensagem copiada. Cole no WhatsApp.'); }
-      catch (er) { toast('Não deu para copiar. Toque em "Enviar no WhatsApp".'); }
-    };
-    try { sessionStorage.removeItem('dy_endereco'); } catch (er) { /* */ }
-    limparAndamento();
-    mostrar('fim');
-  });
-
-  /* ---------- Resumo do combo: no tablet/desktop fica dentro da página, abaixo do progresso ---------- */
-  const mqDock = matchMedia('(min-width: 768px)');
-  const posicionarDock = () => { if (mqDock.matches) $('[data-progresso]').after(dock); else document.body.appendChild(dock); };
-  posicionarDock(); mqDock.addEventListener('change', posicionarDock);
-
-  /* ---------- Menu lateral ---------- */
-  const menuBtn = $('[data-ct-menu]'); const menu = $('[data-ct-menu-painel]');
-  const abrirMenu = (abrir) => {
-    menu.hidden = !abrir; menuBtn.setAttribute('aria-expanded', abrir); document.body.style.overflow = abrir ? 'hidden' : '';
-    if (abrir) { salvarAndamento(); setTimeout(() => menu.querySelector('.ct-menu__x').focus(), 50); } else menuBtn.focus();
+      const busca = async (foco) => {
+        const n = so(iCep.value); if (n.length < 8) { ultimo = ''; st.achou = false; st.end.cep = n; desenhaAchado(); pinta('cep', 'x', false); return; }
+        if (n === ultimo && st.achou) return; ultimo = n; st.achou = false; desenhaAchado();
+        $('[data-cp=cep]').classList.add('is-busca'); const r = await DY.buscarCep(n);
+        if (tela !== 'endereco' || !iCep.isConnected || so(iCep.value) !== n) return; $('[data-cp=cep]').classList.remove('is-busca');
+        if (!r || !DY.UFS[r.uf]) { ultimo = ''; pinta('cep', 'Não encontramos esse CEP. Confira os números ou toque em "Não sei meu CEP".'); return; }
+        pinta('cep', ''); Object.assign(st.end, { cep: n, ...r, travado: !!r.logradouro }); st.achou = true; desenhaAchado(foco); if (st.end.numero) confere();
+      };
+      iCep.addEventListener('input', () => { iCep.value = mascara.cep(iCep.value); busca(true); });
+      iCep.addEventListener('blur', () => setTimeout(() => { if (iCep.isConnected && st.modo === 'cep' && iCep.value && so(iCep.value).length < 8) pinta('cep', validar.cep(iCep.value)); }, 250));
+      const modo = (m) => { st.modo = m; $$('[data-modo]', el).forEach((x) => (x.hidden = x.dataset.modo !== m)); $('[data-troca]').textContent = m === 'cep' ? 'Não sei meu CEP' : 'Sei meu CEP'; if (m === 'rua') { st.achou = false; ultimo = ''; iCep.value = ''; pinta('cep', 'x', false); desenhaAchado(); cidades(); } };
+      $('[data-troca]').addEventListener('click', () => { modo(st.modo === 'cep' ? 'rua' : 'cep'); $(st.modo === 'cep' ? '#f-cep' : '#f-cidade').focus(); });
+      const usa = (cep, num) => { if (num) st.end.numero = num; iCep.value = mascara.cep(cep); modo('cep'); ultimo = ''; busca(true); };
+      el.onclick = (e) => { const b = e.target.closest('button[data-cep]'); if (b) usa(b.dataset.cep, b.dataset.num); };
+      // não sei meu CEP
+      const uf = $('#f-uf'), cid = $('#f-cidade'), rua = $('#f-rua'), num = $('#f-ruan'), sug = $('[data-sug]');
+      const cidades = async () => { try { const r = await (await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf.value}/municipios?orderBy=nome`)).json(); $('#l-cid').innerHTML = r.map((x) => `<option value="${esc(x.nome)}">`).join(''); } catch (e) { /* campo livre */ } };
+      const mostraSug = () => {
+        const n = parseInt(so(num.value), 10), nomes = [...new Map(listaRua.map((d) => [semAcento(d.logradouro), d.logradouro])).entries()];
+        let k = st.rua.k; if (!k && nomes.length === 1) k = nomes[0][0];
+        if (!listaRua.length) return;
+        if (!k) { sug.innerHTML = `<p>Qual é a sua rua?</p>${nomes.slice(0, 12).map(([x, t]) => `<button type="button" data-rua="${esc(x)}"><b>${esc(t)}</b></button>`).join('')}`; return; }
+        if (!n) { sug.innerHTML = '<p>Agora digite o número do imóvel.</p>'; return; }
+        const dela = listaRua.filter((d) => semAcento(d.logradouro) === k), cert = dela.filter((d) => naFaixa(d.complemento, n) === true), l = cert.length ? cert : dela.filter((d) => naFaixa(d.complemento, n) === null);
+        sug.innerHTML = l.length ? `<p>Este é o seu endereço?</p>${l.slice(0, 5).map((d) => `<button type="button" data-cep="${so(d.cep)}" data-num="${n}"><b>${esc(d.logradouro)}, ${n}</b><span>${esc(d.bairro)} · CEP ${d.cep}</span></button>`).join('')}` : '<p>Não encontramos um CEP para esse número. Confira o número.</p>';
+      };
+      const buscaRua = () => { clearTimeout(tRua); tRua = setTimeout(async () => {
+        const m = rua.value.match(/^(.*?\D)[\s,]+(\d{1,6})\s*$/); if (m && m[1].trim().length >= 3) { rua.value = st.rua.nome = m[1].replace(/[\s,]+$/, ''); num.value = st.rua.num = m[2]; }
+        const t = tiraTipo(rua.value); if (cid.value.trim().length < 3 || t.length < 3) { sug.innerHTML = ''; return; }
+        const meu = ++pedRua, l = await viacep(uf.value, cid.value.trim(), t); if (meu !== pedRua || !sug.isConnected) return;
+        listaRua = l || []; if (listaRua.length) mostraSug(); else sug.innerHTML = `<p>${l ? 'Não achamos essa rua nessa cidade. Confira como se escreve.' : 'Não conseguimos buscar agora. Tente de novo ou chame no WhatsApp.'}</p>`;
+      }, 400); };
+      uf.addEventListener('change', () => { st.rua.uf = uf.value; cid.value = ''; sug.innerHTML = ''; st.rua.k = ''; listaRua = []; cidades(); });
+      cid.addEventListener('input', () => { st.rua.cidade = cid.value; buscaRua(); }); rua.addEventListener('input', () => { st.rua.nome = rua.value; st.rua.k = ''; buscaRua(); });
+      num.addEventListener('input', () => { num.value = st.rua.num = so(num.value); mostraSug(); });
+      sug.addEventListener('click', (e) => { const b = e.target.closest('[data-rua]'); if (!b) return; st.rua.k = b.dataset.rua; rua.value = st.rua.nome = b.textContent; mostraSug(); if (!num.value) num.focus(); });
+      if (st.modo === 'rua') cidades(); else if (st.achou) { pinta('cep', ''); desenhaAchado(); } else if (st.end.cep.length === 8) busca(true); else if (matchMedia('(min-width:1124px)').matches) setTimeout(() => iCep.isConnected && iCep.focus(), 500);
+    },
   };
-  menuBtn.addEventListener('click', () => abrirMenu(true));
-  menu.addEventListener('click', (e) => { if (e.target.closest('[data-ct-menu-fechar]')) abrirMenu(false); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) abrirMenu(false); });
-  $('[data-reiniciar]').addEventListener('click', () => { limparAndamento(); try { sessionStorage.removeItem('dy_endereco'); } catch (er) { /* */ } location.href = location.pathname + '?novo'; });
-  window.addEventListener('pagehide', salvarAndamento);
 
-  /* ---------- Retomar o pedido salvo ---------- */
-  if (retomar) {
-    const a = retomar.s;
-    Object.assign(st, { id: a.id || st.id, end: { ...st.end, ...a.end }, fibra: a.fibra, disp: a.disp, ordem: a.ordem || st.ordem, idx: a.idx || 0, para: { ...st.para, ...a.para }, contato: { ...st.contato, ...a.contato } });
-    Object.assign(st.esc, a.esc || {}); Object.assign(st.rasc, a.rasc || {});
-    DY.definirPlanos({ uf: st.end.uf, tipo: st.para.internet });
-    inCep.value = mascara.cep(st.end.cep || ''); inNum.value = st.end.numero || ''; $('#f-logradouro').value = st.end.logradouro || ''; $('#f-comp').value = st.end.comp || '';
-    ['#f-nome', '#f-telefone'].forEach((sel) => { const el = $(sel); const v = sel === '#f-nome' ? st.contato.nome : st.contato.telefone; if (el && v) { el.value = sel === '#f-telefone' ? mascara.telefone(v) : v; el.dispatchEvent(new Event('input', { bubbles: true })); } });
-    let tela = retomar.tela; if (['cadastro', 'pagamento'].includes(tela)) tela = st.contato.nome ? 'cadastro' : 'contato';
-    if (tela === 'disponivel' && st.disp) renderDisponivel();
-    if (tela === 'combo') renderProduto();
-    if (tela === 'resumo') renderResumo();
-    if (!st.disp && tela !== 'contato') tela = 'endereco';
-    mostrar(tela);
-    if (tela !== 'endereco') setTimeout(() => toast('Continuando o seu pedido de onde parou.'), 400);
+  /* ========== 2. CONSULTA ========== */
+  T.consulta = {
+    html: () => `<div class="cons"><div class="cons__a" aria-hidden="true"><i></i><i></i><i></i><img src="/img/3d-g/pino.webp" alt=""></div><h1>Consultando o seu endereço</h1><p>${esc(st.end.logradouro)}, ${esc(st.end.numero)} · ${esc(st.end.cidade)}/${esc(st.end.uf)}</p><ul aria-live="polite"><li>Endereço encontrado</li><li>Vendo os serviços para a sua rua</li><li>Separando os preços do seu estado</li></ul></div>`,
+    async liga(el) {
+      const li = $$('li', el), vale = () => tela === 'consulta' && li[0].isConnected;
+      DY.definirPlanos({ uf: st.end.uf }); DY.salvarLocal(st.end.uf, st.end.cidade);
+      const f = DY.consultarViabilidade(st.end.cep, st.end.numero);
+      await espera(500); li[0].className = 'is-ok'; st.fibra = await f; await espera(900); li[1].className = 'is-ok'; await espera(700); li[2].className = 'is-ok'; await espera(500);
+      if (!vale()) return;
+      st.disp = { internet: st.fibra, celular: 'sim', energia: E.atende(st.end.uf) ? 'sim' : 'nao' };
+      st.sel = ORDEM.filter((s) => st.sel.includes(s) && st.disp[s] !== 'nao');
+      if (st.opcaoUrl) { const i = pNet().opcoes.findIndex((o) => o.nome === st.opcaoUrl); st.net.op = Math.max(0, i); st.opcaoUrl = ''; } else if (st.net.id === '600' && st.origem === 'internet') st.net.op = 0;
+      mostra('servicos');
+    },
+  };
+
+  /* ========== 3. SERVIÇOS ========== */
+  T.servicos = {
+    html() {
+      const net = DY.catalogo[st.net.para || 'casa'][DY.blocoInternet(st.end.uf)], min = Math.min(...net.flatMap((p) => p.opcoes.map((o) => c(o.preco)))), celMin = Math.min(...planosCel().map((p) => c(p.preco)));
+      const I = {
+        energia: ['Até <b>30%</b> de desconto', `Para contas a partir de R$ ${E.minimo}. Sem placas e sem obra.`],
+        internet: [`A partir de <b>${brl(min)}</b>/mês`, 'Com Wi-Fi e instalação inclusos.'],
+        celular: [`A partir de <b>${brl(celMin)}</b>/mês por linha`, 'Só para quem tem CNPJ ou MEI.'],
+      };
+      return `${cab('O que você quer contratar?', 'Escolha um, dois ou os três. O Cashback de cada um se soma.')}
+      <p class="ondes">${esc(st.end.logradouro)}, ${esc(st.end.numero)} · ${esc(st.end.cidade)}/${esc(st.end.uf)} <button class="link" type="button" data-volta>Trocar</button></p>
+      <div class="svs">${ORDEM.map((s) => (st.disp[s] === 'nao'
+        ? `<div class="sv is-nao" data-s="${S[s].k}"><img src="${S[s].img}" alt=""><div><h2>${S[s].t}</h2><p>${s === 'internet' ? 'Ainda não temos fibra no seu endereço. Tem CNPJ? Conheça a <a href="/internet/wttx">internet sem fio</a>.' : 'Ainda não atende a sua região.'}</p></div></div>`
+        : `<button type="button" class="sv" role="checkbox" aria-checked="${st.sel.includes(s)}" data-sv="${s}" data-s="${S[s].k}"><img src="${S[s].img}" alt=""><div><h2>${S[s].t}</h2><p class="sv__p">${I[s][0]}</p><p>${I[s][1]}</p><p class="sv__cb">Cashback de ${S[s].cb}</p></div><i class="sv__m" aria-hidden="true"></i></button>`)).join('')}</div>
+      ${st.disp.internet === 'talvez' ? '<p class="nota">A fibra no seu número é confirmada no WhatsApp, antes de qualquer contrato.</p>' : ''}`;
+    },
+    bt: () => (st.sel.length ? (st.sel.length > 1 ? `Continuar com ${st.sel.length} serviços` : 'Continuar') : 'Escolha um serviço'), pode: () => !!st.sel.length,
+    ir() { ORDEM.forEach((s) => { if (!st.sel.includes(s)) delete st.ok[s]; }); st.idx = 0; st.editando = false; mostra('produto'); },
+    liga(el) { el.querySelector('.svs').addEventListener('click', (e) => { const b = e.target.closest('[data-sv]'); if (!b) return; const s = b.dataset.sv, on = !st.sel.includes(s); st.sel = ORDEM.filter((x) => (x === s ? on : st.sel.includes(x))); b.setAttribute('aria-checked', on); if (gs && on) gs.fromTo($('img', b), { scale: .86, rotate: -6 }, { scale: 1, rotate: 0, duration: .5, ease: 'back.out(2.4)', clearProps: 'all' }); botao(); }); },
+  };
+
+  /* ========== 4. PRODUTO ========== */
+  const sAtual = () => st.sel[st.idx];
+  const passos = () => (st.sel.length > 1 && !st.editando ? `<ol class="pas" aria-label="Serviços do pedido">${st.sel.map((s, i) => `<li data-s="${S[s].k}" class="${i === st.idx ? 'is-atual' : st.ok[s] ? 'is-ok' : ''}">${S[s].curto}</li>`).join('')}</ol>` : '');
+  const P = {
+    energia: () => `${passos()}${cab('Quanto vem a sua conta de luz?', 'Use uma conta recente. É uma simulação, sem compromisso.')}
+      <section class="bl"><h2>A conta está em nome de quem?</h2>${opcoes('luz.tit', 'Titular da conta de luz', [['cpf', 'CPF', 'Casa ou apartamento', '/img/3d-g/casa.webp'], ['cnpj', 'CNPJ', 'Condomínio, empresa ou comércio', '/img/3d-g/predio.webp']], st.luz.tit, 'ops--2')}</section>
+      <section class="bl" data-b2${st.luz.tit ? '' : ' hidden'}><h2>Valor da conta por mês</h2><label class="val"><span>R$</span><input data-conta inputmode="decimal" autocomplete="off" placeholder="800" aria-label="Valor da conta de luz em reais" value="${st.luz.conta ? DY.formatarReais(String(st.luz.conta).replace('.', ',')) : ''}"></label>
+        <div class="chips">${[500, 800, 1500, 3000, 8000].map((v) => `<button type="button" data-chip="${v}">R$ ${mil(v)}</button>`).join('')}</div><div data-sim aria-live="polite"></div></section>`,
+    internet() {
+      const l = planosNet(), sel = pNet(), of = oferta(l), vis = l.filter((p) => p.id !== '2000' || st.todosNet || sel.id === '2000');
+      const ord = [of, ...vis.filter((p) => p !== of)];
+      const card = (p) => {
+        const on = p === sel, oi = on ? opNet(p) : 0, o = p.opcoes[oi], v = c(o.preco), wifi = p.num >= 2000 ? 7 : p.num >= 1000 ? 6 : 5, up = p.num / 2, pode = p.opcoes.length > 1;
+        const inc = !pode && o.nome !== 'Somente Internet' ? (p.id === '2000' ? 'HBO Max, Paramount+, Globoplay e Looke inclusos' : nomeOp(o) + ' incluso') : pode ? 'Com opção de streaming' : '';
+        return `<div class="pl${on ? ' is-on' : ''}${p === of ? ' pl--of' : ''}" data-s="net"><button type="button" class="pl__b" role="radio" aria-checked="${on}" tabindex="${on ? 0 : -1}" data-plano="${p.id}"><i class="pl__m" aria-hidden="true"></i><span class="pl__n">${p === of ? '<em>Oferta do mês</em>' : ''}<b>${mil(p.num)} Mega</b><small>Wi-Fi ${wifi} · upload de ${mil(up)} Mega${p.id === '1000' && o.nome === 'Somente Internet' ? ' · NoPing incluso' : ''}</small>${inc && !on ? `<small>${inc}</small>` : inc && !pode ? `<small>${inc}</small>` : ''}</span><span class="pl__v">${p === of ? `<s>${brl(c(o.de || p.de))}</s>` : ''}<b>${brl(v)}</b><small>/mês</small><em>Cashback ${brl(cbk(v, 50))}</em></span></button>
+          ${on && pode ? `<div class="pl__x"><p>Quer um streaming junto?</p><div class="ap" role="radiogroup" aria-label="Streaming">${p.opcoes.map((x, i) => [x, i]).sort((a, b) => a[0].preco - b[0].preco).map(([x, i]) => `<button type="button" role="radio" aria-checked="${i === oi}" tabindex="${i === oi ? 0 : -1}" data-op="${i}">${LOGO[x.nome] ? `<img src="${LOGO[x.nome][0]}" alt="">` : '<i class="ap__n" aria-hidden="true"></i>'}<b>${nomeOp(x)}</b><small>${brl(c(x.preco))}</small></button>`).join('')}</div></div>` : ''}</div>`;
+      };
+      return `${passos()}${cab('Escolha a sua internet', 'Fibra com Wi-Fi e instalação inclusos.')}
+      <section class="bl"><h2>A internet fica em nome de quem?</h2>${opcoes('net.para', 'Titular da internet', [['casa', 'CPF', 'Casa ou apartamento', '/img/3d-g/casa.webp'], ['empresa', 'CNPJ', 'Empresa ou comércio', '/img/3d-g/predio.webp']], st.net.para, 'ops--2')}</section>
+      <section class="bl" data-b2${st.net.para ? '' : ' hidden'}><h2>Qual velocidade?</h2><div class="pls" role="radiogroup" aria-label="Planos de internet">${ord.map(card).join('')}</div>
+        ${l.some((p) => p.id === '2000') && !vis.some((p) => p.id === '2000') ? '<button class="link link--c" type="button" data-todos="todosNet">Ver também o plano de 2.000 Mega</button>' : ''}<p class="nota">Preços no débito em conta. No boleto ou PIX, ${brl(DY.boletoPix * 100)} a mais por mês.</p></section>`;
+    },
+    celular() {
+      const l = planosCel(), of = oferta(l), sel = pCel(), porta = st.cel.porta ? DY.celularPorta : [], tud = [...l, ...porta], base = st.todosCel ? tud : tud.filter((p) => ['40', '80', '150'].includes(p.id) || p.id === sel.id), ord = [of, ...base.filter((p) => p !== of)];
+      const card = (p) => { const on = p.id === sel.id, v = c(p.preco); return `<div class="pl${on ? ' is-on' : ''}${p === of ? ' pl--of' : ''}" data-s="cel"><button type="button" class="pl__b" role="radio" aria-checked="${on}" tabindex="${on ? 0 : -1}" data-plano="${p.id}"><i class="pl__m" aria-hidden="true"></i><span class="pl__n">${p === of ? '<em>Oferta do mês</em>' : ''}<b>${p.gb} GB</b><small>${p.plano} GB do plano + ${p.bonus} GB de bônus</small>${p.soPorta ? '<small>Só para quem traz o número</small>' : ''}</span><span class="pl__v">${p === of && p.de ? `<s>${brl(c(p.de))}</s>` : ''}<b>${brl(v)}</b><small>/linha</small><em>Cashback ${brl(v)}</em></span></button></div>`; };
+      const n = st.cel.n, t = c(sel.preco) * n;
+      return `${passos()}${cab('Escolha o plano de celular', 'Ligações ilimitadas para todo o Brasil. Para empresas e MEI.')}
+      <section class="bl"><h2>As linhas ficam em qual CNPJ?</h2>${opcoes('cel.tipo', 'Tipo de CNPJ', [['cnpj', 'Empresa', 'LTDA, ME, EPP e outras', '/img/3d-g/predio.webp'], ['mei', 'MEI', 'Até 3 linhas', '/img/3d-g/casa.webp']], st.cel.tipo, 'ops--2')}<p class="nota">Não tem CNPJ? O plano de celular é só para empresas e MEI. <button class="link" type="button" data-pular>Continuar sem celular</button></p></section>
+      <section class="bl" data-b2${st.cel.tipo ? '' : ' hidden'}><h2>Vai trazer o seu número?</h2>${opcoes('cel.porta', 'Número', [['1', 'Quero trazer', 'Portabilidade grátis, do número que já está no CNPJ'], ['0', 'Número novo', 'Enviamos o chip para você']], st.cel.porta === null ? '' : st.cel.porta ? '1' : '0', 'ops--2')}</section>
+      <section class="bl" data-b3${st.cel.tipo && st.cel.porta !== null ? '' : ' hidden'}><h2>Qual plano?</h2><div class="pls" role="radiogroup" aria-label="Planos de celular">${ord.map(card).join('')}</div>${st.todosCel ? '' : '<button class="link link--c" type="button" data-todos="todosCel">Ver todos os planos</button>'}
+        <div class="qtd"><div><h2>Quantas linhas?</h2><p data-qt></p></div><div class="qtd__c"><button type="button" data-l="-1" aria-label="Tirar uma linha">−</button><output aria-live="polite">${n}</output><button type="button" data-l="1" aria-label="Adicionar uma linha">+</button></div></div>
+        <p class="nota">${st.cel.tipo === 'mei' ? 'No MEI, são até 3 linhas por CNPJ.' : `Mais de ${DY.linhasEspecial} linhas? <a class="link" target="_blank" rel="noopener" href="${esc(DY.linkWhatsApp(`Olá! Quero mais de ${DY.linhasEspecial} linhas de celular para a minha empresa.`))}">Fale com a gente</a> e veja a condição especial.`}</p></section>`.replace('data-qt></p>', `data-qt>${n} × ${brl(c(sel.preco))} = <b>${brl(t)}/mês</b></p>`);
+    },
+  };
+  T.produto = {
+    html: () => P[sAtual()]() + `<button class="link link--c pular-s" type="button" data-pular>${st.ok[sAtual()] ? 'Tirar ' + S[sAtual()].art + ' do pedido' : 'Continuar sem ' + S[sAtual()].art}</button>`,
+    bt: () => (pronto[sAtual()]() ? (st.editando ? 'Salvar' : st.idx < st.sel.length - 1 ? 'Próximo' : 'Ver meu pedido') : falta()), pode: () => pronto[sAtual()](),
+    ir() { st.ok[sAtual()] = true; segue(); },
+    liga(el) {
+      const s = sAtual(), refaz = (foco) => { const y = scrollY; el.innerHTML = T.produto.html(); T.produto.liga(el); scrollTo({ top: y, behavior: 'instant' }); botao(); atualiza(); const f = foco && $(foco, el); if (f) f.focus({ preventScroll: true }); };
+      const pulsa = (sel) => { const x = $(sel, el); if (gs && x) gs.fromTo(x, { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .45, ease: 'power3.out', clearProps: 'all' }); rola(x, 'start'); };
+      el.onclick = (e) => {
+        if (tela !== 'produto') return;
+        const o = e.target.closest('[data-ops] [data-v]'), p = e.target.closest('[data-plano]'), a = e.target.closest('[data-op]'), l = e.target.closest('[data-l]'), t = e.target.closest('[data-todos]'), ch = e.target.closest('[data-chip]');
+        if (o) {
+          const nome = o.parentElement.dataset.ops, v = o.dataset.v, eraVazio = { 'luz.tit': !st.luz.tit, 'net.para': !st.net.para, 'cel.tipo': !st.cel.tipo, 'cel.porta': st.cel.porta === null }[nome];
+          if (nome === 'luz.tit') st.luz.tit = v;
+          if (nome === 'net.para') { if (st.net.para !== v) st.net.op = 0; const num = so(st.net.id); st.net.para = v; if (num) { const alvo = planosNet().find((x) => so(x.id) === num); st.net.id = alvo ? alvo.id : ''; } }
+          if (nome === 'cel.tipo') { st.cel.tipo = v; st.cel.n = Math.min(st.cel.n, maxLinhas()); }
+          if (nome === 'cel.porta') { st.cel.porta = v === '1'; if (!st.cel.porta && /^p/.test(st.cel.id)) st.cel.id = '80'; }
+          refaz(`[data-ops="${nome}"] [data-v="${v}"]`);
+          if (eraVazio) { pulsa(nome === 'cel.porta' ? '[data-b3]' : '[data-b2]'); if (nome === 'luz.tit') setTimeout(() => { const i = $('[data-conta]', el); if (i) i.focus({ preventScroll: true }); }, 350); }
+        } else if (p) { const k = s === 'internet' ? st.net : st.cel; if (k.id !== p.dataset.plano && s === 'internet') st.net.op = 0; k.id = p.dataset.plano; refaz(`[data-plano="${k.id}"]`); if (s === 'internet') { const x = $('.pl.is-on', el); if (x && $('.pl__x', x)) rola(x, 'nearest'); } }
+        else if (a) { st.net.op = +a.dataset.op; refaz(`[data-op="${st.net.op}"]`); }
+        else if (l) { st.cel.n = limita(st.cel.n + +l.dataset.l, 1, maxLinhas()); refaz(`[data-l="${l.dataset.l}"]`); }
+        else if (t) { st[t.dataset.todos] = true; refaz('[data-plano][aria-checked=true]'); }
+        else if (ch) { const i = $('[data-conta]', el); i.value = DY.formatarReais(ch.dataset.chip); sim(); rola($('[data-sim]', el), 'nearest'); }
+        else if (e.target.closest('[data-pular]')) { delete st.ok[s]; st.sel = st.sel.filter((x) => x !== s); if (!st.sel.length) { if (st.editando) { st.editando = false; mostra('resumo'); } else { st.idx = 0; mostra('servicos', { volta: true }); } return; } if (st.editando) return segue(); st.idx--; segue(); }
+      };
+      const i = $('[data-conta]', el);
+      function sim() {
+        st.luz.conta = DY.lerReais(i.value); const b = $('[data-sim]', el), r = E.simular(st.luz.conta); $$('[data-chip]', el).forEach((x) => x.setAttribute('aria-pressed', +x.dataset.chip === st.luz.conta));
+        b.innerHTML = !st.luz.conta ? '' : !r.elegivel ? `<p class="erro-cx">O desconto vale para contas a partir de R$ ${E.minimo} por mês.</p>` : `<div class="sim"><div class="sim__b"><p><small>Hoje</small><s>${brl(r.conta)}</s></p><p><small>Com ${r.pct}% de desconto</small><b>${brl(r.comDesconto)}</b></p></div><i class="sim__r" aria-hidden="true"><i style="width:${100 - r.pct}%"></i></i><p class="sim__e">Economia estimada de <b>${brl(r.economiaMes)}</b> por mês, ou <b>${brl(r.economiaMes * 12)}</b> em um ano.</p><p class="sim__cb">Cashback de <b>${brl(r.cashback)}</b></p><p class="nota">O valor certo sai da análise da sua fatura, e você aprova antes. A primeira fatura com desconto pode levar até 90 dias.</p></div>`;
+        botao(); atualiza();
+      }
+      if (i) { i.addEventListener('input', () => { const resto = i.value.length - i.selectionStart; i.value = DY.formatarReais(i.value); const x = Math.max(0, i.value.length - resto); i.setSelectionRange(x, x); sim(); }); i.addEventListener('keydown', (e) => { if (e.key === 'Enter') { i.blur(); rola($('[data-sim]', el)); } }); if (st.luz.conta) sim(); }
+      $$('[data-l]', el).forEach((b) => (b.disabled = +b.dataset.l < 0 ? st.cel.n <= 1 : st.cel.n >= maxLinhas()));
+    },
+  };
+  const falta = () => ({ energia: st.luz.tit ? 'Digite o valor da conta' : 'Escolha CPF ou CNPJ', internet: 'Escolha CPF ou CNPJ', celular: st.cel.tipo ? 'Escolha o número' : 'Escolha Empresa ou MEI' }[sAtual()]);
+  function segue() {
+    if (st.editando) { st.editando = false; return mostra('resumo'); }
+    if (st.idx < st.sel.length - 1) { st.idx++; mostra('produto'); } else mostra('resumo');
   }
 
-  document.querySelectorAll('[data-ano]').forEach((el) => (el.textContent = new Date().getFullYear()));
-  dock.hidden = telaAtual === 'endereco'; document.body.classList.toggle('com-dock', !dock.hidden); atualizarCarrinho(); syncDock(); atualizarProgresso();
+  /* ========== 5. RESUMO ========== */
+  T.resumo = {
+    html() {
+      const fora = ORDEM.filter((s) => !st.ok[s] && st.disp[s] !== 'nao');
+      return `${cab('Confira o seu pedido', 'Se precisar, altere, adicione ou remova um serviço.')}<div class="cx-r">${htmlResumo()}</div>
+      ${fora.length ? `<section class="mais"><h2>Quer incluir mais algum?</h2>${fora.map((s) => `<button type="button" data-editar="${s}" data-s="${S[s].k}"><img src="${S[s].img}" alt=""><span><b>${S[s].t}</b><small>Cashback de ${S[s].cb}${s === 'celular' ? ' · CNPJ e MEI' : ''}</small></span><i aria-hidden="true">+</i></button>`).join('')}</section>` : ''}
+      <p class="nota">Nada é cobrado agora. A equipe tira as suas dúvidas no WhatsApp antes de qualquer contrato.</p>`;
+    },
+    bt: () => (itens().length ? 'Continuar' : 'Escolha um serviço'), pode: () => !!itens().length, ir: () => mostra('contato'),
+  };
+
+  /* ========== 6. CONTATO · 7. DADOS ========== */
+  const MIN = new Set(['de', 'da', 'do', 'das', 'dos', 'e']);
+  const nomeProprio = (v) => { let k = 0; return v.replace(/^\s+/, '').replace(/\s{2,}/g, ' ').replace(/[^\s]+/g, (w) => { const l = w.toLocaleLowerCase('pt-BR'); return k++ && MIN.has(l) ? l : l.charAt(0).toLocaleUpperCase('pt-BR') + l.slice(1); }); };
+  T.contato = {
+    html: () => `${cab('Como podemos te chamar?', 'É pelo WhatsApp que a gente finaliza o pedido com você.')}<form class="cx-f" data-form novalidate>${campo('nome', 'Nome completo', 'autocomplete="name" autocapitalize="words" maxlength="80"', st.nome)}${campo('tel', 'Celular com WhatsApp', 'type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="15"', mascara.telefone(st.tel))}<button hidden></button></form><p class="nota">Usamos o seu contato só para falar deste pedido.</p>`,
+    bt: () => 'Continuar', pode: () => !validar.nome(st.nome) && !validar.telefone(st.tel),
+    ir() { st.nome = st.nome.trim(); mostra('dados'); },
+    liga(el) { liga('nome', { masc: nomeProprio, val: validar.nome, guarda: (v) => (st.nome = v) }); liga('tel', { masc: mascara.telefone, val: validar.telefone, guarda: (v) => (st.tel = v) }); $('[data-form]', el).addEventListener('submit', (e) => { e.preventDefault(); acao(); }); },
+  };
+  T.dados = {
+    html: () => `${cab('Dados para o contrato', 'Assim você não precisa repetir tudo no WhatsApp.')}<form class="cx-f" data-form novalidate>${campo('email', 'E-mail', 'type="email" inputmode="email" autocomplete="email" autocapitalize="none" maxlength="120"', st.email)}${campo('cpf', precisaCnpj() ? 'CPF do responsável' : 'CPF do titular', 'inputmode="numeric" autocomplete="off" maxlength="14"', mascara.cpf(st.cpf))}${precisaCnpj() ? campo('cnpj', 'CNPJ', 'inputmode="numeric" autocomplete="off" maxlength="18"', mascara.cnpj(st.cnpj), 'É o CNPJ que vai no contrato.') : ''}
+      <label class="aceite"><input type="checkbox" data-aceite${st.aceite ? ' checked' : ''}><i aria-hidden="true"></i><span>Autorizo o uso dos meus dados para este pedido. <a class="link" href="/privacidade" target="_blank" rel="noopener">Política de privacidade</a></span></label><button hidden></button></form><p class="nota">O CPF, o CNPJ e o e-mail não ficam salvos neste aparelho.</p>`,
+    bt: () => (tem('internet') ? 'Continuar' : 'Gerar meu pedido'), pode: () => !validar.email(st.email) && !validar.cpf(st.cpf) && (!precisaCnpj() || !validar.cnpj(st.cnpj)) && st.aceite,
+    ir: () => (tem('internet') ? mostra('pagamento') : gera()),
+    liga(el) { liga('email', { val: validar.email, guarda: (v) => (st.email = v.trim().toLowerCase()) }); liga('cpf', { masc: mascara.cpf, val: validar.cpf, guarda: (v) => (st.cpf = so(v)) }); liga('cnpj', { masc: mascara.cnpj, val: validar.cnpj, guarda: (v) => (st.cnpj = so(v)) }); $('[data-aceite]', el).addEventListener('change', (e) => { st.aceite = e.target.checked; botao(); }); $('[data-form]', el).addEventListener('submit', (e) => { e.preventDefault(); acao(); }); },
+  };
+
+  /* ========== 8. PAGAMENTO (só internet fibra) ========== */
+  T.pagamento = {
+    html() {
+      const i = itens().find((x) => x.produto === 'internet'), mais = DY.boletoPix * 100, n = st.nome.split(/\s+/)[0];
+      return `${cab(`${esc(n)}, como prefere pagar a internet?`, 'Nada é cobrado agora. A primeira fatura vem cerca de 30 dias depois da instalação.')}
+      <section class="bl">${`<div class="ops ops--p" role="radiogroup" aria-label="Forma de pagamento" data-pag>${[['debito', 'Débito em conta', 'Sai da sua conta no vencimento', i.mensal, 'Melhor preço'], ['boleto', 'Boleto ou PIX', `${brl(mais)} a mais por mês`, i.mensal + mais, '']].map(([k, t, s, v, tag]) => `<button type="button" role="radio" aria-checked="${st.pag.tipo === k}" tabindex="${st.pag.tipo === k ? 0 : -1}" data-v="${k}"><span><b>${t}</b><small>${s}</small>${tag ? `<em>${tag}</em>` : ''}</span><strong>${brl(v)}<small>/mês</small></strong></button>`).join('')}</div>`}</section>
+      <section class="bl" data-bancos${st.pag.tipo === 'debito' ? '' : ' hidden'}><h2>Qual é o seu banco?</h2><div class="bancos" role="radiogroup" aria-label="Banco">${DY.bancosDebito.map(([, b], k) => `<button type="button" role="radio" aria-checked="${st.pag.banco === b}" tabindex="${st.pag.banco === b || (!st.pag.banco && !k) ? 0 : -1}" data-banco="${b}">${b}</button>`).join('')}</div><p class="nota">Seu banco não está na lista? Escolha boleto ou PIX. A conta e a agência são combinadas no WhatsApp.</p></section>
+      <p class="nota">O Cashback é o mesmo nas duas formas: sempre calculado no valor do débito em conta.</p>`;
+    },
+    bt: () => (T.pagamento.pode() ? 'Gerar meu pedido' : 'Escolha o seu banco'), pode: () => st.pag.tipo === 'boleto' || !!st.pag.banco, ir: () => gera(),
+    liga(el) {
+      const marca = (b) => $$('[role=radio]', b.parentElement).forEach((x) => { x.setAttribute('aria-checked', x === b); x.tabIndex = x === b ? 0 : -1; });
+      el.onclick = (e) => {
+        if (tela !== 'pagamento') return; const p = e.target.closest('[data-pag] [data-v]'), b = e.target.closest('[data-banco]');
+        if (p) { st.pag.tipo = p.dataset.v; marca(p); $('[data-bancos]', el).hidden = st.pag.tipo !== 'debito'; } else if (b) { st.pag.banco = b.dataset.banco; marca(b); } else return; botao(); atualiza();
+      };
+    },
+  };
+
+  /* ========== 9. PEDIDO ========== */
+  function montaPedido() {
+    const l = itens(), utm = {}; ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'gclid', 'fbclid'].forEach((k) => q.get(k) && (utm[k] = q.get(k)));
+    const { travado, ...end } = st.end;
+    return { id: st.id, etapa: 'pedido_criado', origem: st.origem, atualizado_em: new Date().toISOString(), endereco: end, fibra_viabilidade: st.fibra, itens: l.map(({ linhaZap, antes, ...r }) => r), cashback_total_centavos: soma(l, (i) => i.cashback), nome: st.nome, telefone: so(st.tel), email: st.email, cpf: st.cpf, cnpj: precisaCnpj() ? st.cnpj : '', consentimento: st.aceite, pagamento: tem('internet') ? { tipo: st.pag.tipo, banco: st.pag.tipo === 'debito' ? st.pag.banco : '', mensal_centavos: mes(l.find((i) => i.produto === 'internet')) } : null, utm };
+  }
+  async function gera() {
+    const b = $('[data-ir]'); if (b.classList.contains('is-indo')) return; b.classList.add('is-indo'); b.disabled = true;
+    await Promise.all([DY.salvarPedido(montaPedido()), espera(700)]); b.classList.remove('is-indo');
+    try { sessionStorage.removeItem('dy_endereco'); } catch (e) { /* */ }
+    mostra('fim');
+  }
+  const formaPg = () => (st.pag.tipo === 'boleto' ? 'Boleto ou PIX' : `Débito em conta (${st.pag.banco})`);
+  T.fim = {
+    html() {
+      const l = itens(), msg = DY.mensagemPedido({ id: st.id, itens: l }).replace('Meu pedido é', (tem('internet') ? `Pagamento da internet: ${formaPg()}\n` : '') + 'Meu pedido é');
+      T.fim.msg = msg; const zap = esc(DY.linkWhatsApp(msg));
+      const passo = [['Envie o pedido', 'A mensagem já vai pronta.'], ['Confirme com a equipe', 'Conferimos tudo e tiramos as suas dúvidas.'], [l.length > 1 ? 'Conclua cada contrato' : 'Conclua o contrato', l.map((i) => ({ energia: 'Energia: biometria pelo link.', internet: 'Internet: biometria pelo link e instalação.', celular: 'Celular: chip ativado.' }[i.produto])).join(' ')], ['Receba o Cashback', 'Via PIX na sua conta bancária, em até 7 dias depois de cada contrato concluído.']];
+      return `<div class="fim"><div class="fim__a"><img src="/img/3d-g/conversa.webp" alt="" width="220" height="220"></div><p class="fim__n">Pedido <b>${st.id}</b></p><h1>Pedido pronto. Falta só enviar.</h1><p>Toque no botão e envie a mensagem. Um atendente continua com você.</p>
+        <a class="bt bt--zap" href="${zap}" target="_blank" rel="noopener"><img src="/img/icones/whatsapp-branco.svg" alt="" width="24" height="24">Enviar no WhatsApp</a>
+        <p class="fim__c"><button class="link" type="button" data-copia>Copiar a mensagem</button><span>ou mande para ${DY.config.whatsappExibicao}</span></p></div>
+        <ol class="fim__p">${passo.map(([t, s]) => `<li><b>${t}</b><span>${s}</span></li>`).join('')}</ol>
+        <section class="cx-r"><h2>Resumo do pedido</h2>${htmlResumo({ editar: false })}${tem('internet') ? `<p class="rs__t"><span>Pagamento da internet</span><b class="rs__pg">${formaPg()}</b></p>` : ''}</section><p class="fim__h"><a class="link" href="/">Voltar para o início</a></p>`;
+    },
+    liga(el) { $('[data-copia]', el).addEventListener('click', async (e) => { const b = e.currentTarget; try { await navigator.clipboard.writeText(T.fim.msg); b.textContent = 'Mensagem copiada'; } catch (x) { b.textContent = 'Não deu para copiar. Use o botão verde.'; } }); if (gs) gs.from('.fim__a img', { scale: .4, rotate: -14, duration: .9, ease: 'back.out(1.8)' }); },
+  };
+
+  /* ---------- janelas e cliques gerais ---------- */
+  const jan = (k) => $(`[data-jan="${k}"]`); let tirar = '';
+  $('[data-jan-cb]').innerHTML = `<p>Uma parte do valor volta para você, uma única vez, via PIX na sua conta bancária.</p><ul class="cbl">${ORDEM.map((s) => `<li data-s="${S[s].k}"><img src="${S[s].img}" alt=""><span><b>${S[s].curto}</b>${S[s].cb}<small>Em até 7 dias ${S[s].marco}</small></span></li>`).join('')}</ul><p>A conta é feita sobre o preço no débito em conta. A chave PIX é pedida no WhatsApp.</p>`;
+  const edita = (s) => { $$('dialog[open]').forEach((d) => d.close()); st.sel = ORDEM.filter((x) => x === s || st.sel.includes(x)); st.idx = st.sel.indexOf(s); st.editando = tela !== 'produto' || ORDEM.filter((x) => st.ok[x]).length === st.sel.length; mostra('produto'); };
+  document.addEventListener('click', (e) => {
+    const t = e.target, ed = t.closest('[data-editar]'), rm = t.closest('[data-remover]');
+    if (t.closest('[data-volta]')) history.back();
+    else if (ed) edita(ed.dataset.editar);
+    else if (rm) { tirar = rm.dataset.remover; $('[data-jan-txt]').textContent = itens().find((i) => i.produto === tirar).titulo; jan('remover').showModal(); }
+    else if (t.closest('[data-sim]') && t.closest('[data-jan]')) { delete st.ok[tirar]; st.sel = st.sel.filter((s) => s !== tirar); $$('dialog[open]').forEach((d) => d.close()); if (!itens().length) { st.idx = 0; st.editando = false; mostra('servicos'); } else if (tela === 'produto') { if (!st.sel.length || !st.sel[st.idx]) mostra('resumo'); else { st.idx = Math.min(st.idx, st.sel.length - 1); mostra('produto', { empurra: false }); } } else if (tela === 'resumo') mostra('resumo', { empurra: false }); else { if (tela === 'pagamento' && !tem('internet')) mostra('dados'); else mostra(tela, { empurra: false }); } }
+    else if (t.closest('[data-cb]')) jan('cashback').showModal();
+    else if (t.closest('[data-abrir-resumo]')) jan('resumo').showModal();
+    else if (t.closest('[data-fechar]') || t.tagName === 'DIALOG') t.closest('dialog').close();
+  });
+  document.addEventListener('keydown', (e) => {
+    const b = e.target.closest('[role=radio]'), d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]; if (!b || !d) return; e.preventDefault();
+    const g = b.closest('[role=radiogroup]'), l = $$('[role=radio]', g).filter((x) => x.closest('[role=radiogroup]') === g); const n = l[(l.indexOf(b) + d + l.length) % l.length]; n.focus({ preventScroll: true }); n.click();
+  });
+  $('[data-zap]').href = DY.linkWhatsApp('Olá! Estou contratando pelo site da Do Yourself e fiquei com uma dúvida.');
+  mostra('endereco', { empurra: false });
 })();
