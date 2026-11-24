@@ -1,6 +1,7 @@
 /* Do Yourself v2 — peças didáticas da internet
    1. Caminho da fibra: a luz sai da central e vai até o modem, em 4 etapas (sozinha ou por toque)
    2. Preço do plano em que cada aplicativo vem (estado escolhido, evento dy:planos)
+   4. Fibra e WTTx juntos: caso da padaria, do mercadinho e do escritório
    3. Planta da casa: o cliente arrasta o modem e vê o sinal do Wi-Fi 5 ou do Wi-Fi 6 */
 (function () {
   const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -41,6 +42,38 @@
     };
     precos(); document.addEventListener('dy:planos', precos);
   }
+
+  /* 4. fibra e WTTx juntos: o dia de um negócio */
+  const NEG = {
+    padaria: { ap: ['Maquininha', 'Caixa', 'Pedidos no WhatsApp'], p: ['Fila do pão, cartão passando e pedidos chegando.', 'Na hora do movimento, a internet para.', 'A equipe liga os aparelhos no Wi-Fi do WTTx.'], fim: ['Padaria atendendo normalmente.', 'Cartão, caixa e pedidos parados.', 'A fila anda e o cartão volta a passar.'] },
+    mercado: { ap: ['Maquininhas', 'Sistema do caixa', 'Entregas no WhatsApp'], p: ['Caixas abertos e entregas saindo.', 'O sistema e o cartão saem do ar.', 'Os caixas passam para o Wi-Fi do WTTx.'], fim: ['Mercadinho atendendo normalmente.', 'Caixas parados, com o carrinho cheio.', 'Os caixas voltam a registrar e a receber.'] },
+    escritorio: { ap: ['Celulares da equipe', 'Notebooks', 'WhatsApp da empresa'], p: ['Equipe no sistema e clientes na conversa.', 'No meio do dia, tudo desconecta.', 'Os notebooks entram no Wi-Fi do WTTx.'], fim: ['Escritório trabalhando normalmente.', 'E-mails, sistema e conversas parados.', 'O trabalho continua até a fibra voltar.'] },
+  };
+  document.querySelectorAll('[data-caso]').forEach((sec) => {
+    const abas = [...sec.querySelectorAll('[data-neg]')], passos = [...sec.querySelectorAll('.caso__passos li')];
+    const aps = [...sec.querySelectorAll('.caso__ap')];
+    let neg = 'padaria', i = 0, timer = null;
+    const pinta = () => {
+      const n = NEG[neg];
+      sec.dataset.etapa = i + 1;
+      sec.querySelectorAll('[data-caso-p]').forEach((p, k) => (p.textContent = n.p[k]));
+      aps.forEach((a, k) => { a.querySelector('[data-caso-n]').textContent = n.ap[k]; a.querySelector('[data-caso-s]').textContent = ['Pela fibra', 'Sem internet', 'Pelo WTTx'][i]; });
+      sec.querySelector('[data-caso-f]').textContent = ['Conectada', 'Fora do ar', 'Fora do ar'][i];
+      sec.querySelector('[data-caso-w]').textContent = ['De reserva', 'Pronto para usar', 'Conectado'][i];
+      sec.querySelector('[data-caso-fim]').textContent = n.fim[i];
+      passos.forEach((p, k) => { p.classList.toggle('is-on', k === i); p.querySelector('button').setAttribute('aria-pressed', k === i); });
+      abas.forEach((a) => { const on = a.dataset.neg === neg; a.setAttribute('aria-checked', on); a.tabIndex = on ? 0 : -1; });
+    };
+    const vai = (k, auto) => { i = k; pinta(); clearTimeout(timer); if (auto && k < 2) timer = setTimeout(() => vai(k + 1, true), 3000); };
+    passos.forEach((p, k) => p.querySelector('button').addEventListener('click', () => vai(k, false)));
+    abas.forEach((a, k) => {
+      a.addEventListener('click', () => { neg = a.dataset.neg; vai(0, !calmo); });
+      a.addEventListener('keydown', (ev) => { const d = { ArrowRight: 1, ArrowLeft: 2 }[ev.key]; if (d) { ev.preventDefault(); const z = abas[(k + d) % 3]; z.click(); z.focus(); } });
+    });
+    if (calmo || !('IntersectionObserver' in window)) { vai(2); return; }
+    pinta();
+    new IntersectionObserver((es, ob) => { if (es[0].isIntersecting) { ob.disconnect(); vai(0, true); } }, { threshold: .35 }).observe(sec.querySelector('.caso__dir'));
+  });
 
   /* 3. planta da casa */
   const pl = document.querySelector('[data-planta]');

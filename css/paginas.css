@@ -617,3 +617,45 @@ main > section.fb { background: linear-gradient(180deg, #f3f7fc 0%, #e8f1fb 100%
 
 .zz__txt { position: relative; }
 @media (min-width: 901px) { .fxw__f > .fxw__obj { right: 18px; bottom: 24px; width: 40%; } .fxw__tx { position: relative; z-index: 1; } }
+
+/* ---------- qual escolher: dois cartões iguais ---------- */
+.fxw { grid-template-columns: 1fr 1fr; align-items: stretch; }
+.fxw__w { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+.fxw__w > * { margin-left: 32px; margin-right: 32px; }
+.fxw__w > .fxw__se { margin: 0 0 26px; padding: 20px 32px; background: var(--wtx); color: #fff; } .fxw__w--f > .fxw__se { background: var(--net); }
+.fxw__se span { display: block; font-size: 16px; line-height: 1.35; color: rgb(255 255 255 / .92); } .fxw__se b { display: block; margin-top: 3px; font: 500 28px/1.15 var(--font-display); letter-spacing: -.025em; }
+.fxw__w--f { background: radial-gradient(80% 50% at 100% 20%, var(--net-b) 0%, transparent 70%), #fff; border-color: #cfe0f2; } .fxw__w--f .fxw__cab h3 { color: var(--net-ink); } .fxw__w--f .fxw__ob { border-color: #dbe7f4; }
+.fxw__ob { margin-top: auto; } .fxw__u { margin-bottom: 22px; } .fxw__w > .botoes { margin-bottom: 30px; }
+@media (max-width: 900px) { .fxw { grid-template-columns: 1fr; } }
+@media (min-width: 620px) and (max-width: 1123px) { .fxw__cab { grid-template-columns: 84px 1fr; } }
+@media (max-width: 619px) { .fxw__w { padding: 0; } .fxw__w > * { margin-left: 20px; margin-right: 20px; } .fxw__w > .fxw__se { padding: 16px 20px; margin-bottom: 20px; } .fxw__se b { font-size: 25px; } }
+
+/* ---------- fibra e WTTx juntos: caso ---------- */
+.caso { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: stretch; max-width: 1080px; margin: 40px auto 0; padding: 32px; border-radius: var(--raio-g); background: #fff; border: 1px solid #e1e6f0; box-shadow: 0 50px 90px -70px rgb(15 34 56 / .5); }
+.caso__esq { display: flex; flex-direction: column; justify-content: center; }
+.caso__abas { display: grid; grid-template-columns: repeat(3, 1fr); padding: 5px; border-radius: 999px; background: var(--net-a); }
+.caso__abas button { min-height: 46px; border: 0; border-radius: 999px; background: none; color: var(--net-ink); font: 700 15px var(--font-display, inherit); cursor: pointer; } .caso__abas [aria-checked="true"] { background: var(--net); color: #fff; }
+.caso button:focus-visible { outline: 3px solid var(--net); outline-offset: 2px; }
+.caso__passos { display: grid; gap: 10px; margin: 18px 0 0; padding: 0; list-style: none; }
+.caso__passos button { display: grid; grid-template-columns: 62px 1fr; gap: 14px; align-items: start; width: 100%; padding: 15px 18px 15px 14px; border: 1px solid #e3e8ef; border-radius: 20px; background: none; color: var(--tinta); font: inherit; text-align: left; cursor: pointer; transition: border-color .3s, background .3s; }
+.caso__passos span { padding: 5px 0; border-radius: 999px; background: #eef1f5; color: #4a5561; font-size: 14px; font-weight: 700; text-align: center; } .caso__passos b { display: block; padding-top: 3px; font-size: 17px; } .caso__passos p { margin: 3px 0 0; font-size: 15px; line-height: 1.4; color: var(--cinza); }
+.caso__passos .is-on button { border-color: var(--net); background: #f4f9ff; } .caso__passos .is-on span { background: var(--net); color: #fff; }
+.caso__passos .is-on:nth-child(2) button { border-color: #d9a441; background: #fffaf0; } .caso__passos .is-on:nth-child(2) span { background: #8f5f0a; }
+.caso__passos .is-on:nth-child(3) button { border-color: var(--wtx); background: #f5f6ff; } .caso__passos .is-on:nth-child(3) span { background: var(--wtx); }
+.caso__dir { padding: 24px; border-radius: 26px; background: linear-gradient(165deg, #eef5fc, #eceefb); }
+.caso__rot { margin: 0 0 12px; text-align: center; font-size: 13px; color: var(--cinza); }
+.caso__redes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.caso__rede { padding: 14px 10px; border-radius: 20px; border: 2px solid transparent; background: rgb(255 255 255 / .7); text-align: center; transition: border-color .4s, opacity .4s, background .4s; }
+.caso__rede img { display: block; width: 82px; height: 82px; margin: 0 auto 6px; object-fit: contain; transition: filter .4s; } .caso__rede b { display: block; font-size: 17px; } .caso__rede small { font-size: 14px; color: var(--cinza); }
+[data-etapa="1"] .caso__rede--f { border-color: var(--net); background: #fff; } [data-etapa="3"] .caso__rede--w { border-color: var(--wtx); background: #fff; }
+.caso:not([data-etapa="1"]) .caso__rede--f img { filter: grayscale(1) opacity(.35); } .caso:not([data-etapa="1"]) .caso__rede--f small { color: #8f5f0a; font-weight: 700; } [data-etapa="3"] .caso__rede--w small { color: var(--wtx-ink); font-weight: 700; }
+.caso__aps { display: grid; gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
+.caso__ap { display: grid; grid-template-columns: 40px 1fr 14px; gap: 14px; align-items: center; padding: 10px 16px 10px 10px; border-radius: 16px; background: #fff; }
+.caso__ap svg { width: 40px; height: 40px; padding: 9px; border-radius: 12px; background: var(--net-a); fill: none; stroke: var(--net); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; } .caso__ap b { display: block; font-size: 16px; } .caso__ap small { font-size: 14px; color: var(--cinza); }
+.caso__ap i { width: 12px; height: 12px; border-radius: 50%; background: #22a06b; box-shadow: 0 0 0 4px rgb(34 160 107 / .18); transition: background .4s, box-shadow .4s; } [data-etapa="2"] .caso__ap i { background: #d9a441; box-shadow: 0 0 0 4px rgb(217 164 65 / .22); } [data-etapa="3"] .caso__ap svg { background: #e7e9fb; stroke: var(--wtx); }
+.caso__fim { min-height: 2.8em; margin: 16px 0 0; text-align: center; font-size: 17px; line-height: 1.4; font-weight: 700; text-wrap: balance; } [data-etapa="2"] .caso__fim { color: #8f5f0a; } [data-etapa="3"] .caso__fim { color: #12804d; }
+.caso-sec .dif-bts { flex-wrap: wrap; gap: 12px; }
+.dicas-sec .dicas2 { margin-top: 0; }
+@media (max-width: 900px) { .caso { grid-template-columns: 1fr; gap: 24px; max-width: 720px; } }
+@media (max-width: 619px) { .caso { margin-top: 26px; padding: 16px; border-radius: 26px; gap: 16px; } .caso__dir { padding: 18px 14px; border-radius: 20px; } .caso__rede img { width: 64px; height: 64px; } .caso__passos button { grid-template-columns: 56px 1fr; padding: 12px; gap: 12px; } .caso-sec .dif-bts .bt { width: 100%; justify-content: center; } }
+.atalhos-sec + .fim-sec { padding-top: 56px; }
