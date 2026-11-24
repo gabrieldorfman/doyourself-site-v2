@@ -173,7 +173,7 @@ main > section.svc { background: linear-gradient(180deg, var(--creme) 0%, var(--
 .sim__out { padding: 36px; background: linear-gradient(160deg, #fff6ea 0%, #ffe3c2 100%); display: grid; gap: 14px; align-content: center; }
 .sim__linha { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #f2d3ad; }
 .sim__linha span { font-size: 15px; color: #6b4a2c; }
-.sim__linha b { font: 500 30px/1 var(--font-display); letter-spacing: -0.02em; color: var(--luz-ink); font-variant-numeric: tabular-nums; }
+.sim__linha b { font: 500 30px/1 var(--font-display); letter-spacing: -0.02em; color: var(--luz-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .sim__linha--cb b { color: var(--cel-ink); }
 .sim__out .bt { margin-top: 8px; }
 @media (max-width: 1123px) { .sim { grid-template-columns: 1fr; } }

@@ -2,7 +2,8 @@
 // Rodar antes de cada commit: node tools/montar.mjs
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-const raiz = new URL('..', import.meta.url).pathname;
+import { fileURLToPath } from 'node:url';
+const raiz = fileURLToPath(new URL('..', import.meta.url));
 const partes = Object.fromEntries(readdirSync(join(raiz, '_partes')).filter((f) => f.endsWith('.html')).map((f) => [f.replace('.html', ''), readFileSync(join(raiz, '_partes', f), 'utf8').trim()]));
 const paginas = [];
 const andar = (d) => { for (const f of readdirSync(d)) { const p = join(d, f); if (['node_modules', '.git', '_partes', 'kit', 'tools', 'img', 'js', 'css'].includes(f)) continue; if (statSync(p).isDirectory()) andar(p); else if (f.endsWith('.html')) paginas.push(p); } };

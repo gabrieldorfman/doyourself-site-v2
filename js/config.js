@@ -21,11 +21,11 @@ DY.config = {
 
 /* ---------- Energia: estimativa da simulação (sem citar parceira) ----------
    Faixas internas (modelo-cashback-doyourself): abaixo de R$ 150 não elegível ·
-   R$ 150 a R$ 2.999,99 → 18% · R$ 3.000+ → 15%. É ESTIMATIVA: o valor final sai da fatura. */
+   R$ 150 a R$ 2.999,99 → 20% · R$ 3.000 a R$ 7.999,99 → 25% · R$ 8.000 ou mais → 30% (decisão de 23/11/2026). É ESTIMATIVA: o valor final sai da fatura. */
 DY.energia = {
   minimo: 150,
-  descontoPct: (conta) => (conta >= 3000 ? 15 : 18),
-  // Estados atendidos pela energia por assinatura. Vazio = todos (até a lista real das parceiras ser definida).
+  descontoPct: (conta) => (conta >= 8000 ? 30 : conta >= 3000 ? 25 : 20),
+  // Estados atendidos pela energia por assinatura. Vazio = Brasil todo (decisão de 23/11/2026): a disponibilidade é confirmada no WhatsApp.
   ufsAtendidas: [],
   atende(uf) { return !this.ufsAtendidas.length || this.ufsAtendidas.includes(String(uf || '').toUpperCase()); },
   simular(contaReais) {

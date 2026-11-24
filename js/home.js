@@ -188,14 +188,14 @@
   const sim = $('[data-sim]');
   if (sim) {
     const rng = $('input[type=range]', sim), val = $('[data-sim-valor]', sim), chips = $$('[data-v]', sim);
-    const out = { mes: $('[data-out=mes]', sim), ano: $('[data-out=ano]', sim), cb: $('[data-out=cb]', sim) };
+    const out = { mes: $('[data-out=mes]', sim), ano: $('[data-out=ano]', sim), cb: $('[data-out=cb]', sim), pct: $('[data-out=pct]', sim) };
     const btn = $('[data-sim-ir]', sim);
     const conta = { v: 500 };
     function pinta(v) {
       const s = DY.energia.simular(v);
       val.textContent = partes(v).i;
       if (!s.elegivel) { out.mes.textContent = '—'; out.ano.textContent = '—'; out.cb.textContent = 'a partir de R$ 150'; return; }
-      out.mes.textContent = DY.brl(s.economiaMes); out.ano.textContent = DY.brl(s.economiaMes * 12); out.cb.textContent = DY.brl(s.cashback);
+      out.mes.textContent = DY.brl(s.economiaMes); out.ano.textContent = DY.brl(s.economiaMes * 12); out.cb.textContent = DY.brl(s.cashback); if (out.pct) out.pct.textContent = s.pct + '%';
       chips.forEach((b) => b.classList.toggle('is-on', +b.dataset.v === v));
       btn.href = `/contratar?origem=energia&conta=${v}`;
     }
