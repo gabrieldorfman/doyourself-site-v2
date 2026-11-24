@@ -51,6 +51,18 @@
     if (p) st.rasc.celular = { id: p.id, linhas: Math.max(1, Math.min(99, +q.get('linhas') || 1)) };
   }
 
+  // Combo montado em /combo: serviços, plano de internet e linhas já chegam marcados
+  const SERV = (q.get('servicos') || '').split(',').filter((x) => ['energia', 'internet', 'celular'].includes(x));
+  if (origem === 'combo' && SERV.length) {
+    const pn = st.para.internet && DY.planosInternet.find((x) => x.id === q.get('plano'));
+    if (pn && SERV.includes('internet')) st.rasc.internet = { id: pn.id, op: 0 };
+    if (SERV.includes('celular')) {
+      st.para.celular = PARA0.celular = 'cnpj'; DY.definirPlanos({ celular: 'cnpj' });
+      const pc = DY.planosCelular.find((x) => x.id === q.get('cel'));
+      if (pc) st.rasc.celular = { id: pc.id, linhas: Math.max(1, Math.min(DY.linhasEspecial, +q.get('linhas') || 1)) };
+    }
+  }
+
   /* ---------- Pedido em andamento salvo no navegador (sem CPF, CNPJ nem e-mail) ---------- */
   const CHAVE_ANDAMENTO = 'dy_andamento';
   // O pedido sempre recomeça ao atualizar a página (nada do combo fica salvo no navegador)
@@ -454,7 +466,7 @@
   function renderDisponivel() {
     $('[data-disp-end]').innerHTML = `${st.end.logradouro}, ${st.end.numero} — ${st.end.cidade}/${st.end.uf} · <button class="ct-link disp-alterar" type="button" data-voltar>Alterar endereço</button>`;
     // pré-seleção: quem veio da página de um serviço já chega com ele marcado; do Combo, todos
-    if (!st.sel.length) st.sel = origem === 'combo' ? ORDEM_FIXA.slice() : ['internet', 'celular', 'energia'].includes(origem) ? [origem] : [];
+    if (!st.sel.length) st.sel = origem === 'combo' ? (SERV.length ? SERV.slice() : ORDEM_FIXA.slice()) : ['internet', 'celular', 'energia'].includes(origem) ? [origem] : [];
     st.sel = st.sel.filter((p) => st.disp[p] !== 'nao');
     const info = infoDisponivel();
     $('[data-disp]').innerHTML = ORDEM_FIXA.map((p, k) => {
