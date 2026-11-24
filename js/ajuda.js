@@ -15,10 +15,11 @@
   const PULA = new Set('a o e as os de da do das dos em no na um uma para por que com meu minha como eu e esta nao consigo tirar quero fazer'.split(' '));
   const SIN = { fatura: 'conta', boleto: 'conta', roteador: 'modem', velocidade: 'lenta', devagar: 'lenta', netflix: 'aplicativo', pix: 'cashback', selfie: 'biometria', trocar: 'mudar' };
   idx.forEach((x) => { x.kq = limpa(x.q); x.kt = limpa(x.t); x.ka = limpa(x.a); });
+  const COR = { Energia: 'luz', Internet: 'net', Celular: 'cel', Aplicativos: 'net' }; // cor da etiqueta de cada serviço
   const busca = () => {
     const ps = limpa(inp.value).split(' ').filter((x) => x.length > 1 && !PULA.has(x));
     const r = !ps.length ? [] : idx.map((x) => ({ x, n: ps.reduce((s, w) => s + [w, SIN[w]].filter(Boolean).reduce((m, t) => { const k = t.length > 4 ? t.slice(0, -1) : t; return Math.max(m, x.kq.includes(k) ? 4 : x.kt.includes(k) ? 2 : x.ka.includes(k) ? 1 : 0); }, 0), 0) })).filter((y) => y.n).sort((a, b) => b.n - a.n).slice(0, 5);
-    ul.replaceChildren(...r.map(({ x }) => { const li = document.createElement('li'), a = document.createElement('a'); a.href = x.l; [['small', x.t], ['b', x.q], ['span', x.a]].forEach(([t, v]) => { const e = document.createElement(t); e.textContent = v; a.append(e); }); li.append(a); return li; }));
+    ul.replaceChildren(...r.map(({ x }) => { const li = document.createElement('li'), a = document.createElement('a'); a.href = x.l; [['small', x.t], ['b', x.q], ['span', x.a]].forEach(([t, v]) => { const e = document.createElement(t); e.textContent = v; if (t === 'small') e.className = 'is-' + (COR[v] || 'marca'); a.append(e); }); li.append(a); return li; }));
     nada.hidden = !ps.length || r.length > 0;
   };
   inp.addEventListener('input', busca);

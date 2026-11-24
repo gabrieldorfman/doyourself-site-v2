@@ -52,3 +52,4 @@
 }
 .aj-md__f i.is-e { transform: translate(-160%, -50%); } .aj-md__f i.is-e::before { right: auto; left: 100%; } .aj-lk { margin: 14px 0 0; font-size: 17px; }
 @media (max-width: 779px) { .aj-ps .aj-ab__p { order: -1; } }
+.aj-bu ul small { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 7px 13px; border-radius: 99px; background: #dcebe2; color: var(--marca); font-size: 14.5px; line-height: 1; } .aj-bu ul small::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: currentColor; } .aj-bu ul small.is-luz { background: #ffe6c9; color: #a44a03; } .aj-bu ul small.is-net { background: #d8e9fa; color: #1d4f82; } .aj-bu ul small.is-cel { background: #d3f0df; color: #0f6a3f; }
