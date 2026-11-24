@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Como funciona o Cashback | Do Yourself</title>
-<meta name="description" content="Internet e WTTx: 50% de uma mensalidade. Celular: 100% de uma mensalidade por linha. Energia: 10%. Pago uma vez, no PIX, em até 7 dias depois que o contrato é concluído.">
+<meta name="description" content="Receba parte do que você paga, via PIX: 10% na energia, 50% na internet e 100% no celular. Pago uma vez, em até 7 dias.">
 <link rel="canonical" href="https://doyourself.digital/cashback">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://doyourself.digital/cashback">
 <meta property="og:title" content="Como funciona o Cashback | Do Yourself">
-<meta property="og:description" content="Internet e WTTx: 50% de uma mensalidade. Celular: 100% de uma mensalidade por linha. Energia: 10%. Pago uma vez, no PIX, em até 7 dias depois que o contrato é concluído.">
+<meta property="og:description" content="Receba parte do que você paga, via PIX: 10% na energia, 50% na internet e 100% no celular. Pago uma vez, em até 7 dias.">
 <meta property="og:image" content="https://doyourself.digital/img/og-doyourself.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/img/marca/dy-selo-verde.svg" type="image/svg+xml">
@@ -37,6 +37,8 @@
 <link rel="stylesheet" href="/css/v2.css">
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
+<link rel="stylesheet" href="/css/combo.css">
+<link rel="stylesheet" href="/css/cashback.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -45,7 +47,7 @@
 <script src="/js/config.js"></script>
 </head>
 <body>
-<!-- Do Yourself v2 · Cashback (/cashback): por enquanto só o topo; as próximas seções entram depois -->
+<!-- Do Yourself v2 · Cashback (/cashback) -->
 <!--#menu-->
 <header class="nav">
   <div class="wrap nav__bar">
@@ -92,20 +94,116 @@
 </header>
 <!--/menu-->
 
-<main id="top">
+<main id="top" class="pg-combo pg-cash">
   <section class="topo topo--pg topo--so topo--marca" aria-labelledby="hero-h" data-bar-hero>
     <div class="topo__painel">
       <div class="cx topo__grid">
         <div class="topo__txt">
           <span class="etq etq--marca">Cashback</span>
-          <h1 id="hero-h">Parte do que você paga <em>volta no seu PIX</em></h1>
-          <p class="lede">Internet e WTTx: 50% de uma mensalidade. Celular: 100% de uma mensalidade por linha. Energia: 10%. Pago uma vez, no PIX, em até 7 dias depois que o contrato é concluído.</p>
-          <div class="botoes"><a class="bt bt--marca" href="/contratar?origem=combo">Montar meu combo<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" data-zap="Olá! Quero entender como funciona o Cashback." href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
+          <h1 id="hero-h">Parte do que você paga <em>volta para você</em></h1>
+          <p class="lede">Contrate energia, internet ou celular com a Do Yourself e receba uma parte em dinheiro, via PIX na sua conta bancária. É o <b>Cashback</b>, pago uma vez em cada serviço.</p>
+          <ul class="pg-chips"><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>10% na energia</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>50% na internet</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>100% no celular</li></ul>
+          <div class="botoes"><a class="bt bt--marca" href="#quanto">Ver quanto eu recebo<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" data-zap="Olá! Quero entender como funciona o Cashback." href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
         </div>
         <div class="topo__cena hx" aria-hidden="true">
           <span class="hx__luz"></span>
           <div class="obj obj--x"><img src="/img/3d-g/cashback.webp" alt="" width="720" height="720"></div>
-          
+          <span class="tag tag--a"><i></i><span>Via PIX<small>na sua conta bancária</small></span></span><span class="tag tag--b"><i></i><span>Em até 7 dias<small>em cada serviço</small></span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy" id="quanto" aria-labelledby="qt-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--cm">Quanto volta</span><h2 class="h-sec h-sec--m" id="qt-h">Veja o valor do seu Cashback</h2><p>Escolha o serviço. O valor aparece na hora.</p></div></div>
+      <div class="cs-calc" data-cs data-s="net" data-sobe>
+        <div class="cs-tabs" role="radiogroup" aria-label="Serviço"><button type="button" role="radio" class="cs-t cs-t--luz" aria-checked="false" tabindex="-1" data-cs-s="luz"><img src="/img/3d-g/lampada.webp" alt="" width="200" height="200"><b>Energia</b><small>10%</small></button><button type="button" role="radio" class="cs-t cs-t--net" aria-checked="true" data-cs-s="net"><img src="/img/3d-g/wifi.webp" alt="" width="200" height="200"><b>Internet</b><small>50%</small></button><button type="button" role="radio" class="cs-t cs-t--cel" aria-checked="false" tabindex="-1" data-cs-s="cel"><img src="/img/3d-g/celular.webp" alt="" width="200" height="200"><b>Celular</b><small>100%</small></button><button type="button" role="radio" class="cs-t cs-t--wtx" aria-checked="false" tabindex="-1" data-cs-s="wtx"><img src="/img/3d-g/modem.webp" alt="" width="200" height="200"><b>WTTx</b><small>50%</small></button></div>
+        <div class="cs-calc__g">
+          <div class="cs-esc"><div data-cs-p="luz" hidden><label class="cm-rs"><span>Quanto vem a sua conta de luz?</span><span class="cm-rs__c"><i>R$</i><input type="text" inputmode="decimal" autocomplete="off" value="700" data-cs-luz aria-describedby="cs-luz-d"></span></label><p class="cm-dica" id="cs-luz-d" data-cs-luz-d></p></div><div data-cs-p="net"><div class="cs-seg" role="radiogroup" aria-label="Internet para"><button type="button" role="radio" aria-checked="true" data-cs-para="casa">Casa</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-cs-para="empresa">Empresa</button></div><div class="cm-op" role="radiogroup" aria-label="Velocidade" data-cs-op="net"></div><div class="cs-ap" role="radiogroup" aria-label="Aplicativo" data-cs-op="app"></div></div><div data-cs-p="cel" hidden><div class="cm-op" role="radiogroup" aria-label="Plano de celular" data-cs-op="cel"></div><div class="cm-q"><span>Quantas linhas?</span><button type="button" data-cs-l="-1" aria-label="Tirar uma linha">−</button><output data-cs-n>1</output><button type="button" data-cs-l="1" aria-label="Adicionar uma linha">+</button></div><p class="cm-dica">Para CNPJ e MEI. No MEI, até 3 linhas.</p></div><div data-cs-p="wtx" hidden><div class="cm-op" role="radiogroup" aria-label="Franquia do WTTx" data-cs-op="wtx"></div><p class="cm-dica">Internet sem fio 4G, para CNPJ e MEI.</p></div></div>
+          <div class="cs-nota">
+            <div class="cs-nota__a"><small data-cs-rot>Você paga por mês</small><b data-cs-v="paga">R$ 0,00</b></div>
+            <div class="cs-barra" aria-hidden="true"><i></i><span data-cs-pct>50%</span></div>
+            <div class="cs-nota__b" aria-live="polite"><small>Volta via PIX, uma vez</small><b data-cs-v="volta">R$ 0,00</b><span data-cs-conta></span></div>
+          </div>
+        </div>
+        <div class="botoes cs-calc__b"><a class="bt bt--marca" data-cs-ir href="/contratar">Quero contratar<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" data-cs-zap href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
+        <p class="cm-nota cs-c" data-cs-obs></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy" id="quando" aria-labelledby="qd-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--cm">Quando cai</span><h2 class="h-sec h-sec--m" id="qd-h">Até 7 dias, contados do momento certo</h2><p>Cada serviço tem o seu ponto de partida. A partir dele, o PIX cai em até 7 dias.</p></div></div>
+      <ul class="cs-mr" data-sobe><li class="cs-mr--luz"><img src="/img/3d-g/lampada.webp" alt="" width="300" height="300" loading="lazy"><small>Energia</small><h3>A biometria é feita</h3><p>Você assina o contrato por um link, no celular.</p><div class="cs-dias" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p class="cs-mr__f">Até 7 dias para o PIX</p></li><li class="cs-mr--net"><img src="/img/3d-g/wifi.webp" alt="" width="300" height="300" loading="lazy"><small>Internet</small><h3>A internet é instalada</h3><p>O técnico termina a instalação no seu endereço.</p><div class="cs-dias" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p class="cs-mr__f">Até 7 dias para o PIX</p></li><li class="cs-mr--cel"><img src="/img/3d-g/celular.webp" alt="" width="300" height="300" loading="lazy"><small>Celular</small><h3>O chip é ativado</h3><p>Você recebe o chip e ele começa a funcionar.</p><div class="cs-dias" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p class="cs-mr__f">Até 7 dias para o PIX</p></li><li class="cs-mr--wtx"><img src="/img/3d-g/modem.webp" alt="" width="300" height="300" loading="lazy"><small>WTTx</small><h3>O chip do modem é ativado</h3><p>Você liga o modem na tomada e ele se conecta.</p><div class="cs-dias" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p class="cs-mr__f">Até 7 dias para o PIX</p></li></ul>
+    </div>
+  </section>
+
+  <section class="dy" id="como" aria-labelledby="co-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--cm">Como você recebe</span><h2 class="h-sec h-sec--m" id="co-h">Uma pessoa cuida do seu PIX</h2><p>Sem aplicativo, sem pontos e sem formulário.</p></div></div>
+      <div class="cs-co" data-sobe>
+        <ol class="cs-co__l"><li><b>Você contrata</b><span>Pelo site ou pelo WhatsApp. O Cashback já faz parte, sem cadastro e sem código.</span></li><li><b>O contrato é concluído</b><span>A energia é assinada, a internet é instalada ou o chip é ativado.</span></li><li><b>A gente pede a sua chave PIX</b><span>Um atendente chama você no WhatsApp. Nada é pedido antes disso.</span></li><li><b>O dinheiro cai na conta</b><span>O valor vai via PIX para a sua conta bancária, e você recebe o comprovante no WhatsApp.</span></li></ol>
+        <div class="cs-fone"><p class="cs-fone__t"><i></i>Do Yourself<small>Exemplo de conversa</small></p>
+          <span class="cs-m">Oi! Sua internet foi instalada. Deu tudo certo?</span><span class="cs-m cs-m--eu">Deu sim, já estou usando 😊</span><span class="cs-m">Que bom! Qual chave PIX você quer usar para receber o Cashback?</span><span class="cs-m cs-m--eu">Pode ser o meu celular.</span><span class="cs-m">Prontinho, enviado! Segue o comprovante.</span>
+          <div class="cs-pix"><em>PIX</em><div><b>Cashback Do Yourself</b><small>Internet <span data-cs-ex="nome">1.000 Mega</span></small></div><strong data-cs-ex="v">R$ 0,00</strong></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy" id="o-que-e" aria-labelledby="oq-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--cm">Sem letra miúda</span><h2 class="h-sec h-sec--m" id="oq-h">O que o Cashback é e o que ele não é</h2><p>É simples: parte do que você paga volta para você.</p></div></div>
+      <div class="cm-ju" data-sobe>
+        <div class="cm-ju__c cm-ju__c--j"><h3>É</h3><ul><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Dinheiro, via PIX na sua conta bancária</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Pago uma vez em cada serviço</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Sem custo extra para você</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Para CPF e CNPJ</li></ul></div>
+        <div class="cm-ju__c"><h3>Não é</h3><ul><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8"/></svg>Desconto na fatura</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8"/></svg>Pagamento todo mês</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8"/></svg>Pontos, cupom ou vale-compra</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8"/></svg>Sorteio ou promoção surpresa</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy" id="pagamento" aria-labelledby="pg-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--cm">Forma de pagamento</span><h2 class="h-sec h-sec--m" id="pg-h">Débito, boleto ou PIX: o Cashback é o mesmo</h2><p>Na internet, o cálculo usa sempre o preço no débito em conta.</p></div></div>
+      <div class="cs-pg" data-cs-pg="deb" data-sobe>
+        <div class="cs-seg" role="radiogroup" aria-label="Forma de pagamento da internet"><button type="button" role="radio" aria-checked="true" data-cs-f="deb">Débito em conta</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-cs-f="bol">Boleto ou PIX</button></div>
+        <dl><div><dt>Internet <span data-cs-ex="nome">1.000 Mega</span></dt><dd data-cs-g="preco">R$ 0,00</dd><small data-cs-g="obs"></small></div><div class="is-cb"><dt>Seu Cashback</dt><dd data-cs-ex="v">R$ 0,00</dd><small>50% do preço no débito</small></div></dl>
+        <p class="cm-nota cs-c">No celular, a forma de pagamento não muda o preço.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy" id="duvidas" aria-labelledby="duvidas-h">
+    <div class="cx duv">
+      <div data-sobe>
+        <span class="eyebrow"><i style="background:var(--marca)">?</i>Dúvidas</span>
+        <h2 class="h-sec" id="duvidas-h">Perguntas sobre o Cashback</h2>
+        <p class="lede">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p>
+        <div class="botoes"><a class="bt bt--linha" data-zap="Olá! Tenho uma dúvida sobre o Cashback." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></div>
+      </div>
+      <div class="faq" data-sobe>
+        <div class="faq__item"><h3>O plano fica mais caro por causa do Cashback?</h3><p>Não. O preço é o mesmo. O Cashback não tem custo para você.</p></div>
+        <div class="faq__item"><h3>O Cashback vem todo mês?</h3><p>Não. Ele é pago uma única vez em cada serviço contratado.</p></div>
+        <div class="faq__item"><h3>Se eu contratar mais de um serviço, recebo mais de um Cashback?</h3><p>Sim. Cada serviço paga o seu, e os valores se somam. Eles podem cair em dias diferentes. <a href="/combo">Veja o combo</a>.</p></div>
+        <div class="faq__item"><h3>Preciso informar a chave PIX no site?</h3><p>Não. Um atendente pede a chave no WhatsApp, só na hora de pagar.</p></div>
+        <div class="faq__item"><h3>Como é calculado o Cashback da energia?</h3><p>São 10% da nova conta de luz, já com o desconto. O valor certo sai da análise da sua fatura.</p></div>
+        <div class="faq__item"><h3>Como é calculado o do celular?</h3><p>É o valor de uma mensalidade para cada linha contratada. Com duas linhas, voltam duas mensalidades.</p></div>
+        <div class="faq__item"><h3>E se eu escolher boleto ou PIX na internet?</h3><p>A mensalidade fica <span data-cs-boleto>R$ 10,00</span> maior, mas o Cashback continua calculado pelo preço no débito em conta.</p></div>
+        <div class="faq__item"><h3>Os centavos são arredondados?</h3><p>Sim, sempre para baixo. Por exemplo: metade de R$ 129,99 é R$ 64,99.</p></div>
+        <div class="faq__item"><h3>O Cashback vale para empresa e MEI?</h3><p>Vale. As regras são as mesmas no CPF e no CNPJ.</p></div>
+        <div class="faq__item"><h3>Passaram os 7 dias e não recebi. E agora?</h3><p>Chame a gente no WhatsApp. Um atendente confere o seu contrato e resolve com você.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy fim-sec" aria-labelledby="fim-h">
+    <div class="cx">
+      <div class="fim" data-sobe>
+        <div class="fim__obj" aria-hidden="true"><div class="obj"><img src="/img/3d-g/cashback.webp" alt="" width="720" height="720"></div></div>
+        <div class="fim__txt">
+          <h2 id="fim-h">Escolha um serviço e receba a sua parte</h2>
+          <p>Consulte o seu CEP ou junte dois ou três serviços no combo.</p>
+          <div class="botoes"><a class="bt bt--ouro" href="/contratar">Consultar meu CEP<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha-claro" href="/combo#montar">Montar um combo</a></div>
         </div>
       </div>
     </div>
@@ -196,6 +294,7 @@
 <script src="/js/vendor/ScrollTrigger.min.js"></script>
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
+<script src="/js/cashback.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>

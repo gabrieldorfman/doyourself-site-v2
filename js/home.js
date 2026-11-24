@@ -813,10 +813,10 @@ document.querySelectorAll('[data-slides]').forEach((m) => {
       const cel = d.cbTipo === 'cel', wtx = d.cbTipo === 'wtx';
       const plano = cel ? (n > 1 ? `${n} linhas do plano de ${nb(d.cbPlano)}` : `1 linha do plano de ${nb(d.cbPlano)}`) : `o plano de ${d.cbPlano.replace(/^(\S+) Mega/, (m) => nb(m))}`;
       $j('[data-cbm-txt]').innerHTML = `<p>Se você contratar <b>${plano}</b>, você paga <b class="nw">${preco} por mês</b>, que é o valor da mensalidade.</p>
-        <p>${cel ? 'Com as linhas ativadas e o contrato concluído' : wtx ? 'Com o chip do modem ativado e o contrato concluído' : 'Depois da instalação, com o contrato concluído'}, você recebe <b class="cbm__v nw">${valor}</b> em forma de <b>Cashback</b>, direto na sua conta, via PIX.</p>`;
+        <p>${cel ? 'Com o chip ativado' : wtx ? 'Com o chip do modem ativado e o contrato concluído' : 'Depois da instalação, com o contrato concluído'}, você recebe <b class="cbm__v nw">${valor}</b> em forma de <b>Cashback</b>, direto na sua conta, via PIX.</p>`;
       $j('[data-cbm-passos]').innerHTML = `<li><b>Você contrata</b><span>Pelo site, em poucos minutos</span></li>
         ${cel ? `<li><b>${n > 1 ? 'Suas linhas são ativadas' : 'Sua linha é ativada'}</b><span>Com número novo ou com o seu, pela portabilidade</span></li>` : wtx ? '<li><b>Você recebe o modem</b><span>Liga na tomada e o chip é ativado</span></li>' : '<li><b>Sua internet é instalada</b><span>Em até 48 horas, sem custo</span></li>'}
-        <li><b>Você recebe ${valor} no PIX</b><span>Em até 7 dias depois do contrato concluído</span></li>`;
+        <li><b>Você recebe ${valor} no PIX</b><span>Em até 7 dias depois ${cel ? 'do chip ativado' : wtx ? 'do chip do modem ativado' : 'da instalação'}</span></li>`;
       $j('[data-cbm-nota]').innerHTML = cel
         ? 'O <b>Cashback</b> é pago uma única vez: o valor de uma mensalidade inteira, por linha contratada.'
         : 'O <b>Cashback</b> é pago uma única vez: metade de uma mensalidade do plano escolhido.';
