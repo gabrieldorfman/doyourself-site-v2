@@ -37,6 +37,7 @@
 <link rel="stylesheet" href="/css/v2.css">
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
+<link rel="stylesheet" href="/css/energia.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -45,7 +46,7 @@
 <script src="/js/config.js"></script>
 </head>
 <body>
-<!-- Do Yourself v2 · Energia para condomínios (/energia/condominio): por enquanto só o topo; as próximas seções entram depois -->
+<!-- Do Yourself v2 · Energia para condomínios (/energia/condominio) -->
 <!--#menu-->
 <header class="nav">
   <div class="wrap nav__bar">
@@ -92,7 +93,7 @@
 </header>
 <!--/menu-->
 
-<main id="top">
+<main id="top" class="pg-luz">
   <section class="topo topo--pg topo--so topo--luz" aria-labelledby="hero-h" data-bar-hero>
     <div class="topo__painel">
       <div class="cx topo__grid">
@@ -100,12 +101,97 @@
           <span class="etq etq--luz">Energia para condomínios</span>
           <h1 id="hero-h">Menos gasto com a luz das <em>áreas comuns</em></h1>
           <p class="lede">Energia solar por assinatura para elevadores, iluminação e bombas do condomínio, sem obra no prédio e sem investimento.</p>
-          <div class="botoes"><a class="bt bt--luz" data-zap="Olá! Quero saber da energia por assinatura para condomínio." href="https://wa.me/5541995701636">Falar com um especialista</a></div>
+          <ul class="pg-chips"><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Sem obra no prédio</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Sem investimento</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>No CNPJ do condomínio</li></ul>
+          <div class="botoes"><a class="bt bt--luz" href="#economia">Ver quanto economizo<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" data-zap="Olá! Quero saber da energia por assinatura para condomínio." href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
         </div>
         <div class="topo__cena hx" aria-hidden="true">
           <span class="hx__luz"></span>
           <div class="obj obj--x"><img src="/img/3d-g/predio.webp" alt="" width="720" height="720"></div>
           
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy en-pr-sec" id="areas" aria-labelledby="ar-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">Áreas comuns</span><h2 class="h-sec h-sec--m" id="ar-h">A conta que todos os moradores pagam</h2><p>Toque em uma área e veja por que ela pesa.</p></div></div>
+      <div class="en-pr" data-en-pr="elev" data-sobe><div class="en-pr__v"><svg viewBox="0 0 460 440" aria-hidden="true"><rect x="0" y="396" width="460" height="44" fill="#e4b377"/><g class="en-ar" data-x="bomba"><rect x="196" y="18" width="68" height="36" rx="8"/><path class="en-ar__l" d="M230 54v22"/></g><rect x="106" y="64" width="248" height="332" rx="14" fill="#fff"/><g fill="#f3e2cd"><rect x="128" y="88" width="28" height="28" rx="5"/><rect x="174" y="88" width="28" height="28" rx="5"/><rect x="266" y="88" width="28" height="28" rx="5"/><rect x="312" y="88" width="28" height="28" rx="5"/><rect x="128" y="136" width="28" height="28" rx="5"/><rect x="174" y="136" width="28" height="28" rx="5"/><rect x="266" y="136" width="28" height="28" rx="5"/><rect x="312" y="136" width="28" height="28" rx="5"/><rect x="128" y="184" width="28" height="28" rx="5"/><rect x="174" y="184" width="28" height="28" rx="5"/><rect x="266" y="184" width="28" height="28" rx="5"/><rect x="312" y="184" width="28" height="28" rx="5"/><rect x="128" y="232" width="28" height="28" rx="5"/><rect x="174" y="232" width="28" height="28" rx="5"/><rect x="266" y="232" width="28" height="28" rx="5"/><rect x="312" y="232" width="28" height="28" rx="5"/><rect x="128" y="280" width="28" height="28" rx="5"/><rect x="174" y="280" width="28" height="28" rx="5"/><rect x="266" y="280" width="28" height="28" rx="5"/><rect x="312" y="280" width="28" height="28" rx="5"/></g><g class="en-ar" data-x="elev"><rect x="214" y="80" width="32" height="250" rx="8"/><rect class="en-cab" x="218" y="262" width="24" height="36" rx="5"/></g><g class="en-ar" data-x="port"><rect x="194" y="338" width="72" height="58" rx="8"/></g><g class="en-ar" data-x="gar"><rect x="284" y="346" width="60" height="50" rx="6"/><path class="en-ar__l" d="M290 358h48M290 370h48M290 382h48"/></g><g class="en-ar" data-x="lazer"><rect x="374" y="356" width="76" height="40" rx="18"/><path class="en-ar__l" d="M386 378q8-8 16 0t16 0 16 0"/></g></svg></div>
+        <div class="en-fat__b" role="radiogroup" aria-label="Áreas comuns"><button type="button" role="radio" aria-checked="true" data-en-f="elev"><b>Elevadores</b><span>Sobem e descem o dia todo, e gastam mais nos horários de pico.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="gar"><b>Garagem</b><span>A luz da garagem e os portões funcionam de dia e de noite.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="port"><b>Portaria</b><span>Câmeras, interfone e portões precisam estar sempre ligados.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="bomba"><b>Bombas de água</b><span>Levam a água até a caixa no alto do prédio, várias vezes ao dia.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="lazer"><b>Área de lazer</b><span>Piscina, salão de festas e academia também entram na conta comum.</span></button></div></div>
+    </div>
+  </section>
+
+  <section class="dy en-re-sec" id="economia" aria-labelledby="ec-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">Para o condomínio</span><h2 class="h-sec h-sec--m" id="ec-h">Quanto sobra por ano, e por apartamento</h2><p>Arraste até o valor da conta e diga quantos apartamentos o prédio tem.</p></div></div>
+      <div class="en-regua" data-en-regua data-sobe>
+        <div class="en-regua__in">
+          <label for="en-r"><span>A conta das áreas comuns</span><output data-en="de" for="en-r">R$ 0,00</output></label>
+          <input id="en-r" type="range" min="500" max="15000" step="50" value="2500">
+          <div class="en-regua__m" aria-hidden="true"><span>R$ 500</span><span>R$ 15.000</span></div>
+          <div class="en-apt"><label for="en-apt">Quantos apartamentos?</label><input id="en-apt" type="text" inputmode="numeric" maxlength="4" value="40" data-en-apt></div>
+          <p class="en-nota">Sua conta é outra? <a href="/energia/simulador">Digite o valor exato</a>.</p>
+        </div>
+        <div class="en-contas" aria-hidden="true">
+          <div class="en-conta en-conta--a"><i></i><small>Hoje</small><b data-en="de">R$ 0,00</b></div>
+          <div class="en-conta en-conta--b"><i></i><small>Com a assinatura</small><b data-en="para">R$ 0,00</b></div>
+        </div>
+        <dl class="en-res" aria-live="polite">
+          <div><dt>Economia por mês</dt><dd data-en="mes">R$ 0,00</dd></div>
+          <div class="is-g"><dt>Economia em um ano</dt><dd data-en="ano">R$ 0,00</dd></div>
+          <div><dt>Por apartamento, no ano</dt><dd data-en="apt">R$ 0,00</dd></div>
+          <div class="is-cb"><dt>Cashback via PIX, uma vez</dt><dd data-en="cb">R$ 0,00</dd></div>
+        </dl>
+        <div class="botoes en-regua__b"><a class="bt bt--luz" data-en-ir href="/contratar?origem=energia">Quero esse desconto</a><a class="bt bt--linha" data-en-zap href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
+        <p class="en-nota en-nota--c">Isto é uma simulação. O desconto real é calculado com a sua fatura e enviado pelo WhatsApp para você aprovar antes de qualquer contrato.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy en-as-sec" id="assembleia" aria-labelledby="as-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">Para o síndico</span><h2 class="h-sec h-sec--m" id="as-h">O que levar para a assembleia</h2><p>Marque o que você já tem. O que faltar, a gente prepara com você.</p></div></div>
+      <div class="en-as" data-en-lista data-sobe><ul><li><label><input type="checkbox"><span></span>A última conta de luz das áreas comuns</label></li><li><label><input type="checkbox"><span></span>A simulação da economia por ano</label></li><li><label><input type="checkbox"><span></span>A proposta com o desconto real, enviada por nós</label></li><li><label><input type="checkbox"><span></span>A resposta para “precisa de obra?”: não precisa</label></li><li><label><input type="checkbox"><span></span>Quem assina pelo condomínio: síndico ou administradora</label></li></ul><p aria-live="polite" data-en-lt>0 de 5 prontos</p><div class="botoes"><a class="bt bt--luz" data-zap="Olá! Sou síndico ou administradora e quero uma proposta de energia por assinatura para levar à assembleia." href="https://wa.me/5541995701636">Pedir a proposta</a></div></div>
+    </div>
+  </section>
+
+  <section class="dy en-ps" id="como" aria-labelledby="como-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">Como contratar</span><h2 class="h-sec h-sec--m" id="como-h">Você manda a fatura, a gente cuida do resto</h2><p>Sem visita e sem obra, tudo pelo WhatsApp.</p></div></div>
+      <ol class="en-passos" data-sobe><li><img src="/img/3d-g/celular.webp" alt="" width="200" height="200" loading="lazy"><h3>Envie a fatura</h3><p>Uma foto ou o PDF da última conta do condomínio.</p></li><li><img src="/img/3d-g/conversa.webp" alt="" width="200" height="200" loading="lazy"><h3>Receba a proposta</h3><p>A gente calcula o desconto real. Você só segue se gostar.</p></li><li><img src="/img/3d-g/escudo.webp" alt="" width="200" height="200" loading="lazy"><h3>Faça a biometria</h3><p>A assinatura é feita por um link, no celular.</p></li><li><img src="/img/3d-g/calendario.webp" alt="" width="200" height="200" loading="lazy"><h3>Espere os créditos</h3><p>A primeira conta com desconto pode levar até 90 dias.</p></li><li><img src="/img/3d-g/cashback.webp" alt="" width="200" height="200" loading="lazy"><h3>Receba o Cashback</h3><p>10% da nova conta, via PIX na sua conta bancária, em até 7 dias depois da biometria.</p></li></ol>
+    </div>
+  </section>
+
+  <section class="dy" id="duvidas" aria-labelledby="duvidas-h">
+    <div class="cx duv">
+      <div data-sobe>
+        <span class="eyebrow"><i style="background:var(--luz)">?</i>Dúvidas</span>
+        <h2 class="h-sec" id="duvidas-h">Perguntas de síndicos e administradoras</h2>
+        <p class="lede">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p>
+        <div class="botoes"><a class="bt bt--linha" data-zap="Olá! Tenho uma dúvida sobre energia por assinatura para o meu condomínio." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></div>
+      </div>
+      <div class="faq" data-sobe>
+        <div class="faq__item"><h3>O desconto vale para os apartamentos?</h3><p>Aqui ele vale para a conta das áreas comuns. Cada morador pode contratar a sua, se a conta for de R$ 500 ou mais.</p></div>
+        <div class="faq__item"><h3>Precisa de obra no prédio?</h3><p>Não. Nada é instalado no telhado, na garagem nem no quadro de luz.</p></div>
+        <div class="faq__item"><h3>Precisa passar por assembleia?</h3><p>Depende da convenção do condomínio. A gente prepara a proposta para você apresentar.</p></div>
+        <div class="faq__item"><h3>Quem recebe o Cashback?</h3><p>O condomínio, via PIX, depois que o contrato é assinado com a biometria. O atendente combina a conta bancária com você.</p></div>
+        <div class="faq__item"><h3>O prédio tem mais de uma conta de luz. E agora?</h3><p>Envie todas. A gente calcula o desconto de cada uma.</p></div>
+        <div class="faq__item"><h3>A conta de luz zera?</h3><p>Não. O desconto vale para a energia que você consome. O custo mínimo da ligação e a iluminação pública continuam.</p></div>
+        <div class="faq__item"><h3>Quando vem a primeira conta com desconto?</h3><p>Pode levar até 90 dias depois da assinatura, que é o tempo de ligar os créditos à sua conta.</p></div>
+        <div class="faq__item"><h3>Vou receber uma ou duas contas?</h3><p>Depende da empresa parceira que atende a sua região. Se forem duas, a soma delas é a que fica menor. O atendente explica antes de você assinar.</p></div>
+        <div class="faq__item"><h3>E se faltar luz?</h3><p>Você liga para a distribuidora da sua cidade, como hoje. Os fios e o atendimento continuam com ela.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy fim-sec" aria-labelledby="fim-h">
+    <div class="cx">
+      <div class="fim" data-sobe>
+        <div class="fim__obj" aria-hidden="true"><div class="obj"><img src="/img/3d-g/predio.webp" alt="" width="720" height="720"></div></div>
+        <div class="fim__txt">
+          <h2 id="fim-h">Leve a proposta pronta para os moradores</h2>
+          <p>Envie a conta das áreas comuns. A análise é grátis.</p>
+          <div class="botoes"><a class="bt bt--ouro" data-zap="Olá! Quero enviar a conta de luz do meu condomínio para saber o desconto." href="https://wa.me/5541995701636">Enviar a conta<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha-claro" href="#economia">Simular primeiro</a></div>
         </div>
       </div>
     </div>
@@ -196,6 +282,7 @@
 <script src="/js/vendor/ScrollTrigger.min.js"></script>
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
+<script src="/js/energia.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>

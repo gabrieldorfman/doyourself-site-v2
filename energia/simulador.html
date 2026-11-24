@@ -37,6 +37,7 @@
 <link rel="stylesheet" href="/css/v2.css">
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
+<link rel="stylesheet" href="/css/energia.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -92,14 +93,14 @@
 </header>
 <!--/menu-->
 
-<main id="top">
+<main id="top" class="pg-luz">
   <section class="topo topo--pg topo--so topo--luz" aria-labelledby="hero-h" data-bar-hero>
     <div class="topo__painel">
       <div class="cx topo__grid">
         <div class="topo__txt">
           <span class="etq etq--luz">Simulador de economia</span>
           <h1 id="hero-h">Descubra quanto você <em>economiza na conta de luz</em></h1>
-          <p class="lede">Informe o valor médio da sua conta e veja a economia por mês, por ano e o Cashback no PIX.</p>
+          <p class="lede">Informe o valor médio da sua conta e veja a economia por mês, por ano e o seu Cashback.</p>
           <div class="botoes"><a class="bt bt--luz" href="#simulador">Simular agora<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" data-zap="Olá! Quero simular a economia na minha conta de luz." href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
         </div>
         <div class="topo__cena hx" aria-hidden="true">
@@ -138,6 +139,60 @@
   </div>
 </div>
 <!--/simulador-->
+    </div>
+  </section>
+
+  <section class="dy en-fx-sec" id="faixas" aria-labelledby="fx-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">Faixas de desconto</span><h2 class="h-sec h-sec--m" id="fx-h">Quanto maior a conta, maior o desconto</h2><p>A faixa sai sozinha no simulador. O valor exato depende da sua fatura e da sua região.</p></div></div>
+      <ol class="en-fx" data-en-faixas data-sobe></ol>
+    </div>
+  </section>
+
+  <section class="dy en-fat-sec" id="fatura" aria-labelledby="fat-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">Na sua fatura</span><h2 class="h-sec h-sec--m" id="fat-h">Onde achar cada valor na conta de luz</h2><p>Toque em um item para ver onde ele costuma ficar.</p></div></div>
+      <div class="en-fat" data-en-fat="total" data-sobe>
+        <div class="en-fat__p" aria-hidden="true"><p class="en-fat__l"><b>Conta de energia</b><span>Exemplo ilustrativo</span></p>
+          <div class="en-fat__x" data-x="hist"><small>Histórico de consumo</small><p class="en-fat__g"><i style="height:46%"></i><i style="height:60%"></i><i style="height:52%"></i><i style="height:74%"></i><i style="height:88%"></i><i style="height:70%"></i><i style="height:64%"></i><i style="height:80%"></i></p></div>
+          <div class="en-fat__x en-fat__ln" data-x="consumo"><span>Energia consumida</span><b>940 kWh</b></div>
+          <div class="en-fat__x en-fat__ln" data-x="ip"><span>Iluminação pública</span><b>R$ 32,00</b></div>
+          <div class="en-fat__x en-fat__tt" data-x="total"><span>Total a pagar</span><b>R$ 800,00</b></div></div>
+        <div class="en-fat__b" role="radiogroup" aria-label="Itens da fatura"><button type="button" role="radio" aria-checked="true" data-en-f="total"><b>Total a pagar</b><span>É este valor que você digita no simulador. Se a conta muda muito, use a média dos últimos 3 meses.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="consumo"><b>Consumo em kWh</b><span>É quanta energia você usou. O desconto vale para esta parte, a maior da conta.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="ip"><b>Iluminação pública</b><span>É uma taxa da prefeitura. Ela não entra no desconto e continua na conta.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="hist"><b>Histórico</b><span>Mostra o consumo dos últimos meses. Com ele, a gente calcula a proposta exata.</span></button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy" id="duvidas" aria-labelledby="duvidas-h">
+    <div class="cx duv">
+      <div data-sobe>
+        <span class="eyebrow"><i style="background:var(--luz)">?</i>Dúvidas</span>
+        <h2 class="h-sec" id="duvidas-h">Perguntas sobre a simulação</h2>
+        <p class="lede">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p>
+        <div class="botoes"><a class="bt bt--linha" data-zap="Olá! Tenho uma dúvida sobre a simulação da conta de luz." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></div>
+      </div>
+      <div class="faq" data-sobe>
+        <div class="faq__item"><h3>O valor do simulador é garantido?</h3><p>Não. É uma estimativa. O desconto real é calculado com a sua fatura e enviado pelo WhatsApp, para você aprovar antes de qualquer contrato.</p></div>
+        <div class="faq__item"><h3>Qual é o valor mínimo da conta?</h3><p>R$ 500 por mês. Não existe valor máximo.</p></div>
+        <div class="faq__item"><h3>Qual valor eu digito?</h3><p>O total da sua última conta. Se ela muda muito de um mês para o outro, use a média dos últimos 3 meses.</p></div>
+        <div class="faq__item"><h3>A conta de luz zera?</h3><p>Não. O desconto vale para a energia que você consome. O custo mínimo da ligação e a iluminação pública continuam.</p></div>
+        <div class="faq__item"><h3>Quando vem a primeira conta com desconto?</h3><p>Pode levar até 90 dias depois da assinatura, que é o tempo de ligar os créditos à sua conta.</p></div>
+        <div class="faq__item"><h3>Como recebo o Cashback?</h3><p>Você recebe 10% da nova conta, uma única vez, via PIX na sua conta bancária, em até 7 dias depois da biometria do contrato.</p></div>
+        <div class="faq__item"><h3>Vocês atendem a minha cidade?</h3><p>Atendemos o Brasil todo. A disponibilidade na sua distribuidora é confirmada no WhatsApp.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy fim-sec" aria-labelledby="fim-h">
+    <div class="cx">
+      <div class="fim" data-sobe>
+        <div class="fim__obj" aria-hidden="true"><div class="obj"><img src="/img/3d-g/lampada.webp" alt="" width="720" height="720"></div></div>
+        <div class="fim__txt">
+          <h2 id="fim-h">Quer o valor exato?</h2>
+          <p>Envie a sua fatura pelo WhatsApp. A análise é grátis e sem compromisso.</p>
+          <div class="botoes"><a class="bt bt--ouro" data-zap="Olá! Quero enviar a minha fatura de luz para saber o desconto exato." href="https://wa.me/5541995701636">Enviar minha fatura<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha-claro" href="#simulador">Simular de novo</a></div>
+        </div>
+      </div>
     </div>
   </section>
 </main>
@@ -226,6 +281,7 @@
 <script src="/js/vendor/ScrollTrigger.min.js"></script>
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
+<script src="/js/energia.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>

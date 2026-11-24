@@ -37,6 +37,7 @@
 <link rel="stylesheet" href="/css/v2.css">
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
+<link rel="stylesheet" href="/css/energia.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -45,7 +46,7 @@
 <script src="/js/config.js"></script>
 </head>
 <body>
-<!-- Do Yourself v2 · Energia para empresas (/energia/empresas): por enquanto só o topo; as próximas seções entram depois -->
+<!-- Do Yourself v2 · Energia para empresas (/energia/empresas) -->
 <!--#menu-->
 <header class="nav">
   <div class="wrap nav__bar">
@@ -92,7 +93,7 @@
 </header>
 <!--/menu-->
 
-<main id="top">
+<main id="top" class="pg-luz">
   <section class="topo topo--pg topo--so topo--luz" aria-labelledby="hero-h" data-bar-hero>
     <div class="topo__painel">
       <div class="cx topo__grid">
@@ -100,12 +101,85 @@
           <span class="etq etq--luz">Energia para empresas</span>
           <h1 id="hero-h">Energia solar por assinatura para <em>empresas maiores</em></h1>
           <p class="lede">Para empresas com conta de luz alta: desconto na energia sem investimento, sem obra e sem mudar de distribuidora.</p>
-          <div class="botoes"><a class="bt bt--luz" data-zap="Olá! Quero saber da energia por assinatura para a minha empresa." href="https://wa.me/5541995701636">Falar com um especialista</a></div>
+          <ul class="pg-chips"><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Sem obra</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Sem investimento</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Uma ou várias unidades</li></ul>
+          <div class="botoes"><a class="bt bt--luz" href="#economia">Ver quanto economizo<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" data-zap="Olá! Quero saber da energia por assinatura para a minha empresa." href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
         </div>
         <div class="topo__cena hx" aria-hidden="true">
           <span class="hx__luz"></span>
-          <div class="obj obj--x"><img src="/img/3d-g/predio.webp" alt="" width="720" height="720"></div>
+          <div class="obj obj--x"><img src="/img/3d-g/solar.webp" alt="" width="720" height="720"></div>
           
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy en-un-sec" id="economia" aria-labelledby="ec-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">Suas unidades</span><h2 class="h-sec h-sec--m" id="ec-h">Some as contas e veja a economia do grupo</h2><p>Matriz, filial, galpão: digite a conta de luz de cada uma.</p></div></div>
+      <div class="en-un" data-en-un data-sobe>
+        <div><ul data-en-ul></ul><button class="bt bt--linha" type="button" data-en-add>Adicionar unidade</button></div>
+        <div class="en-un__r"><p>Hoje</p><b data-en="de">R$ 0,00</b><p>Com a assinatura</p><b class="is-g" data-en="para">R$ 0,00</b>
+        <dl><div><dt>Economia por mês</dt><dd data-en="mes">R$ 0,00</dd></div><div><dt>Economia em um ano</dt><dd data-en="ano">R$ 0,00</dd></div><div class="is-cb"><dt>Cashback via PIX, uma vez</dt><dd data-en="cb">R$ 0,00</dd></div></dl><a class="bt bt--ouro" data-en-zap href="https://wa.me/5541995701636">Pedir proposta no WhatsApp</a></div>
+        <p class="en-nota en-nota--c">Isto é uma simulação. O desconto real é calculado com as suas faturas e enviado pelo WhatsApp para você aprovar antes de qualquer contrato.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy en-fx-sec" id="faixas" aria-labelledby="fx-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">Faixas de desconto</span><h2 class="h-sec h-sec--m" id="fx-h">Conta maior, desconto maior</h2><p>A faixa é estimada pelo valor da conta de cada unidade.</p></div></div>
+      <ol class="en-fx" data-en-faixas data-sobe></ol>
+    </div>
+  </section>
+
+  <section class="dy en-mu-sec" id="o-que-muda" aria-labelledby="mu-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">Sem surpresa</span><h2 class="h-sec h-sec--m" id="mu-h">Muda o valor. O resto fica igual</h2><p>A distribuidora da sua cidade continua a mesma, e a manutenção também é dela.</p></div></div>
+      <div class="en-mu" data-sobe>
+        <div class="en-mu__c en-mu__c--s"><h3>O que muda</h3><ul><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>O valor que você paga pela energia</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>De onde vem: energia solar, limpa e renovável</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>O Cashback de 10%, que volta uma vez via PIX</li></ul></div>
+        <div class="en-mu__c"><h3>O que fica igual</h3><ul><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>A luz, os fios e o relógio do imóvel</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Quem atende se faltar energia: a distribuidora</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>O jeito de usar: nada para instalar ou ligar</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>A operação: a empresa não para em nenhum momento</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy en-ps" id="como" aria-labelledby="como-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">Como contratar</span><h2 class="h-sec h-sec--m" id="como-h">Você manda a fatura, a gente cuida do resto</h2><p>Sem visita e sem obra, tudo pelo WhatsApp.</p></div></div>
+      <ol class="en-passos" data-sobe><li><img src="/img/3d-g/celular.webp" alt="" width="200" height="200" loading="lazy"><h3>Envie a fatura</h3><p>Uma foto ou o PDF da última conta de cada unidade.</p></li><li><img src="/img/3d-g/conversa.webp" alt="" width="200" height="200" loading="lazy"><h3>Receba a proposta</h3><p>A gente calcula o desconto real. Você só segue se gostar.</p></li><li><img src="/img/3d-g/escudo.webp" alt="" width="200" height="200" loading="lazy"><h3>Faça a biometria</h3><p>A assinatura é feita por um link, no celular.</p></li><li><img src="/img/3d-g/calendario.webp" alt="" width="200" height="200" loading="lazy"><h3>Espere os créditos</h3><p>A primeira conta com desconto pode levar até 90 dias.</p></li><li><img src="/img/3d-g/cashback.webp" alt="" width="200" height="200" loading="lazy"><h3>Receba o Cashback</h3><p>10% da nova conta, via PIX na sua conta bancária, em até 7 dias depois da biometria.</p></li></ol>
+    </div>
+  </section>
+
+  <section class="dy" id="duvidas" aria-labelledby="duvidas-h">
+    <div class="cx duv">
+      <div data-sobe>
+        <span class="eyebrow"><i style="background:var(--luz)">?</i>Dúvidas</span>
+        <h2 class="h-sec" id="duvidas-h">Perguntas de empresas</h2>
+        <p class="lede">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p>
+        <div class="botoes"><a class="bt bt--linha" data-zap="Olá! Tenho uma dúvida sobre energia por assinatura para a minha empresa." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></div>
+      </div>
+      <div class="faq" data-sobe>
+        <div class="faq__item"><h3>Minha empresa é de alta tensão. Vocês atendem?</h3><p>Envie a fatura. A gente analisa e diz qual é a melhor opção para o seu caso.</p></div>
+        <div class="faq__item"><h3>Tenho unidades em estados diferentes. Posso contratar?</h3><p>Pode. Cada unidade é analisada na distribuidora dela.</p></div>
+        <div class="faq__item"><h3>Precisa de investimento?</h3><p>Não. Não há compra de placas nem financiamento.</p></div>
+        <div class="faq__item"><h3>A produção para em algum momento?</h3><p>Não. Nada é instalado e a energia não é desligada.</p></div>
+        <div class="faq__item"><h3>Vou receber uma ou duas contas?</h3><p>Depende da empresa parceira que atende a sua região. Se forem duas, a soma delas é a que fica menor. O atendente explica antes de você assinar.</p></div>
+        <div class="faq__item"><h3>A conta de luz zera?</h3><p>Não. O desconto vale para a energia que você consome. O custo mínimo da ligação e a iluminação pública continuam.</p></div>
+        <div class="faq__item"><h3>Quando vem a primeira conta com desconto?</h3><p>Pode levar até 90 dias depois da assinatura, que é o tempo de ligar os créditos à sua conta.</p></div>
+        <div class="faq__item"><h3>Tenho conta de luz atrasada. Posso contratar?</h3><p>Fale com a gente no WhatsApp. A conta em atraso pode precisar ser paga antes.</p></div>
+        <div class="faq__item"><h3>Como recebo o Cashback?</h3><p>Você recebe 10% da nova conta, uma única vez, via PIX na sua conta bancária, em até 7 dias depois da biometria do contrato.</p></div>
+        <div class="faq__item"><h3>Isso é regulamentado?</h3><p>Sim. A geração compartilhada de energia é prevista na Lei 14.300, de 2022.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy fim-sec" aria-labelledby="fim-h">
+    <div class="cx">
+      <div class="fim" data-sobe>
+        <div class="fim__obj" aria-hidden="true"><div class="obj"><img src="/img/3d-g/solar.webp" alt="" width="720" height="720"></div></div>
+        <div class="fim__txt">
+          <h2 id="fim-h">Uma análise para cada unidade</h2>
+          <p>Envie as contas de luz da empresa. A proposta volta pelo WhatsApp.</p>
+          <div class="botoes"><a class="bt bt--ouro" data-zap="Olá! Quero enviar as contas de luz da minha empresa para saber o desconto." href="https://wa.me/5541995701636">Enviar as contas<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha-claro" href="#economia">Somar as unidades</a></div>
         </div>
       </div>
     </div>
@@ -196,6 +270,7 @@
 <script src="/js/vendor/ScrollTrigger.min.js"></script>
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
+<script src="/js/energia.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>
