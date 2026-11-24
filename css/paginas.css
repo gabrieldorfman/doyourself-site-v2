@@ -429,3 +429,5 @@ main > section.fim-sec { padding-top: 24px; }
 .emp-uf { white-space: nowrap; }
 @media (max-width: 619px) { .emp-uf .regiao__sel { flex: none; width: auto; } }
 @media (max-width: 619px) { .mil__info li { min-width: 0; padding-inline: 8px; } .mil .mil__info li b, .mil__info li b { font-size: 12px; letter-spacing: -.03em; white-space: normal !important; overflow: visible; } }
+/* títulos e subtítulos sem palavra solta na última linha */
+.h-sec, .h-sec + p, .lede { text-wrap: balance; }
