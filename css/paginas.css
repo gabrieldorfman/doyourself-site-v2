@@ -433,3 +433,14 @@ main > section.fim-sec { padding-top: 24px; }
 .h-sec, .h-sec + p, .lede { text-wrap: balance; }
 .cep__t:has(+ .cep__sub) { margin-bottom: 4px; text-wrap: balance; }
 .cep__sub { margin: 0 0 16px; font-size: 14px; line-height: 1.45; text-align: center; color: var(--cinza); }
+
+/* ---------- /internet/wttx ---------- */
+.pg-wtx .fim { background: radial-gradient(60% 90% at 0% 0%, #5f70e0 0%, transparent 70%), linear-gradient(160deg, #3b4bbf 0%, var(--wtx-noite) 100%); }
+.pg-wtx .topo .pg-chips + .botoes { margin-top: 24px; }
+.dif-bts { display: flex; justify-content: center; margin-top: 24px; }
+.dicas2--wtx ol { grid-template-columns: repeat(4, 1fr); }
+.dicas2--wtx li::before { background: var(--wtx-a); color: var(--wtx-ink); }
+@media (max-width: 1123px) { .dicas2--wtx ol { grid-template-columns: repeat(2, 1fr); gap: 20px 0; } .dicas2--wtx li:nth-child(odd) { padding-left: 0; border-left: 0; } .dicas2--wtx li:nth-child(4) { padding-left: 16px; border-left: 1px solid #e6edf5; } }
+@media (max-width: 619px) { .dicas2--wtx ol { grid-template-columns: 1fr; gap: 14px; } .dicas2--wtx li:nth-child(n) { padding: 0; border: 0; } }
+.pg-wtx .topo { --net: var(--wtx); --net-ink: var(--wtx-ink); }
+.pg-wtx .etq--wtx { text-transform: none; }

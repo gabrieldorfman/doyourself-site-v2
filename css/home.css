@@ -1596,7 +1596,7 @@ main > section.porque--wtx { background: linear-gradient(180deg, var(--creme) 0%
   .cards--emp, .cards--cel { grid-auto-columns: 330px; justify-content: center; }
   .cards--wtx { grid-auto-columns: calc((100% - 3 * 20px) / 4); justify-content: center; overflow: visible; }
 }
-@media (min-width: 620px) and (max-width: 1123px) { .cards--emp, .cards--cel, .cards--wtx { justify-content: center; } }
+@media (min-width: 620px) and (max-width: 1123px) { .cards--emp, .cards--cel, .cards--wtx { justify-content: safe center; } }
 .sub__rot--emp { color: var(--emp); } .sub__rot--wtx { color: var(--wtx-ink); }
 
 /* oferta do mês da empresa: o card do 1.000 Mega, no azul-acinzentado */
