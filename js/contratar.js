@@ -439,7 +439,7 @@
     const [cMin, cMax] = faixa(cel, (p) => centavos(p.preco));
     const ex = DY.energia.simular(500);
     return {
-      energia: { tit: 'Desconto de até 20% na Conta de Luz', ico: 'hero-lampada.svg', preco: 'Economize até <b>20%</b> todo mês',
+      energia: { tit: 'Desconto de até 30% na Conta de Luz', ico: 'hero-lampada.svg', preco: 'Economize até <b>30%</b> todo mês',
         itens: ['Sem obra e sem placas', 'Sem investimento', 'Continua com a mesma distribuidora'],
         cb: `Volta <b>10% da nova conta</b>. Ex.: conta de R$ 500 → volta <b>${brl(ex.cashback)}</b>` },
       internet: { tit: 'Internet Fibra Óptica', ico: 'hero-wifi.svg', preco: `${vMin} a ${vMax} Mega · a partir de <b>${brl(Math.min(...precosNet))}/mês</b>`,
@@ -528,8 +528,8 @@
         ? ['Escolha seu plano de celular', 'Planos controle ou empresariais, com o seu número. <b>100% das linhas volta para você.</b>']
         : ['Quer incluir celular?', 'Ligações ilimitadas e 5G. <b>100% das linhas volta para você.</b>'],
       energia: primeiro
-        ? ['Quanto vem sua conta de luz?', 'Até 20% menos na conta, sem obra e sem placas. <b>10% da nova conta volta para você.</b>']
-        : ['E a conta de luz?', 'Até 20% menos na conta, sem obra. <b>10% da nova conta volta para você.</b>'],
+        ? ['Quanto vem sua conta de luz?', 'Até 30% menos na conta, sem obra e sem placas. <b>10% da nova conta volta para você.</b>']
+        : ['E a conta de luz?', 'Até 30% menos na conta, sem obra. <b>10% da nova conta volta para você.</b>'],
     };
     const [t, s] = textos[prod];
     return `<header class="produto__cab">
