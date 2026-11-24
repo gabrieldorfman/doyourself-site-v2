@@ -431,3 +431,5 @@ main > section.fim-sec { padding-top: 24px; }
 @media (max-width: 619px) { .mil__info li { min-width: 0; padding-inline: 8px; } .mil .mil__info li b, .mil__info li b { font-size: 12px; letter-spacing: -.03em; white-space: normal !important; overflow: visible; } }
 /* títulos e subtítulos sem palavra solta na última linha */
 .h-sec, .h-sec + p, .lede { text-wrap: balance; }
+.cep__t:has(+ .cep__sub) { margin-bottom: 4px; text-wrap: balance; }
+.cep__sub { margin: 0 0 16px; font-size: 14px; line-height: 1.45; text-align: center; color: var(--cinza); }
