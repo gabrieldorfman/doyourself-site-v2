@@ -2,7 +2,8 @@
    1. O que gasta a internet: o cliente toca numa ação e vê se ela usa a franquia
    2. Monte as linhas da equipe: soma as linhas, o total por mês e o Cashback
    3. Portabilidade: onde o número está hoje
-   4. Como ativar o 5G, por marca */
+   4. Como ativar o 5G, por marca
+   5. Lista do que conferir antes da portabilidade */
 (function () {
   const $ = (s, e = document) => e.querySelector(s), $$ = (s, e = document) => [...e.querySelectorAll(s)];
   const brl = (cent) => DY.brl(cent);
@@ -46,7 +47,8 @@
   /* 2. monte as linhas da equipe */
   const eq = $('[data-equipe]');
   if (eq && window.DY) {
-    const q = { 12: 1, 40: 1, 80: 1 }, linhas = $$('[data-eq]', eq), MAX = DY.linhasMax, ESP = DY.linhasEspecial;
+    const linhas = $$('[data-eq]', eq), ini = (eq.dataset.ini || '').split(','), q = {}, MAX = +eq.dataset.equipe || DY.linhasMax, ESP = DY.linhasEspecial;
+    linhas.forEach((l, k) => { q[l.dataset.eq] = ini[k] ? +ini[k] : 1; });
     const total = () => Object.values(q).reduce((a, b) => a + b, 0);
     const pinta = () => {
       let soma = 0; const partes = [];
@@ -81,7 +83,7 @@
   }
 
   /* valores das cenas de contratação: 3 linhas da oferta do mês */
-  const cenas = $('[data-cel-jo]');
+  const cenas = $$('[data-cel-jo]');
   if (cenas.length) {
     const valores = () => { const p = DY.planosCnpj.find((x) => x.selo === 'OFERTA DO MÊS'); if (!p) return; const t = Math.round(p.preco * 100) * 3; cenas.forEach((e) => (e.textContent = brl(e.dataset.celJo === 'cb' ? DY.cashbackCentavos(t, 100) : t))); };
     valores(); document.addEventListener('dy:planos', valores);
@@ -92,4 +94,16 @@
     const paineis = $$('[data-painel]', sec);
     grupo($$('[data-abre]', sec), (b) => paineis.forEach((p) => (p.hidden = p.dataset.painel !== b.dataset.abre)));
   });
+
+  /* 5. portabilidade: lista do que conferir antes */
+  const lt = $('[data-lista]');
+  if (lt) {
+    const cx = $$('[data-tk]', lt);
+    const pinta = () => {
+      const n = cx.filter((x) => x.checked).length; lt.dataset.ok = n === cx.length ? 'sim' : 'nao';
+      $('[data-tk-n]', lt).textContent = n; $('.tk__b i', lt).style.width = (n / cx.length) * 100 + '%';
+      $('[data-tk-t]', lt).textContent = n === cx.length ? 'Tudo pronto. Pode pedir a portabilidade.' : n ? 'Está quase. Se faltar algo, a gente ajuda no WhatsApp.' : 'Marque o que você já tem.';
+    };
+    cx.forEach((x) => x.addEventListener('change', pinta)); pinta();
+  }
 })();

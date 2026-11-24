@@ -45,7 +45,7 @@
 <script src="/js/config.js"></script>
 </head>
 <body>
-<!-- Do Yourself v2 · Portabilidade (/celular/portabilidade): por enquanto só o topo; as próximas seções entram depois -->
+<!-- Do Yourself v2 · Portabilidade (/celular/portabilidade) -->
 <!--#menu-->
 <header class="nav">
   <div class="wrap nav__bar">
@@ -92,20 +92,160 @@
 </header>
 <!--/menu-->
 
-<main id="top">
+<main id="top" class="pg-cel">
   <section class="topo topo--pg topo--so topo--cel" aria-labelledby="hero-h" data-bar-hero>
     <div class="topo__painel">
       <div class="cx topo__grid">
         <div class="topo__txt">
           <span class="etq etq--cel">Portabilidade</span>
           <h1 id="hero-h">Traga o número da sua empresa <em>sem pagar nada</em></h1>
-          <p class="lede">Mantenha os números que os seus clientes já conhecem e passe a ter Cashback no PIX em cada linha.</p>
+          <p class="lede">Mantenha os números que os seus clientes já conhecem e passe a ter <b>Cashback</b> de uma mensalidade em cada linha, via PIX.</p>
+          <ul class="pg-chips"><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Sem custo</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>O mesmo número</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>CNPJ e MEI</li></ul>
           <div class="botoes"><a class="bt bt--cel" data-zap="Olá! Quero fazer a portabilidade das linhas da minha empresa." href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
         </div>
         <div class="topo__cena hx" aria-hidden="true">
           <span class="hx__luz"></span>
           <div class="obj obj--x"><img src="/img/3d-g/conversa.webp" alt="" width="720" height="720"></div>
-          
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy pt-sec" id="portabilidade" aria-labelledby="pt-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--cel">Comece por aqui</span><h2 class="h-sec h-sec--m" id="pt-h">Descubra se o seu número pode vir</h2><p>O número precisa estar no mesmo CNPJ que vai contratar.</p></div></div>
+      <div class="pt" data-troca data-sobe>
+        <p class="pt__q">Onde o seu número está hoje?</p>
+        <div class="pt__ops" role="radiogroup" aria-label="Onde o seu número está hoje?"><button type="button" role="radio" aria-checked="true" data-abre="cnpj">No meu CNPJ</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-abre="cpf">No meu CPF</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-abre="outro">Em outro CNPJ</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-abre="novo">Quero um novo</button></div>
+        <div class="pt__res" aria-live="polite">
+          <div data-painel="cnpj"><img src="/img/3d-g/celular.webp" alt=""><div><h3>Pode trazer, sem custo</h3><p>Você mantém o número, inclusive no WhatsApp. Pode trazer quantos quiser, desde que estejam no mesmo CNPJ. No MEI, o total é de até 3 linhas.</p><a class="bt bt--cel" data-zap="Olá! Quero trazer os números da minha empresa, que já estão no meu CNPJ." href="https://wa.me/5541995701636">Trazer meu número<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div></div>
+          <div data-painel="cpf" hidden><img src="/img/3d-g/info.webp" alt=""><div><h3>Primeiro, passe o número para o CNPJ</h3><p>Peça a troca de titularidade na operadora onde ele está hoje. Com o número no seu CNPJ, fazemos a portabilidade.</p><a class="bt bt--cel" data-zap="Olá! Meu número está no CPF e quero usar no meu CNPJ. Como faço?" href="https://wa.me/5541995701636">Tirar dúvida no WhatsApp<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div></div>
+          <div data-painel="outro" hidden><img src="/img/3d-g/predio.webp" alt=""><div><h3>O número precisa estar no CNPJ que contrata</h3><p>Contrate pelo CNPJ em que o número já está, ou peça antes a troca de titularidade na operadora atual.</p><a class="bt bt--cel" data-zap="Olá! Meu número está em outro CNPJ. Como faço a portabilidade?" href="https://wa.me/5541995701636">Tirar dúvida no WhatsApp<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div></div>
+          <div data-painel="novo" hidden><img src="/img/3d-g/conversa.webp" alt=""><div><h3>Você recebe um número novo</h3><p>O chip vai para o endereço da empresa, em todo o Brasil, com o número já no seu CNPJ.</p><a class="bt bt--cel" href="#planos-celular">Escolher o plano<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy mu-sec" id="o-que-muda" aria-labelledby="mu-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--cel">O que muda</span><h2 class="h-sec h-sec--m" id="mu-h">O plano muda, o número não</h2><p>Portabilidade é levar o seu número de uma operadora para outra.</p></div></div>
+      <div class="mu" data-sobe>
+        <div class="mu__c"><p class="mu__t">Hoje</p><img src="/img/3d-g/celular.webp" alt="" loading="lazy"><p class="mu__num">(41) 9 0000-0000</p><p class="mu__op">Na operadora atual</p></div>
+        <div class="mu__s" aria-hidden="true"><svg viewBox="0 0 48 24"><path d="M3 12h40M34 4l9 8-9 8"/></svg><b>grátis</b></div>
+        <div class="mu__c mu__c--n"><p class="mu__t">Com a Do Yourself</p><img src="/img/3d-g/celular.webp" alt="" loading="lazy"><p class="mu__num">(41) 9 0000-0000</p><p class="mu__op">Na operadora parceira</p></div>
+      </div>
+      <div class="mu__ls" data-sobe><div><h3>O que fica igual</h3><ul><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg><span>O seu número, com o mesmo DDD</span></li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg><span>O contato que os clientes já têm salvo</span></li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg><span>O aparelho que você já usa</span></li></ul></div><div><h3>O que passa a ter</h3><ul><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg><span>Um plano novo, com ligações ilimitadas</span></li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg><span>Um chip novo, enviado para a empresa</span></li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg><span><b>Cashback</b> de uma mensalidade por linha</span></li></ul></div></div>
+    </div>
+  </section>
+
+  <section class="dy tk-sec" id="antes-de-pedir" aria-labelledby="tk-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--cel">Antes de pedir</span><h2 class="h-sec h-sec--m" id="tk-h">Confira se está tudo pronto</h2><p>Marque o que você já tem. Assim, o pedido não volta.</p></div></div>
+      <div class="tk" data-lista data-sobe>
+        <ul class="tk__l"><li><label><input type="checkbox" data-tk><span class="tk__cx"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg></span><span><b>O número está no CNPJ que vai contratar</b><small>É a regra principal. No CPF ou em outro CNPJ, troque a titularidade antes.</small></span></label></li><li><label><input type="checkbox" data-tk><span class="tk__cx"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg></span><span><b>A linha está ativa</b><small>Não cancele antes: um número cancelado não pode ser levado.</small></span></label></li><li><label><input type="checkbox" data-tk><span class="tk__cx"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg></span><span><b>Sei qual é a operadora atual</b><small>A gente pergunta no pedido, junto com o número.</small></span></label></li><li><label><input type="checkbox" data-tk><span class="tk__cx"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg></span><span><b>Tenho os dados do responsável</b><small>Quem responde pela empresa confirma o pedido.</small></span></label></li></ul>
+        <div class="tk__r" aria-live="polite"><div class="tk__n"><b data-tk-n>0</b><span>de 4</span></div><p data-tk-t></p><div class="tk__b" aria-hidden="true"><i></i></div><a class="bt bt--ouro" data-tk-ir data-zap="Olá! Quero fazer a portabilidade das linhas da minha empresa." href="https://wa.me/5541995701636">Pedir a portabilidade<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy tt-sec" id="titularidade" aria-labelledby="tt-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--cel">O número está no CPF?</span><h2 class="h-sec h-sec--m" id="tt-h">Passe para o CNPJ em três passos</h2><p>Isso se chama troca de titularidade, e é feita na operadora em que o número está hoje.</p></div></div>
+      <ol class="rg rg--p" data-sobe><li><b>1</b><div><h3>Peça na operadora atual</h3><p>Solicite a troca de titularidade do número, do CPF para o seu CNPJ.</p></div></li><li><b>2</b><div><h3>Espere a confirmação</h3><p>A operadora atual avisa quando o número já está no CNPJ.</p></div></li><li><b>3</b><div><h3>Chame a gente</h3><p>Com o número no CNPJ, fazemos a portabilidade sem custo.</p></div></li></ol>
+    </div>
+  </section>
+
+  <section class="dy cel-planos" id="planos-celular" aria-labelledby="planos-cel-h">
+    <div class="cx">
+      <div class="sub__topo sub__topo--c" data-sobe><div><h2 class="h-sec h-sec--m" id="planos-cel-h">Escolha o plano do seu número</h2><p>Os mesmos preços valem para números trazidos e novos.</p></div></div>
+      <div class="sub" data-cel>
+        <div class="mil mil--cel pc--cel is-dest" data-cel-dest data-sobe></div>
+        <p class="sub__rot sub__rot--cel" data-sobe>Outros planos de celular</p>
+        <div class="trilho">
+          <div class="cards cards--cel" aria-live="polite"></div>
+          <div class="dica" aria-hidden="true">Arraste para ver os outros planos<svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></div>
+          <div class="pontos"></div>
+        </div>
+        <p class="mei" data-sobe><b>Tem MEI?</b> Contrate até 3 linhas no seu CNPJ, de até R$ 100 cada, e use no seu celular pessoal. <b>Mais de 15 linhas?</b> Tem condição especial, com valores e franquias negociados: <a data-zap="Olá! Quero mais de 15 linhas de celular para a minha empresa." href="https://wa.me/5541995701636">fale com a gente</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="jornada jornada--net" id="instalacao" aria-labelledby="como-h" data-jornada>
+    <div class="jo__pista">
+      <div class="jo__fixo">
+        <div class="cx jo__grade">
+          <div class="jo__esq">
+            <span class="etq etq--cel">Como contratar</span>
+            <h2 class="jo__h" id="como-h">Do pedido ao Cashback no PIX, em 5 passos</h2>
+            <ol class="jo__passos">
+            <li class="jo__p is-on" data-i="0"><button type="button" aria-controls="jo-palco"><span class="jo__n">1</span><span class="jo__t">Escolha o plano e as linhas</span></button><p>Veja o preço por linha e diga quantas a sua equipe precisa.</p></li>
+            <li class="jo__p" data-i="1"><button type="button" aria-controls="jo-palco"><span class="jo__n">2</span><span class="jo__t">Confirme pelo WhatsApp</span></button><p>A gente confere os dados da empresa e os números da portabilidade, numa conversa só.</p></li>
+            <li class="jo__p" data-i="2"><button type="button" aria-controls="jo-palco"><span class="jo__n">3</span><span class="jo__t">Receba o chip</span></button><p>Ele vai para o endereço da empresa, em todo o Brasil.</p></li>
+            <li class="jo__p" data-i="3"><button type="button" aria-controls="jo-palco"><span class="jo__n">4</span><span class="jo__t">Comece a usar</span></button><p>O atendente informa a data da troca. Coloque o chip novo, e o número continua o mesmo.</p></li>
+            <li class="jo__p" data-i="4"><button type="button" aria-controls="jo-palco"><span class="jo__n">5</span><span class="jo__t">Receba o Cashback no PIX</span></button><p>Com o contrato concluído, uma mensalidade por linha volta via PIX na sua conta bancária em até 7 dias, uma única vez.</p></li>
+            </ol>
+          </div>
+          <div class="jo__palco" id="jo-palco" aria-live="polite">
+            <div class="jo__cena jo__cena--1 is-on" data-c="0">
+              <img class="jo__obj" src="/img/3d-g/celular.webp" alt="">
+              <div class="jo__ui jo__ui--itens"><p class="jo__rot">Escolha o plano</p><span class="jo__item is-sel"><i class="cel"></i>Plano de 80 GB<b>✓</b></span><span class="jo__item is-sel"><i class="cel"></i>3 linhas<b>✓</b></span><span class="jo__item is-sel"><i class="cel"></i>Débito em conta<b>✓</b></span><p class="jo__ok"><i></i><span><span data-cel-jo="total">R$ 161,97</span> por mês</span></p></div>
+            </div>
+            <div class="jo__cena jo__cena--2" data-c="1">
+              <img class="jo__obj" src="/img/3d-g/conversa.webp" alt="">
+              <div class="jo__ui jo__ui--chat"><p class="jo__rot"><i class="jo__dot"></i>Do Yourself <small>online agora</small></p><span class="jo__msg jo__msg--eu">Oi! Quero 3 linhas de 80 GB no meu CNPJ.</span><span class="jo__msg">Perfeito! Vai trazer algum número ou quer números novos?</span><span class="jo__msg jo__msg--eu">Trazer os 3 ✅</span></div>
+            </div>
+            <div class="jo__cena jo__cena--3" data-c="2">
+              <img class="jo__obj" src="/img/3d-g/calendario.webp" alt="">
+              <div class="jo__ui jo__ui--itens"><p class="jo__rot">Seus chips</p><span class="jo__item is-sel"><i class="cel"></i>Pedido confirmado<b>✓</b></span><span class="jo__item is-sel"><i class="cel"></i>Chips enviados<b>✓</b></span><span class="jo__item is-sel"><i class="cel"></i>Entregues na empresa<b>✓</b></span><p class="jo__ok"><i></i>Envio para todo o Brasil</p></div>
+            </div>
+            <div class="jo__cena jo__cena--4" data-c="3">
+              <img class="jo__obj" src="/img/3d-g/wifi.webp" alt="">
+              <div class="jo__ui jo__ui--itens"><p class="jo__rot">Linhas da equipe</p><span class="jo__item is-sel"><i class="cel"></i>Atendimento<b>✓</b></span><span class="jo__item is-sel"><i class="cel"></i>Vendas<b>✓</b></span><span class="jo__item is-sel"><i class="cel"></i>Entregas<b>✓</b></span><p class="jo__ok"><i></i>3 linhas no mesmo CNPJ</p></div>
+            </div>
+            <div class="jo__cena jo__cena--5" data-c="4">
+              <img class="jo__obj" src="/img/3d-g/cashback.webp" alt="">
+              <div class="jo__ui jo__ui--pix"><p class="jo__rot">Notificação do banco</p><div class="jo__notif"><span class="jo__pix">PIX</span><div><b>PIX recebido</b><small>Cashback Do Yourself</small></div><strong data-cel-jo="cb">R$ 161,97</strong></div><p class="jo__ok"><i></i>Em até 7 dias depois do contrato</p></div>
+            </div>
+            <span class="jo__selo" data-jo-selo>Passo 1 de 5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy" id="duvidas" aria-labelledby="duvidas-h">
+    <div class="cx duv">
+      <div data-sobe>
+        <span class="eyebrow"><i style="background:var(--cel)">?</i>Dúvidas</span>
+        <h2 class="h-sec" id="duvidas-h">Perguntas sobre a portabilidade</h2>
+        <p class="lede">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p>
+        <div class="botoes"><a class="bt bt--linha" data-zap="Olá! Tenho uma dúvida sobre a portabilidade." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></div>
+      </div>
+      <div class="faq" data-sobe>
+        <div class="faq__item"><h3>Quanto custa?</h3><p>Nada. A portabilidade é gratuita.</p></div>
+        <div class="faq__item"><h3>Quantos números posso trazer?</h3><p>Quantos quiser, desde que todos estejam no mesmo CNPJ. No MEI, o total é de até 3 linhas.</p></div>
+        <div class="faq__item"><h3>Posso trazer um número que está no CPF?</h3><p>Só depois de passar a titularidade para o CNPJ, na operadora atual.</p></div>
+        <div class="faq__item"><h3>Posso trazer um número fixo?</h3><p>Não. A portabilidade é de celular para celular.</p></div>
+        <div class="faq__item"><h3>Devo cancelar a linha antiga antes?</h3><p>Não. O número precisa estar ativo para ser levado.</p></div>
+        <div class="faq__item"><h3>Perco o meu WhatsApp?</h3><p>O número continua o mesmo. Ao trocar o chip, o aplicativo pode pedir para confirmar o número.</p></div>
+        <div class="faq__item"><h3>Preciso trocar de celular?</h3><p>Não. Você usa o chip novo no aparelho que já tem, se ele estiver desbloqueado.</p></div>
+        <div class="faq__item"><h3>Quando a troca acontece?</h3><p>O atendente informa a data no WhatsApp, depois de conferir o pedido.</p></div>
+        <div class="faq__item"><h3>Posso trazer uns números e pedir outros novos?</h3><p>Pode. Cada linha tem o seu plano, tudo no mesmo CNPJ.</p></div>
+        <div class="faq__item"><h3>Quando recebo o Cashback?</h3><p>Em até 7 dias depois que o contrato é concluído, via PIX na sua conta bancária. É pago uma vez: 100% de uma mensalidade de cada linha.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dy fim-sec" aria-labelledby="fim-h">
+    <div class="cx">
+      <div class="fim" data-sobe>
+        <div class="fim__obj" aria-hidden="true"><div class="obj"><img src="/img/3d-g/conversa.webp" alt="" width="720" height="720"></div></div>
+        <div class="fim__txt">
+          <h2 id="fim-h">Vamos trazer o seu número?</h2>
+          <p>Chame no WhatsApp, a qualquer hora. A gente confere e cuida da troca.</p>
+          <div class="botoes"><a class="bt bt--ouro" data-zap="Olá! Quero fazer a portabilidade das linhas da minha empresa." href="https://wa.me/5541995701636">Trazer meu número<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha-claro" href="#planos-celular">Ver os planos</a></div>
         </div>
       </div>
     </div>
@@ -196,6 +336,7 @@
 <script src="/js/vendor/ScrollTrigger.min.js"></script>
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
+<script src="/js/celular.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>
