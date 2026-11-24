@@ -428,4 +428,4 @@ main > section.fim-sec { padding-top: 24px; }
 .emp-uf { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; font-size: 15px; color: var(--cinza); }
 .emp-uf { white-space: nowrap; }
 @media (max-width: 619px) { .emp-uf .regiao__sel { flex: none; width: auto; } }
-@media (max-width: 619px) { .mil__info li { min-width: 0; padding-inline: 9px; } .mil__info li b { font-size: 12.5px; letter-spacing: -.02em; } }
+@media (max-width: 619px) { .mil__info li { min-width: 0; padding-inline: 8px; } .mil .mil__info li b, .mil__info li b { font-size: 12px; letter-spacing: -.03em; white-space: normal !important; overflow: visible; } }
