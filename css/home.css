@@ -179,6 +179,8 @@ main > section.svc { background: linear-gradient(180deg, var(--creme) 0%, var(--
 .sim__nova span { font-size: 15px; color: #6b4a2c; }
 .sim__nova p { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; margin: 6px 0 0; color: var(--luz-ink); }
 .sim__nova s { white-space: nowrap; color: #8a6a4b; }
+.sim:not(.is-ok) .sim__para { display: none; }
+.sim__nova .sim__preco { display: inline-flex; align-items: baseline; gap: 8px; color: inherit; }
 .sim__nova b { font: 500 44px/1 var(--font-display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .sim__nova small { font-size: 15px; }
 .sim__out .sim__nota { margin: 0; text-align: center; color: #6b4a2c; }
