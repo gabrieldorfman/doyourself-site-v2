@@ -184,29 +184,42 @@
     });
   });
 
-  /* ---------- Simulador de energia ---------- */
-  const sim = $('[data-sim]');
-  if (sim) {
-    const rng = $('input[type=range]', sim), val = $('[data-sim-valor]', sim), chips = $$('[data-v]', sim);
-    const out = { mes: $('[data-out=mes]', sim), ano: $('[data-out=ano]', sim), cb: $('[data-out=cb]', sim), pct: $('[data-out=pct]', sim) };
-    const btn = $('[data-sim-ir]', sim);
-    const conta = { v: 500 };
-    function pinta(v) {
-      const s = DY.energia.simular(v);
-      val.textContent = partes(v).i;
-      if (!s.elegivel) { out.mes.textContent = '—'; out.ano.textContent = '—'; out.cb.textContent = 'a partir de R$ 150'; return; }
-      out.mes.textContent = DY.brl(s.economiaMes); out.ano.textContent = DY.brl(s.economiaMes * 12); out.cb.textContent = DY.brl(s.cashback); if (out.pct) out.pct.textContent = s.pct + '%';
-      chips.forEach((b) => b.classList.toggle('is-on', +b.dataset.v === v));
-      btn.href = `/contratar?origem=energia&conta=${v}`;
-    }
-    rng.addEventListener('input', () => pinta(+rng.value));
-    chips.forEach((b) => b.addEventListener('click', () => {
-      const ate = +b.dataset.v;
-      if (!temGsap) { rng.value = ate; pinta(ate); return; }
-      conta.v = +rng.value; gsap.to(conta, { v: ate, duration: .6, ease: 'power3.out', onUpdate: () => { const r = Math.round(conta.v / 10) * 10; rng.value = r; pinta(r); }, onComplete: () => { rng.value = ate; pinta(ate); } });
-    }));
-    pinta(+rng.value);
-  }
+  /* ---------- Simulador de energia ----------
+     O cliente digita o valor da conta; a faixa de desconto sai sozinha de DY.energia. Sem valor máximo.
+     Peça única: _partes/simulador.html (home e /energia/simulador). */
+  $$('[data-sim]').forEach((sim) => {
+    const inp = $('[data-sim-conta]', sim), msg = $('[data-sim-msg]', sim), ir = $('[data-sim-ir]', sim), zap = $('[data-sim-zap]', sim);
+    const out = {}; $$('[data-out]', sim).forEach((e) => (out[e.dataset.out] = e));
+    const min = DY.energia.minimo, minTxt = 'R$ ' + partes(min).i, abaixo = `O desconto vale para contas a partir de ${minTxt}.`;
+    $('[data-sim-min]', sim).textContent = minTxt;
+    zap.target = '_blank'; zap.rel = 'noopener';
+    let t, rot = '';
+    const erro = (txt) => { msg.textContent = txt; sim.classList.toggle('is-erro', !!txt); if (txt) inp.setAttribute('aria-invalid', 'true'); else inp.removeAttribute('aria-invalid'); };
+    const avisa = () => { const v = DY.lerReais(inp.value); erro(v && v < min ? abaixo : ''); };
+    const pinta = () => {
+      const v = DY.lerReais(inp.value), s = DY.energia.simular(v), ok = s.elegivel;
+      sim.classList.toggle('is-ok', ok);
+      const novo = ok ? `Seu desconto é de <b>${s.pct}%</b>` : 'Digite o valor da sua conta para ver o seu desconto';
+      if (novo !== rot) { out.rot.innerHTML = novo; rot = novo; }
+      out.antes.textContent = ok ? DY.brl(s.conta) : '';
+      out.nova.textContent = DY.brl(ok ? s.comDesconto : 0); out.mes.textContent = DY.brl(ok ? s.economiaMes : 0);
+      out.ano.textContent = DY.brl(ok ? s.economiaMes * 12 : 0); out.cb.textContent = DY.brl(ok ? s.cashback : 0);
+      ir.href = '/contratar?origem=energia' + (ok ? '&conta=' + v : '');
+      zap.href = DY.linkWhatsApp(ok ? `Olá! Simulei no site: minha conta de luz é de ${DY.brl(s.conta)} e quero o desconto de ${s.pct}%.` : 'Olá! Quero simular o desconto na minha conta de luz.');
+    };
+    inp.addEventListener('input', () => {
+      // formata sem tirar o cursor do lugar
+      const resto = inp.value.length - inp.selectionStart;
+      inp.value = DY.formatarReais(inp.value);
+      const pos = Math.max(0, inp.value.length - resto); inp.setSelectionRange(pos, pos);
+      pinta(); clearTimeout(t); erro('');
+      t = setTimeout(avisa, 1200);
+    });
+    inp.addEventListener('blur', avisa);
+    inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); inp.blur(); } });
+    ir.addEventListener('click', (e) => { if (sim.classList.contains('is-ok')) return; e.preventDefault(); inp.focus(); erro(DY.lerReais(inp.value) ? abaixo : 'Digite o valor da sua conta de luz.'); });
+    pinta();
+  });
 
   /* ---------- Cards de plano ---------- */
   const APPS = { 'youtube-premium': '/img/apps/youtube-premium-logo.svg', paramount: '/img/apps/paramount-44.svg', 'hbo-max': '/img/apps/hbo-max.png', globoplay: '/img/apps/globoplay.png', whatsapp: '/img/apps/whatsapp.svg' };
@@ -581,7 +594,7 @@
 
   /* combo: o cliente liga/desliga cada serviço, escolhe a conta de luz, o plano de internet e as linhas; o Cashback soma */
   const cmb = { luz: 700, net: '1000', linhas: 1 };
-  const CONTAS = [300, 500, 700, 1000, 1500];
+  const CONTAS = [500, 700, 1000, 1500, 3000];
   function combo() {
     const box = $('[data-combo]'); if (!box) return;
     const on = (k) => $(`[data-cmb="${k}"] [data-cmb-on]`, box).checked;

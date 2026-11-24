@@ -162,13 +162,26 @@ main > section.svc { background: linear-gradient(180deg, var(--creme) 0%, var(--
 /* ---------- simulador de energia ---------- */
 .sim { display: grid; grid-template-columns: 1.1fr 1fr; gap: 0; margin-top: 28px; border-radius: var(--raio); overflow: hidden; background: #fff; border: 1px solid #f1e3d1; box-shadow: 0 30px 60px -40px rgb(154 69 8 / .45); }
 .sim__in { padding: 36px; }
-.sim__q { margin: 0; font-weight: 600; }
-.sim__valor { margin: 12px 0 0; font: 400 64px/1 var(--font-display); letter-spacing: -0.04em; color: var(--luz-ink); }
-.sim__valor small { font-size: 26px; margin-right: 6px; }
-.sim input[type=range] { width: 100%; margin: 22px 0 10px; accent-color: var(--luz); height: 28px; }
-.sim__chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.sim__chips button { height: 40px; padding: 0 16px; border-radius: 999px; border: 1.5px solid #f0d9bd; background: var(--luz-a); color: var(--luz-ink); font: 600 14px/1 var(--font-text); cursor: pointer; }
-.sim__chips button.is-on { background: var(--luz); border-color: var(--luz); color: #fff; }
+.sim__q { margin: 0; font: 600 clamp(22px, 2vw, 28px)/1.2 var(--font-display); letter-spacing: -0.02em; }
+.sim__ajuda { margin: 8px 0 0; font-size: 15px; color: var(--cinza); }
+.sim__campo { display: flex; align-items: center; gap: 10px; margin-top: 22px; padding: 0 20px; height: 88px; border: 2px solid #f0d9bd; border-radius: 18px; background: var(--luz-a); cursor: text; transition: border-color .2s, box-shadow .2s; }
+.sim__campo:focus-within { border-color: var(--luz); box-shadow: 0 0 0 4px rgb(226 112 15 / .16); }
+.sim__campo span { font: 500 26px/1 var(--font-display); color: var(--luz-ink); }
+.sim .sim__campo input { flex: 1; min-width: 0; width: 100%; height: 100%; padding: 0; border: 0; outline: 0; box-shadow: none; background: none; font: 500 44px/1 var(--font-display); letter-spacing: -0.03em; color: var(--luz-ink); font-variant-numeric: tabular-nums; }
+.sim__campo input::placeholder { color: #a8865f; opacity: .6; }
+.sim.is-erro .sim__campo { border-color: #c0392b; }
+.sim__msg { margin: 8px 0 0; min-height: 20px; font-size: 14px; font-weight: 600; color: #b3261e; }
+.sim__pct { margin: 0; min-height: 32px; font-size: 16px; font-weight: 600; color: #6b4a2c; }
+.sim__pct b { display: inline-block; margin-left: 4px; padding: 5px 12px; border-radius: 999px; background: var(--luz-ink); color: #fff; font-size: 18px; line-height: 1.2; }
+.sim__res { display: grid; gap: 14px; transition: opacity .25s; }
+.sim:not(.is-ok) .sim__res { opacity: .4; }
+.sim__nova { padding-bottom: 14px; border-bottom: 1px solid #f2d3ad; }
+.sim__nova span { font-size: 15px; color: #6b4a2c; }
+.sim__nova p { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; margin: 6px 0 0; color: var(--luz-ink); }
+.sim__nova s { font-size: 17px; color: #8a6a4b; }
+.sim__nova b { font: 500 44px/1 var(--font-display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sim__nova small { font-size: 15px; }
+.sim__out .sim__nota { margin: 0; text-align: center; color: #6b4a2c; }
 .sim__nota { margin: 16px 0 0; font-size: 13px; color: var(--cinza); }
 .sim__out { padding: 36px; background: linear-gradient(160deg, #fff6ea 0%, #ffe3c2 100%); display: grid; gap: 14px; align-content: center; }
 .sim__linha { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #f2d3ad; }
@@ -177,7 +190,7 @@ main > section.svc { background: linear-gradient(180deg, var(--creme) 0%, var(--
 .sim__linha--cb b { color: var(--cel-ink); }
 .sim__out .bt { margin-top: 8px; }
 @media (max-width: 1123px) { .sim { grid-template-columns: 1fr; } }
-@media (max-width: 619px) { .sim__in, .sim__out { padding: 22px; } .sim__valor { font-size: 52px; } .sim__linha b { font-size: 24px; } }
+@media (max-width: 619px) { .sim__in, .sim__out { padding: 22px; } .sim__campo { height: 72px; padding: 0 16px; } .sim .sim__campo input { font-size: 34px; } .sim__nova b { font-size: 34px; } .sim__linha { flex-wrap: wrap; row-gap: 4px; } .sim__linha b { font-size: 24px; margin-left: auto; } }
 
 /* ---------- seletor (abas + estado) ---------- */
 .seletor { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }

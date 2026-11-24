@@ -20,10 +20,10 @@ DY.config = {
 };
 
 /* ---------- Energia: estimativa da simulação (sem citar parceira) ----------
-   Faixas internas (modelo-cashback-doyourself): abaixo de R$ 150 não elegível ·
-   R$ 150 a R$ 2.999,99 → 20% · R$ 3.000 a R$ 7.999,99 → 25% · R$ 8.000 ou mais → 30% (decisão de 23/11/2026). É ESTIMATIVA: o valor final sai da fatura. */
+   Faixas internas (modelo-cashback-doyourself): abaixo de R$ 500 não elegível (decisão de 23/11/2026) ·
+   R$ 500 a R$ 2.999,99 → 20% · R$ 3.000 a R$ 7.999,99 → 25% · R$ 8.000 ou mais → 30% (decisão de 23/11/2026). É ESTIMATIVA: o valor final sai da fatura. */
 DY.energia = {
-  minimo: 150,
+  minimo: 500,
   descontoPct: (conta) => (conta >= 8000 ? 30 : conta >= 3000 ? 25 : 20),
   // Estados atendidos pela energia por assinatura. Vazio = Brasil todo (decisão de 23/11/2026): a disponibilidade é confirmada no WhatsApp.
   ufsAtendidas: [],
@@ -310,7 +310,7 @@ DY.brl = (centavos) => 'R$ ' + (centavos / 100).toLocaleString('pt-BR', { minimu
 /* Valor em reais, como a pessoa digita: "800" → 800 · "1500" → 1.500 · "1500,5" → 1.500,5 */
 DY.formatarReais = (v) => {
   const t = String(v).replace(/[^\d,]/g, ''); const i = t.indexOf(',');
-  let int = (i < 0 ? t : t.slice(0, i)).replace(/^0+(?=\d)/, '').slice(0, 6);
+  let int = (i < 0 ? t : t.slice(0, i)).replace(/^0+(?=\d)/, '').slice(0, 7);
   const dec = i < 0 ? null : t.slice(i + 1).replace(/,/g, '').slice(0, 2);
   if (!int && dec === null) return '';
   int = (int || '0').replace(/\B(?=(\d{3})+(?!\d))/g, '.');

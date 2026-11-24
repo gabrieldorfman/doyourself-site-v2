@@ -1,0 +1,23 @@
+<div class="sub" id="simulador">
+  <div class="sim" data-sim data-sobe>
+    <div class="sim__in">
+      <h3 class="sim__q"><label for="sim-conta">Qual é o valor da sua conta de luz?</label></h3>
+      <p class="sim__ajuda" id="sim-ajuda">Digite o total da sua fatura ou a média dos últimos 3 meses.</p>
+      <label class="sim__campo"><span aria-hidden="true">R$</span><input id="sim-conta" type="text" inputmode="decimal" autocomplete="off" enterkeyhint="done" placeholder="0" aria-label="Valor da sua conta de luz em reais" aria-describedby="sim-ajuda sim-msg" data-sim-conta></label>
+      <p class="sim__msg" id="sim-msg" role="status" data-sim-msg></p>
+      <p class="sim__nota">Disponível para contas a partir de <b data-sim-min>R$ 500</b>. Atendemos o Brasil todo e confirmamos a disponibilidade pelo WhatsApp.</p>
+    </div>
+    <div class="sim__out">
+      <p class="sim__pct" data-out="rot" role="status">Digite o valor da sua conta para ver o seu desconto</p>
+      <div class="sim__res">
+        <div class="sim__nova"><span>Sua conta fica cerca de</span><p><s data-out="antes"></s><b data-out="nova">R$ 0,00</b><small>/mês</small></p></div>
+        <div class="sim__linha"><span>Economia por mês</span><b data-out="mes">R$ 0,00</b></div>
+        <div class="sim__linha"><span>Economia em um ano</span><b data-out="ano">R$ 0,00</b></div>
+        <div class="sim__linha sim__linha--cb"><span>Cashback no PIX, uma vez</span><b data-out="cb">R$ 0,00</b></div>
+      </div>
+      <a class="bt bt--luz" data-sim-ir href="/contratar?origem=energia">Quero esse desconto</a>
+      <a class="bt bt--linha" data-sim-zap href="https://wa.me/5541995701636">Falar no WhatsApp</a>
+      <p class="sim__nota">Valores estimados. O valor exato sai da sua fatura.</p>
+    </div>
+  </div>
+</div>

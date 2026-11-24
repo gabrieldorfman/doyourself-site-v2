@@ -44,6 +44,8 @@
   // Celular: CPF (planos controle) ou CNPJ (empresariais); portabilidade é o padrão (muda o preço no CPF)
   st.porta = q.get('numero') !== 'novo';
   if (st.para.celular) DY.definirPlanos({ celular: st.para.celular });
+  // conta de luz digitada no simulador (ou escolhida no combo)
+  if (+q.get('conta') >= DY.energia.minimo) st.rasc.energia = { conta: +q.get('conta') };
   if (origem === 'celular' && q.get('plano')) {
     const p = DY.planosCelular.find((x) => x.id === q.get('plano'));
     if (p) st.rasc.celular = { id: p.id, linhas: Math.max(1, Math.min(99, +q.get('linhas') || 1)) };
@@ -435,11 +437,11 @@
     const precosNet = net.flatMap((p) => p.opcoes.map((o) => centavos(o.preco)));
     const [gMin, gMax] = faixa(cel, (p) => +p.num);
     const [cMin, cMax] = faixa(cel, (p) => centavos(p.preco));
-    const ex = DY.energia.simular(350);
+    const ex = DY.energia.simular(500);
     return {
       energia: { tit: 'Desconto de até 20% na Conta de Luz', ico: 'hero-lampada.svg', preco: 'Economize até <b>20%</b> todo mês',
         itens: ['Sem obra e sem placas', 'Sem investimento', 'Continua com a mesma distribuidora'],
-        cb: `Volta <b>10% da nova conta</b>. Ex.: conta de R$ 350 → volta <b>${brl(ex.cashback)}</b>` },
+        cb: `Volta <b>10% da nova conta</b>. Ex.: conta de R$ 500 → volta <b>${brl(ex.cashback)}</b>` },
       internet: { tit: 'Internet Fibra Óptica', ico: 'hero-wifi.svg', preco: `${vMin} a ${vMax} Mega · a partir de <b>${brl(Math.min(...precosNet))}/mês</b>`,
         itens: ['Wi-Fi incluso', 'Instalação gratuita', 'Streaming em alguns planos'],
         cb: `Volta <b>50% do valor do plano</b>: de ${brl(cashbackCentavos(Math.min(...precosNet), 50))} a <b>${brl(cashbackCentavos(Math.max(...precosNet), 50))}</b>` },
@@ -767,7 +769,7 @@
         </div>
         <p class="campo__msg dica" id="m-conta">Use uma conta recente ou a média de gastos dos últimos 3 meses.</p>
       </div>
-      <div class="chips" role="group" aria-label="Valores comuns">${[200, 350, 500, 800, 1500].map((x) => `<button type="button" class="chip-op" data-v="${x}" aria-pressed="false">R$ ${x.toLocaleString('pt-BR')}</button>`).join('')}</div>
+      <div class="chips" role="group" aria-label="Valores comuns">${[500, 800, 1500, 3000, 8000].map((x) => `<button type="button" class="chip-op" data-v="${x}" aria-pressed="false">R$ ${x.toLocaleString('pt-BR')}</button>`).join('')}</div>
       <div data-energia-res></div>
     </div>`;
   }
@@ -781,8 +783,8 @@
       if (!reais) { st.rasc.energia = null; res.innerHTML = ''; limpar(g); atualizarBotaoAdd(); atualizarCarrinho(); return; }
       const s = DY.energia.simular(reais);
       if (!s.elegivel) {
-        st.rasc.energia = null; marcar(g, 'Para contas abaixo de R$ 150 a energia por assinatura ainda não compensa.', true);
-        res.innerHTML = `<div class="aviso aviso--neutro"><img src="${img('icones/aviso-info.svg')}" alt=""><span>Com uma conta abaixo de R$ 150 o desconto fica pequeno e a assinatura não vale a pena. Se você tiver outra unidade (comércio, casa de praia), conte para a gente no WhatsApp.</span></div>`;
+        st.rasc.energia = null; marcar(g, 'Para contas abaixo de R$ 500 a energia por assinatura ainda não compensa.', true);
+        res.innerHTML = `<div class="aviso aviso--neutro"><img src="${img('icones/aviso-info.svg')}" alt=""><span>Com uma conta abaixo de R$ 500 o desconto fica pequeno e a assinatura não vale a pena. Se você tiver outra unidade (comércio, casa de praia), conte para a gente no WhatsApp.</span></div>`;
       } else {
         marcar(g, '');
         st.rasc.energia = { conta: reais };
