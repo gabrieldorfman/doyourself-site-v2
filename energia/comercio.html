@@ -38,6 +38,7 @@
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
 <link rel="stylesheet" href="/css/energia.css">
+<link rel="stylesheet" href="/css/cenas.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -104,10 +105,8 @@
           <ul class="pg-chips"><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Sem obra</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Sem investimento</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>A distribuidora não muda</li></ul>
           <div class="botoes"><a class="bt bt--luz" href="#economia">Ver quanto economizo<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" data-zap="Olá! Quero saber da energia por assinatura para o meu comércio." href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
         </div>
-        <div class="topo__cena hx" aria-hidden="true">
-          <span class="hx__luz"></span>
-          <div class="obj obj--x"><img src="/img/3d-g/lampada.webp" alt="" width="720" height="720"></div>
-          
+        <div class="topo__cena iso" data-iso>
+          <div class="iso__p"><span class="hx__luz" aria-hidden="true"></span><img src="/img/cenas/comercio-luz.svg" alt="Desenho animado de uma rua com padaria e restaurante" width="660" height="580" class="is-on" fetchpriority="high"></div>
         </div>
       </div>
     </div>
@@ -118,12 +117,13 @@
       <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">O seu negócio</span><h2 class="h-sec h-sec--m" id="neg-h">O que não desliga também pesa no caixa</h2><p>Escolha o seu tipo de comércio.</p></div></div>
       <div class="en-neg" data-en-abas data-sobe>
         <div class="en-neg__m" role="radiogroup" aria-label="Tipo de comércio"><button type="button" role="radio" aria-checked="true" data-en-aba="0">Padaria</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-aba="1">Restaurante</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-aba="2">Mercado</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-aba="3">Salão</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-aba="4">Clínica</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-aba="5">Loja</button></div>
+        <div class="en-neg__c iso__p" data-iso-aba aria-hidden="true"><img src="/img/cenas/padaria-luz.svg" alt="" width="660" height="560" loading="lazy" class="is-on"><img src="/img/cenas/restaurante-luz.svg" alt="" width="660" height="560" loading="lazy"><img src="/img/cenas/mercado-luz.svg" alt="" width="660" height="560" loading="lazy"><img src="/img/cenas/salao-luz.svg" alt="" width="660" height="560" loading="lazy"><img src="/img/cenas/clinica-luz.svg" alt="" width="660" height="560" loading="lazy"><img src="/img/cenas/loja-luz.svg" alt="" width="660" height="560" loading="lazy"></div>
         <div class="en-neg__p" data-en-painel="0"><p>O forno e a refrigeração trabalham desde a madrugada.</p><ul><li><i></i>Forno</li><li><i></i>Câmara fria</li><li><i></i>Vitrine refrigerada</li><li><i></i>Iluminação</li></ul></div>
         <div class="en-neg__p" data-en-painel="1" hidden><p>A cozinha gasta no preparo e o salão gasta no movimento.</p><ul><li><i></i>Freezer</li><li><i></i>Exaustor</li><li><i></i>Ar-condicionado</li><li><i></i>Cozinha elétrica</li></ul></div>
         <div class="en-neg__p" data-en-painel="2" hidden><p>A refrigeração não desliga nem de noite.</p><ul><li><i></i>Câmara fria</li><li><i></i>Ilhas de congelados</li><li><i></i>Caixas</li><li><i></i>Iluminação</li></ul></div>
         <div class="en-neg__p" data-en-painel="3" hidden><p>Os secadores e a água quente ficam ligados o dia inteiro.</p><ul><li><i></i>Secadores</li><li><i></i>Aquecedor de água</li><li><i></i>Ar-condicionado</li><li><i></i>Iluminação</li></ul></div>
         <div class="en-neg__p" data-en-painel="4" hidden><p>Conforto e equipamentos não podem parar.</p><ul><li><i></i>Ar-condicionado</li><li><i></i>Esterilização</li><li><i></i>Equipamentos</li><li><i></i>Computadores</li></ul></div>
-        <div class="en-neg__p" data-en-painel="5" hidden><p>A vitrine e o ar-condicionado são os que mais pesam.</p><ul><li><i></i>Iluminação</li><li><i></i>Ar-condicionado</li><li><i></i>Vitrine</li><li><i></i>Computadores</li></ul></div>
+        <div class="en-neg__p" data-en-painel="5" hidden><p>A vitrine e o <span class="nw">ar-condicionado</span> são os que mais pesam.</p><ul><li><i></i>Iluminação</li><li><i></i>Ar-condicionado</li><li><i></i>Vitrine</li><li><i></i>Computadores</li></ul></div>
         <p class="en-neg__f">Com a assinatura, você usa tudo do mesmo jeito. Só paga menos por isso.</p>
       </div>
     </div>
@@ -292,6 +292,7 @@
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
 <script src="/js/energia.js"></script>
+<script src="/js/cenas.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>

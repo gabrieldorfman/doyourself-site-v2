@@ -16,6 +16,13 @@
     t = setInterval(() => vis && !document.hidden && vai((i + 1) % imgs.length), 8000);
   });
 
+  /* tipo de comércio: a fachada acompanha os botões (js/energia.js cuida dos textos) */
+  $$('[data-iso-aba]').forEach((el) => {
+    const imgs = $$('img', el), bts = $$('[data-en-aba]', el.parentElement);
+    const ve = () => bts.forEach((b, n) => imgs[n].classList.toggle('is-on', b.getAttribute('aria-checked') === 'true'));
+    bts.forEach((b) => new MutationObserver(ve).observe(b, { attributes: true, attributeFilter: ['aria-checked'] }));
+  });
+
   /* áreas comuns: prédio ou casas */
   $$('[data-iso-tr]').forEach((el) => { const ps = $$('.en-pr', el); liga($$('.iso__b button', el), (k) => ps.forEach((p, n) => (p.hidden = n !== k))); });
   const carrega = (el) => fetch(`/img/cenas/${el.dataset.isoSvg}.svg`).then((r) => (r.ok ? r.text() : Promise.reject())).then((s) => { el.innerHTML = s; el.dispatchEvent(new CustomEvent('iso:ok', { bubbles: true })); }).catch(() => { el.innerHTML = `<img alt="" src="/img/cenas/${el.dataset.isoSvg}.svg">`; });

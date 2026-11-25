@@ -153,6 +153,7 @@ class Cena:
                f'.{n} .ref{{animation:isor 7s ease-in-out infinite}}@keyframes isor{{0%,20%{{transform:translateX(-60%)}}75%,100%{{transform:translateX(130%)}}}}'
                f'.{n} .wf{{animation:isox 2.1s ease-out infinite both}}.{n} .f1{{animation-delay:.25s}}.{n} .f2{{animation-delay:.5s}}@keyframes isox{{0%,100%{{opacity:.12}}35%{{opacity:1}}}}'
                f'.{n} .arc{{fill:none;stroke:{t["ac"]};stroke-width:4;stroke-linecap:round;stroke-dasharray:2 11;animation:isod2 1.4s linear infinite}}@keyframes isod2{{from{{stroke-dashoffset:26}}}}'
+               f'.{n} .barb{{animation:isob 1.6s linear infinite}}@keyframes isob{{to{{transform:translateY(14px)}}}}'
                f'.{n} .gru{{animation:isogr 8s ease-in-out infinite alternate}}@keyframes isogr{{from{{transform:translateY(0)}}to{{transform:translateY(34px)}}}}'
                f'.{n} .hl{{opacity:0;fill:{t["ac"]};pointer-events:none;transition:opacity .3s}}.{n} .mk{{display:none}}'
                f'@media (prefers-reduced-motion:reduce){{.{n} *{{animation:none!important}}.{n} .w{{opacity:1}}.{n} .car{{opacity:1;transform:translate(calc(var(--x)*.45),calc(var(--y)*.45))}}}}')
@@ -444,4 +445,120 @@ def wttx(tema='wtx'):
     s.salva()
 
 
+# ---------------------------------------------------------------- uma fachada por tipo de comércio (energia/comercio)
+def fachada(tipo, letreiro, tema='luz'):
+    s = Cena(f'{tipo}-{tema}', tema, 14, 13.4, 4.4, 24)
+    T = s.T; x, y, w, d = 1.4, 1.4, 11, 6.4; yf = y + d; h = 4.9
+    s.piso(0, 7.6, 14, 3.2, '#fff'); s.rua(0, 10.8, 14, 2.6); s.cabo([(0, 10.3), (1, 10.3), (1, 7), (1.4, 7)])
+    V = T['vl']
+    def vit(a, l, z=.4, alt=2.5): return s.qL(a, yf, z, l, alt, T['pi']) + s.qL(a + .1, yf, z + .1, l - .2, alt - .2, V, 'opacity=".92"')
+    def porta(a, l=1.4): return s.qL(a, yf, 0, l, 2.5, T['ac2']) + s.qL(a + .12, yf, .12, l - .24, 2.2, '#fff3cf') + s.qL(a + l / 2 - .03, yf, .12, .06, 2.2, T['ac2'])
+    def ar(a, b, z):  # condensadora com hélice
+        o = s.cubo(a, b, z, 1.5, 1.1, .8); X, Y = s.P(a + .75, b + 1.1, z + .4)
+        return o + f'<ellipse cx="{f(X)}" cy="{f(Y)}" rx="7" ry="8" fill="{T["v2"]}" opacity=".55"/><ellipse cx="{f(X)}" cy="{f(Y)}" rx="3" ry="3.5" fill="#fff" opacity=".8"/>'
+    def mL(a, z, corpo, yy=None): return f'<g transform="{s.mL(a, yf if yy is None else yy, z)}">{corpo}</g>'
+    o = s.cubo(x, y, 0, w, d, h) + ''.join(s.janR(x + w, y + .7 + i * 1.9, .9, 1.2, 1.3) for i in range(3))
+    topo = h
+    if tipo == 'clinica':
+        o = s.cubo(x, y, 0, w, d, 7.2) + ''.join(s.janR(x + w, y + .7 + i * 1.9, z, 1.2, 1.3) for i in range(3) for z in (.9, 5.2)) + ''.join(s.janL(x + .6 + i * 2.1, yf, 5.4, 1.5, 1.2) for i in range(5)); topo = 7.2
+    o += s.cubo(x - .15, y - .15, topo, w + .3, d + .3, .3) + s.qT(x + .3, y + .3, topo + .3, w - .6, d - .6, T['g2'], 'opacity=".75"')
+    z0 = topo + .3
+    fx = s.cubo(x - .1, yf, 3.6, w + .2, .35, 1.35, s.ac()) + s.txL(x + w / 2, yf + .35, 3.97, letreiro, 1.05)
+    if tipo == 'padaria':
+        o += vit(1.9, 4) + porta(6.3) + vit(8.2, 3.7)
+        for z in (.75, 1.45): o += s.qL(2, yf, z - .22, 3.8, .08, T['pi']) + ''.join(f'<ellipse transform="{s.mL(2.35 + i * .62, yf, z)}" rx=".24" ry=".18" fill="{("#d89a50", "#b9702f")[i % 2]}"/>' for i in range(6))
+        o += ''.join(f'<path transform="{s.mL(8.7 + i * .7, yf, .6)}" d="M0 0L.12 -1.2" stroke="#c98a45" stroke-width=".22" stroke-linecap="round"/>' for i in range(5))
+        o += s.cubo(3.4, 3, z0, 1, 1, 1.6, s.ac()) + ar(8, 3.4, z0)
+        a, b = s.P(3.9, 3.5, z0 + 1.7); o += ''.join(f'<circle class="fum m{i}" cx="{f(a)}" cy="{f(b)}" r="{8 + i}" fill="#fff"/>' for i in range(3))
+        o += fx + toldo(s, x + .1, yf + .35, 3.6, w - .2, .75, 12)
+    elif tipo == 'restaurante':
+        o += vit(1.9, 3.8) + porta(6.2) + vit(8.1, 3.9)
+        o += s.cubo(x, y, z0, w, 2.6, 2.4) + ''.join(s.janL(x + .6 + i * 2.1, y + 2.6, z0 + .5, 1.5, 1.3) for i in range(5)) + s.cubo(x - .15, y - .15, z0 + 2.4, w + .3, 2.9, .35, s.ac()) + s.cubo(9.6, 2, z0 + 2.75, .9, .9, 1.2)
+        a, b = s.P(10.05, 2.45, z0 + 4); o += ''.join(f'<circle class="fum m{i}" cx="{f(a)}" cy="{f(b)}" r="{8 + i}" fill="#fff"/>' for i in range(3))
+        for mx in (2.9, 5.6, 8.3, 11):
+            a, b = s.P(mx, 5.6, z0); o += f'<path d="M{f(a)} {f(b)}v-9" stroke="{T["pi"]}" stroke-width="3"/><ellipse cx="{f(a)}" cy="{f(b-12)}" rx="14" ry="7" fill="#fff"/><ellipse cx="{f(a-20)}" cy="{f(b-2)}" rx="6" ry="3.2" fill="{T["ac3"]}"/><ellipse cx="{f(a+20)}" cy="{f(b-2)}" rx="6" ry="3.2" fill="{T["ac3"]}"/>'
+        o += fx
+        for gx in (2.6, 5.4, 9.4): s.guarda(gx, 9.2)
+    elif tipo == 'mercado':
+        o += vit(1.9, 3.2) + s.qL(5.5, yf, 0, 2.9, 2.55, T['ac2']) + s.qL(5.65, yf, .1, 1.25, 2.3, '#fff3cf') + s.qL(7, yf, .1, 1.25, 2.3, '#fff3cf') + vit(8.8, 3.2)
+        cores = ('#e2700f', '#86a866', '#ffd873', '#c98a4e')
+        for a0, l in ((2.1, 2.8), (9, 2.8)):
+            for z in (.6, 1.15, 1.7): o += s.qL(a0, yf, z - .07, l, .07, T['pi']) + ''.join(s.qL(a0 + .05 + i * .4, yf, z, .3, .34, cores[(i + int(z * 3)) % 4]) for i in range(7))
+        o += ar(3, 2.4, z0) + ar(6, 2.4, z0) + ar(9, 2.4, z0) + fx
+        for i in range(3):  # bancas de frutas
+            bx = 1.9 + i * 1.25; c = cores[i]
+            b0 = s.cubo(bx, 8.3, 0, 1.1, .9, .7, (T['l'], T['g2'], T['g3'])) + ''.join(f'<circle cx="{f(s.P(bx + .25 + (k % 3) * .3, 8.55 + (k // 3) * .38, .78)[0])}" cy="{f(s.P(bx + .25 + (k % 3) * .3, 8.55 + (k // 3) * .38, .78)[1])}" r="5.4" fill="{c}"/>' for k in range(6))
+            s.add((bx, 8.3, 0, 1.1, .9, .9), b0)
+        for i in range(4):  # carrinhos
+            cx = 9.4 + i * .75; a, b = s.P(cx, 9.2, .4)
+            s.add((cx, 9, 0, .5, .7, 1.1), f'<path d="M{f(a-11)} {f(b-18)}h5l5 15h14l4 -13h-21" fill="none" stroke="{T["ac2"]}" stroke-width="2.6" stroke-linejoin="round"/><circle cx="{f(a+1)}" cy="{f(b+4)}" r="2.6" fill="{T["pi"]}"/><circle cx="{f(a+12)}" cy="{f(b+4)}" r="2.6" fill="{T["pi"]}"/>', sombra=False)
+    elif tipo == 'salao':
+        o += vit(1.9, 4.2) + porta(6.5) + vit(8.4, 3.5)
+        for a0 in (2.5, 4, 8.9, 10.4):
+            o += mL(a0, .5, f'<circle cx=".5" cy="-1.15" r=".42" fill="#fff"/><circle cx=".5" cy="-1.15" r=".42" fill="none" stroke="{T["ac"]}" stroke-width=".1"/><rect x=".15" y="-.5" width=".7" height=".42" rx=".12" fill="{T["ac2"]}"/><path d="M.5 -.1v.15" stroke="{T["ac2"]}" stroke-width=".12"/>')
+        o += ar(3, 2.6, z0) + s.cubo(8.4, 2.4, z0, 2.4, 1, 1.1, s.ac()) + fx + toldo(s, 1.8, yf + .35, 3.6, 4.4, .75, 6) + toldo(s, 8.3, yf + .35, 3.6, 3.7, .75, 6)
+        X, Y = s.P(x + w + .1, yf + .5, 0)
+        s.add((x + w - .1, yf + .4, 0, .3, .3, 2.2), f'<clipPath id="{s.n}bb"><rect x="{f(X-8)}" y="{f(Y-52)}" width="16" height="42" rx="7"/></clipPath><path d="M{f(X)} {f(Y)}v-12" stroke="{T["pi"]}" stroke-width="4"/><g clip-path="url(#{s.n}bb)"><rect x="{f(X-8)}" y="{f(Y-52)}" width="16" height="42" fill="#fff"/><g class="barb">' + ''.join(f'<path d="M{f(X-10)} {f(Y-74+k*14)}l20 -10v6l-20 10z" fill="{T["ac"]}"/>' for k in range(8)) + f'</g></g><circle cx="{f(X)}" cy="{f(Y-54)}" r="6" fill="{T["ac2"]}"/>', sombra=False)
+    elif tipo == 'clinica':
+        o += vit(1.9, 3.6) + porta(6, 1.8) + vit(8.4, 3.5)
+        o += ar(2.6, 2.6, z0) + ar(5, 2.6, z0) + s.cubo(9, 2.6, z0, 2, 2, 1.1)
+        o += fx + mL(x + .85, 3.9, f'<path d="M.3 0v-.76M-.08 -.38h.76" stroke="#fff" stroke-width=".28" stroke-linecap="round"/>', yf + .35)
+        o += mL(2.5, .6, f'<path d="M0 -.9h.4l.25 -.5.4 1 .3 -.5h1" fill="none" stroke="{T["ac"]}" stroke-width=".14" stroke-linejoin="round"/>')
+        s.add((5.6, yf + .35, 2.5, 2.6, 1.1, .25), s.cubo(5.6, yf + .35, 2.5, 2.6, 1.1, .22), sombra=False)
+        s.bloco(9.2, 9, 0, 2.4, .6, .35, s.ac()); s.bloco(2.4, 9, 0, 2.4, .6, .35, s.ac())
+    else:  # loja
+        o += vit(1.9, 4.2) + porta(6.4) + vit(8.3, 3.7)
+        for k, a0 in enumerate((2.5, 3.6, 4.7, 8.8, 9.9, 11)):
+            c = (T['ac'], '#86a866', T['ac2'])[k % 3]
+            o += mL(a0, .5, f'<circle cx=".3" cy="-1.42" r=".18" fill="#e9b994"/><path d="M.3 -1.25L.62 -1.1.5 -.65 .72 0H-.12L.1 -.65 -.02 -1.1z" fill="{c}"/>')
+        o += ar(3, 2.6, z0) + s.cubo(8.6, 2.6, z0, 1.6, 1.6, .7) + fx + toldo(s, x + .1, yf + .35, 3.6, w - .2, .75, 10)
+    alt = z0 + (3.9 if tipo == 'restaurante' else 1.7)
+    s.add((x - .15, y - .15, 0, w + .3, d + 1.4 if tipo in ('padaria', 'salao', 'loja') else d + .6, alt), o, sombra=False); s.sombra(x, y, w, d, topo)
+    for a, b in ((.9, 9.2),): s.bloco(a - .35, b - .35, 0, .7, .7, .6, s.ac()); s.arbusto(a + .1, b + .5, .5)
+    s.arvore(13.2, 3, .85)
+    if tipo != 'restaurante': s.arvore(13.2, 8.6, .8)
+    s.gente(6.9, 9.4); s.gente(8.6, 9.9, T['v2']);
+    if tipo in ('mercado', 'loja', 'restaurante'): s.gente(12, 10, T['ac3'])
+    s.poste(.6, 10.2, 3); s.poste(11.8, 10.3, 3)
+    s.carro(-1, 11.1, 'br', 13, 7.5, 0)
+    s.salva()
+
+
+# ---------------------------------------------------------------- matriz, filial e galpão (energia/empresas)
+def unidades(tema='luz'):
+    s = Cena('unidades-' + tema, tema, 31, 15.5, 7, 15)
+    T = s.T
+    s.rua(0, 12.2, 31, 3.3); s.piso(0, 10.6, 31, 1.4, '#fff'); s.faixa(3.6, 12.4, 2.4, 3); s.faixa(13.6, 12.4, 2.4, 3)
+    s.cabo([(0, 11.3), (30.4, 11.3)], 1.8)
+    for x in (4.8, 14.8, 25): s.cabo([(x, 11.3), (x, 9.8)])
+    # matriz
+    o = s.cubo(1.2, 2, 0, 7.4, 7.6, 2.2) + ''.join(s.janL(1.6 + i * 1.5, 9.6, .5, 1.1, 1.2) for i in (0, 3)) + s.qL(4.2, 9.6, 0, 1.6, 1.8, T['vl']) + ''.join(s.janR(8.6, 2.5 + i * 1.8, .5, 1.3, 1.2) for i in range(4))
+    o += vidro(s, 1.2, 2, 2.2, 7.4, 7.6, 9.6, 5, 5, 6) + s.cubo(1, 1.8, 11.8, 7.8, 8, .6) + s.qT(1.5, 2.3, 12.4, 6.8, 7, T['g2'], 'opacity=".75"') + s.cubo(3, 4, 12.4, 2.4, 2.4, .9, s.ac())
+    o += s.cubo(1.6, 9.6, 2.1, 6.6, .4, 1.5, s.ac()) + s.txL(4.9, 10, 2.45, 'Matriz', 1.15)
+    s.add((1, 1.8, 0, 7.8, 8.2, 13.3), o)
+    # filial
+    o = s.cubo(11, 3, 0, 8, 6.6, 5.6) + ''.join(s.janL(11.6 + i * 1.9, 9.6, 3.9, 1.3, 1.1) for i in range(4)) + s.qL(11.5, 9.6, .4, 2.6, 1.8, T['pi']) + s.qL(11.6, 9.6, .5, 2.4, 1.6, T['vl']) + s.qL(14.4, 9.6, 0, 1.4, 2.1, T['ac2']) + s.qL(14.55, 9.6, .1, 1.1, 1.85, '#fff3cf') + s.qL(16.2, 9.6, .4, 2.4, 1.8, T['pi']) + s.qL(16.3, 9.6, .5, 2.2, 1.6, T['vl']) + ''.join(s.janR(19, 3.6 + i * 2, z, 1.3, 1.1) for i in range(3) for z in (.7, 3.9))
+    o += s.cubo(10.8, 2.8, 5.6, 8.4, 7, .35) + s.qT(11.3, 3.3, 5.95, 7.4, 6, T['g2'], 'opacity=".75"') + s.cubo(13, 4.6, 5.95, 1.8, 1.4, .7) + s.cubo(10.9, 9.6, 2.35, 8.2, .4, 1.3, s.ac()) + s.txL(15, 10, 2.67, 'Filial', 1.05)
+    s.add((10.8, 2.8, 0, 8.4, 7.2, 6.7), o)
+    # galpão de duas águas, com a empena na frente
+    x, y, w, d, h, b = 21.2, 2, 8.4, 7.6, 4.6, 1.7; yf = y + d; m = x + w / 2
+    o = s.cubo(x, y, 0, w, d, h) + s.poly([(x, yf, h), (x + w, yf, h), (m, yf, h + b)], T['l'])
+    o += s.poly([(m, y - .2, h + b), (m, yf + .25, h + b), (x + w + .3, yf + .25, h - .12), (x + w + .3, y - .2, h - .12)], T['ac']) + s.poly([(m, y - .2, h + b), (m, yf + .25, h + b), (x - .3, yf + .25, h - .12), (x - .3, y - .2, h - .12)], T['ac3'])
+    o += ''.join(f'<path d="M{s.pt(m + (w/2+.3)*k/6, yf+.25, h+b-(b+.12)*k/6)}L{s.pt(m + (w/2+.3)*k/6, y-.2, h+b-(b+.12)*k/6)}" stroke="#fff" opacity=".35" stroke-width="1.4"/>' for k in range(1, 6))
+    for k in range(2):
+        a = x + .7 + k * 3.8; o += s.qL(a, yf, 0, 3.1, 2.6, T['pi']) + ''.join(s.qL(a + .12, yf, .12 + i * .42, 2.86, .28, '#fff', 'opacity=".85"') for i in range(6))
+    o += s.qL(x + 1.2, yf, 3.1, w - 2.4, 1.4, T['ac']) + s.txL(m, yf, 3.43, 'Galpão', 1.1) + ''.join(s.janR(x + w, y + .6 + i * 2.3, 2.6, 1.6, .9) for i in range(3))
+    s.add((x - .3, y - .2, 0, w + .6, d + .45, h + b), o)
+    for a, b2, e in ((9.8, 3, 1), (9.9, 8.6, .9), (20.1, 4, .9), (20.2, 9.4, .8), (30.4, 4, .9), (30.4, 8, .8)): s.arvore(a, b2, e)
+    for a in (2, 10, 19.6, 29.6): s.poste(a, 11.8)
+    s.gente(6.4, 10.9); s.gente(16.8, 11, T['v2']); s.gente(12, 11.3, T['ac3'])
+    s.carro(-1, 12.5, 'ac', 30, 11, 0); s.carro(29.6, 14.1, 'br', -30, 13, -5)
+    for i, (q, w2) in enumerate((((4.9, 5.8, 14.8), 0), ((15, 6.2, 8.4), 0), ((25.4, 5.8, 8), 0))):
+        a, b = s.P(*q); s.topo = min(s.topo, b - 24)
+        s.fim.append(f'<g class="mk un" data-x-u="{i}"><path d="M{f(a-8)} {f(b+13)}L{f(a)} {f(b+26)}L{f(a+8)} {f(b+13)}z"/><circle class="mk0" cx="{f(a)}" cy="{f(b)}" r="12"/><circle class="mk1" cx="{f(a)}" cy="{f(b)}" r="17"/><text x="{f(a)}" y="{f(b+7)}" font-size="20" text-anchor="middle">{i+1}</text></g>')
+    s.salva()
+
+
 predio('luz'); condominio('luz'); empresa('luz'); comercio('luz'); empresa('emp'); comercio('emp'); wttx()
+for t, n in (('padaria', 'Padaria'), ('restaurante', 'Restaurante'), ('mercado', 'Mercado'), ('salao', 'Salão'), ('clinica', 'Clínica'), ('loja', 'Loja')): fachada(t, n)
+unidades()

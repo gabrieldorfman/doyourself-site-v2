@@ -60,7 +60,7 @@
 
   /* 4. unidades */
   $$('[data-en-un]').forEach((el) => {
-    const ul = $('[data-en-ul]', el), zap = $('[data-en-zap]', el), add = $('[data-en-add]', el), MAX = 20; let id = 0;
+    const ul = $('[data-en-ul]', el), zap = $('[data-en-zap]', el), add = $('[data-en-add]', el), MAX = 20, cena = $('[data-en-unc]'); let id = 0;
     zap.target = '_blank'; zap.rel = 'noopener';
     const pinta = () => {
       const t = { de: 0, para: 0, mes: 0, cb: 0 }, li = $$('li', ul); let n = 0;
@@ -71,6 +71,7 @@
         if (v) { const c = Math.round(v * 100); t.de += c; t.para += ok ? s.comDesconto : c; if (ok) { t.mes += s.economiaMes; t.cb += s.cashback; } }
       });
       t.ano = t.mes * 12; poe(el, t); add.hidden = li.length >= MAX;
+      if (cena) $$('[data-x-u]', cena).forEach((m) => { const l = li[m.dataset.xU]; m.classList.toggle('is-on', !!l && !!DY.lerReais($('input', l).value)); });
       zap.href = DY.linkWhatsApp(t.de ? `Olá! Minha empresa tem ${n} ${n === 1 ? 'unidade' : 'unidades'} e paga ${brl(t.de)} de luz por mês. Quero uma proposta.` : 'Olá! Quero uma proposta de energia para a minha empresa.');
     };
     const nova = (v, foco) => {
@@ -83,6 +84,10 @@
     };
     nova('8000'); nova('3500');
     add.addEventListener('click', () => nova('', true));
+    if (cena) { // cena de matriz, filial e galpão: o número acende quando a unidade tem conta
+      cena.addEventListener('iso:ok', pinta);
+      cena.addEventListener('click', (e) => { const m = e.target.closest('[data-x-u]'); if (!m) return; const l = $$('li', ul)[m.dataset.xU]; if (l) $('input', l).focus(); else nova('', true); });
+    }
   });
   $$('[data-en-lista]').forEach((el) => {
     const cx = $$('input', el);
