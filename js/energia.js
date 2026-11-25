@@ -53,7 +53,7 @@
     const f = []; let ant = 0;
     for (let v = E.minimo; v <= 20000; v += 50) { const p = E.simular(v).pct; if (p !== ant) { f.push([v, p]); ant = p; } }
     const int = (v) => 'R$ ' + v.toLocaleString('pt-BR');
-    ol.innerHTML = f.map(([v, p], i) => `<li style="--f:${p}"><b>${p}%</b><span>${f[i + 1] ? `de ${int(v)} até ${brl(f[i + 1][0] * 100 - 1)}`.replace(/R\$ /g, 'R$ ') : `a partir de ${int(v)}`}</span></li>`).join('');
+    ol.innerHTML = f.map(([v, p], i) => `<li style="--f:${p}"><b>${p}%</b><span>${(f[i + 1] ? `de ${int(v)} até ${brl(f[i + 1][0] * 100 - 1)}` : `a partir de ${int(v)}`).replace(/R\$ /g, 'R$ ').replace(/(de|até) R/g, '$1 R')}</span></li>`).join('');
   });
 
   /* 4. unidades */

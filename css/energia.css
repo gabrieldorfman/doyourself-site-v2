@@ -90,3 +90,13 @@
   .en-un li { grid-template-columns: 1fr 44px; padding: 14px 12px 14px 18px; } .en-un__c { grid-column: 1 / -1; grid-row: 2; margin-top: 8px; } .en-un small { grid-row: 3; grid-column: 1 / -1; margin-top: 4px; } .en-un li button { grid-column: 2; grid-row: 1; } .en-un__r { padding: 28px 20px; border-radius: 28px; }
 }
 @media (prefers-reduced-motion: reduce) { .pg-luz *, .pg-luz *::before { animation: none !important; transition: none !important; } }
+
+/* revisão 25/11: quebras de linha e cartões no tablet pequeno */
+.en-q { display: block; } .en-mu li, .en-fat__b span { text-wrap: pretty; }
+.en-qm em { white-space: nowrap; }
+@media (min-width: 1124px) and (max-width: 1300px) { .en-qm a { padding-inline: 20px; } .en-qm em { font-size: 15px; } }
+@media (min-width: 1280px) { .en-passos { gap: 22px; } .en-passos h3 { white-space: nowrap; font-size: 19px; } }
+@media (min-width: 620px) and (max-width: 860px) {
+  .en-fx { gap: 12px; } .en-fx li { padding: 22px 18px; } .en-fx b { font-size: 44px; } .en-fx span { font-size: 15px; }
+  .en-fat__ln, .en-fat__tt { flex-direction: column; align-items: start; justify-content: center; gap: 2px; }
+}
