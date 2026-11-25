@@ -25,6 +25,21 @@
 
   /* áreas comuns: prédio ou casas */
   $$('[data-iso-tr]').forEach((el) => { const ps = $$('.en-pr', el); liga($$('.iso__b button', el), (k) => ps.forEach((p, n) => (p.hidden = n !== k))); });
+  $$('[data-hs]').forEach((el) => { const ps = $$('.hs__p', el); liga($$('.iso__b button', el), (k) => ps.forEach((p, n) => (p.hidden = n !== k))); });
+
+  /* /energia: o caminho da energia, passo a passo e em loop */
+  $$('[data-iso-passos]').forEach((el) => {
+    const bts = $$('.iso__d button', el), tx = el.querySelector('.iso__t'), poe = () => { const s = el.querySelector('svg'); if (s) s.dataset.e = i + 1; };
+    let i = 0, vis = true, t = 0;
+    const vai = liga(bts, (k) => { i = k; tx.innerHTML = `<b>${k + 1}</b><span>${bts[k].dataset.t}</span>`; poe(); });
+    el.addEventListener('iso:ok', poe);
+    const parar = () => { clearInterval(t); el.classList.add('is-parado'); };
+    bts.forEach((b) => b.addEventListener('click', parar));
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return el.classList.add('is-parado');
+    new IntersectionObserver((es) => (vis = es[es.length - 1].isIntersecting)).observe(el);
+    t = setInterval(() => vis && !document.hidden && el.querySelector('svg') && vai((i + 1) % bts.length), 3800);
+  });
+
   const carrega = (el) => fetch(`/img/cenas/${el.dataset.isoSvg}.svg`).then((r) => (r.ok ? r.text() : Promise.reject())).then((s) => { el.innerHTML = s; el.dispatchEvent(new CustomEvent('iso:ok', { bubbles: true })); }).catch(() => { el.innerHTML = `<img alt="" src="/img/cenas/${el.dataset.isoSvg}.svg">`; });
   $$('[data-iso-svg]').forEach((el) => {
     if (!('IntersectionObserver' in window)) return carrega(el);

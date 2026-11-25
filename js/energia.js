@@ -37,10 +37,8 @@
   $$('[data-en-jo]').forEach((x) => { const s = E.simular(800); x.textContent = brl({ de: s.conta, para: s.comDesconto, mes: s.economiaMes, cb: s.cashback }[x.dataset.enJo]); });
 
   /* 2. escolhas */
-  $$('[data-en-cam]').forEach((c) => {
-    const T = ['O sol vira energia em uma usina solar, longe da sua casa. Você não instala nada.', 'Essa energia entra na rede de distribuição, a mesma que já chega até você.', 'A distribuidora transforma a sua parte em créditos, medidos em kWh.', 'Os créditos abatem o seu consumo e você paga menos. A luz chega como sempre chegou.'];
-    grupo($$('[data-en-p]', c), (b) => { c.dataset.enCam = b.dataset.enP; $('[data-en-t]', c).textContent = T[b.dataset.enP]; });
-  });
+  /* hidrelétrica ou assinatura: exemplo de conta */
+  $$('[data-hs-v]').forEach((x) => { const s = E.simular(1000); x.textContent = brl(x.dataset.hsV === 'de' ? s.conta : s.comDesconto); });
   $$('[data-en-fat], [data-en-pr]').forEach((c) => {
     const k = 'enFat' in c.dataset ? 'enFat' : 'enPr';
     const acende = (v) => { c.dataset[k] = v; $$('[data-x]', c).forEach((x) => x.classList.toggle('is-on', x.dataset.x === v)); };

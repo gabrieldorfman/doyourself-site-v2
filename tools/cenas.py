@@ -19,7 +19,10 @@ class Cena:
         s.W, s.Hh = (w + d) * C * S + 2 * m, alto * S + (w + d) * H * S + 60
         s.som_c, s.topo = [], 1e9
 
-    def P(s, x, y, z=0): return s.ox + (x - y) * C * s.S, s.oy + (x + y) * H * s.S - z * s.S
+    dobra = None  # (limite de y, quanto recua, x a partir do qual afasta, quanto afasta): separa as ilhas
+    def P(s, x, y, z=0):
+        if s.dobra and y < s.dobra[0]: x, y = x + (s.dobra[3] if x > s.dobra[2] else 0), y - s.dobra[1]
+        return s.ox + (x - y) * C * s.S, s.oy + (x + y) * H * s.S - z * s.S
     def pt(s, *a): return '%s %s' % tuple(map(f, s.P(*a)))
     def poly(s, ps, fill, extra=''): return f'<path d="M{"L".join(s.pt(*p) for p in ps)}z" fill="{fill}"{" " + extra if extra else ""}/>'
     # decalques: face esquerda (y fixo; u cresce com x) e direita (x fixo; u cresce com -y)
@@ -110,7 +113,7 @@ class Cena:
         a, b = s.P(x, y, z); s.topo = min(s.topo, b - 46 * e)
         s.fim.append(f'<g transform="translate({f(a)} {f(b)}) scale({e})" fill="none" stroke="{s.T["ac"]}" stroke-width="5.5" stroke-linecap="round"><circle r="3.4" fill="{s.T["ac"]}" stroke="none"/>' + ''.join(f'<path class="wf f{i}" d="M{-r} {-r*.62}Q0 {-r*1.5} {r} {-r*.62}"/>' for i, r in enumerate((11, 20, 29))) + '</g>')
 
-    def salva(s):
+    def salva(s, ilhas=None):
         n, t = s.n, s.T
         # ordem de trás para a frente
         it = s.itens; N = len(it); dep = [set() for _ in it]; e = 1e-6
@@ -133,9 +136,12 @@ class Cena:
         for i in sorted(range(N), key=lambda k: it[k][0] + it[k][2]): v(i)
         corpo = ''.join(f'<g class="{it[i][7]}" style="animation-delay:{k * 1.1 / N:.2f}s"{" data-x=%s" % chr(34) + it[i][8] + chr(34) if it[i][8] else ""}>{it[i][6]}</g>' for k, i in enumerate(ordem))
         w, d, b = s.w, s.d, .9
-        base = s.qL(0, d, -b, w, b, t['g2']) + s.qR(w, 0, -b, d, b, t['g3']) + s.poly([(0, 0), (w, 0), (w, d), (0, d)], t['g1'])
-        base = f'<g stroke-linejoin="round" stroke-width="10">' + s.qL(0, d, -b, w, b, t['g2'], f'stroke="{t["g2"]}"') + s.qR(w, 0, -b, d, b, t['g3'], f'stroke="{t["g3"]}"') + s.poly([(0, 0), (w, 0), (w, d), (0, d)], t['g1'], f'stroke="{t["g1"]}"') + '</g>'
-        gb = f'<ellipse cx="{f(s.P(w/2, d/2)[0])}" cy="{f(s.P(w, d, -b)[1] - (w+d)*H*s.S*.36)}" rx="{f((w+d)*C*s.S*.5)}" ry="{f((w+d)*H*s.S*.46)}" fill="url(#{n}b)"/>'
+        il = ilhas or [(0, 0, w, d)]
+        base = gb = ''
+        for x0, y0, w0, d0 in il:
+            a, c = x0 + w0, y0 + d0
+            base += '<g stroke-linejoin="round" stroke-width="10">' + s.qL(x0, c, -b, w0, b, t['g2'], f'stroke="{t["g2"]}"') + s.qR(a, y0, -b, d0, b, t['g3'], f'stroke="{t["g3"]}"') + s.qT(x0, y0, 0, w0, d0, t['g1'], f'stroke="{t["g1"]}"') + '</g>'
+            gb += f'<ellipse cx="{f(s.P(x0 + w0/2, y0 + d0/2)[0])}" cy="{f(s.P(a, c, -b)[1] - (w0+d0)*H*s.S*.36)}" rx="{f((w0+d0)*C*s.S*.5)}" ry="{f((w0+d0)*H*s.S*.46)}" fill="url(#{n}b)"/>'
         gr = lambda i, a, b2: f'<linearGradient id="{n}{i}" x1="0" y1="0" x2="0" y2="1"><stop stop-color="{a}"/><stop offset="1" stop-color="{b2}"/></linearGradient>'
         css = (f'.{n} text{{font-family:Manrope,"Segoe UI",Arial,sans-serif;font-weight:800;letter-spacing:.01em}}'
                f'.{n} .up{{animation:isoup .8s cubic-bezier(.2,.9,.3,1.1) both}}@keyframes isoup{{from{{opacity:0;transform:translateY(26px)}}}}'
@@ -153,14 +159,15 @@ class Cena:
                f'.{n} .ref{{animation:isor 7s ease-in-out infinite}}@keyframes isor{{0%,20%{{transform:translateX(-60%)}}75%,100%{{transform:translateX(130%)}}}}'
                f'.{n} .wf{{animation:isox 2.1s ease-out infinite both}}.{n} .f1{{animation-delay:.25s}}.{n} .f2{{animation-delay:.5s}}@keyframes isox{{0%,100%{{opacity:.12}}35%{{opacity:1}}}}'
                f'.{n} .arc{{fill:none;stroke:{t["ac"]};stroke-width:4;stroke-linecap:round;stroke-dasharray:2 11;animation:isod2 1.4s linear infinite}}@keyframes isod2{{from{{stroke-dashoffset:26}}}}'
+               f'.{n} .fio{{fill:none;stroke:{t["pi"]};stroke-width:1.8;opacity:.7}}.{n} .pul{{fill:none;stroke:{t["ac"]};stroke-width:7;stroke-linecap:round;stroke-dasharray:1 17;animation:isop .9s linear infinite}}@keyframes isop{{from{{stroke-dashoffset:18}}}}.{n} .sol{{transform-box:fill-box;transform-origin:center;animation:isos 26s linear infinite}}@keyframes isos{{to{{transform:rotate(360deg)}}}}.{n} .raio{{animation:isorr 2.4s ease-in-out infinite alternate}}@keyframes isorr{{from{{opacity:.18}}to{{opacity:.6}}}}.{n} .agua{{stroke-dasharray:7 9;animation:isoa .8s linear infinite}}@keyframes isoa{{from{{stroke-dashoffset:16}}}}'
                f'.{n} .barb{{animation:isob 1.6s linear infinite}}@keyframes isob{{to{{transform:translateY(14px)}}}}'
                f'.{n} .gru{{animation:isogr 8s ease-in-out infinite alternate}}@keyframes isogr{{from{{transform:translateY(0)}}to{{transform:translateY(34px)}}}}'
                f'.{n} .hl{{opacity:0;fill:{t["ac"]};pointer-events:none;transition:opacity .3s}}.{n} .mk{{display:none}}'
                f'@media (prefers-reduced-motion:reduce){{.{n} *{{animation:none!important}}.{n} .w{{opacity:1}}.{n} .car{{opacity:1;transform:translate(calc(var(--x)*.45),calc(var(--y)*.45))}}}}')
         defs = gr('t', t['t'], t['t']) + gr('l', t['t'], t['l']) + gr('r', t['l'], t['r']) + gr('gl', '#cfe6f7', '#7fb0da') + gr('gr', '#79a9d3', '#4478a8') \
             + f'<radialGradient id="{n}f" cx=".35" cy=".28" r=".85"><stop stop-color="#e9f3d8"/><stop offset=".45" stop-color="{t["fo"]}"/><stop offset="1" stop-color="{t["fo2"]}"/></radialGradient><radialGradient id="{n}h"><stop stop-color="#ffe9a8" stop-opacity=".95"/><stop offset="1" stop-color="#ffe9a8" stop-opacity="0"/></radialGradient><radialGradient id="{n}b"><stop stop-color="{t["sh"]}" stop-opacity=".3"/><stop offset=".7" stop-color="{t["sh"]}" stop-opacity=".16"/><stop offset="1" stop-color="{t["sh"]}" stop-opacity="0"/></radialGradient>' + ''.join(s.som_c)
-        clip = f'<clipPath id="{n}p">{s.poly([(0, 0), (w, 0), (w, d), (0, d)], "#000")}</clipPath>'
-        y0 = min(min(s.oy + (i[0] + i[2]) * H * s.S - i[5] * s.S for i in it), s.topo) - 14
+        clip = f'<clipPath id="{n}p">{"".join(s.qT(*q[:2], 0, *q[2:], "#000") for q in il)}</clipPath>'
+        y0 = min(min(s.P(i[0], i[2], i[5])[1] for i in it), s.topo) - 14
         o = f'<svg xmlns="http://www.w3.org/2000/svg" class="{n}" viewBox="0 {f(y0)} {f(s.W)} {f(s.Hh-y0)}" width="{f(s.W)}" height="{f(s.Hh-y0)}"><style>{css}</style><defs>{defs}{clip}</defs>{gb}{base}<g clip-path="url(#{n}p)">{"".join(c for c in s.chao)}<g fill="{t["sh"]}" opacity=".16">{"".join(s.som)}</g></g>{corpo}{"".join(s.fim)}</svg>'
         os.makedirs('img/cenas', exist_ok=True)
         open(f'img/cenas/{n}.svg', 'w', encoding='utf8', newline='\n').write(o); print(n, len(o), f'{s.W:.0f}x{s.Hh:.0f}', N)
@@ -559,6 +566,110 @@ def unidades(tema='luz'):
     s.salva()
 
 
+# ---------------------------------------------------------------- o caminho da energia (topo e seção de /energia)
+def rede(usina, tema='luz'):
+    s = Cena(f'rede-{usina}', tema, 29, 21, 7, 14.2)
+    s.dobra = (10, 5, 12.5, 1)
+    T = s.T; V = T['vl']
+    ilhas = [(0, 0, 10.5, 8), (14, 0, 9, 8), (0, 12, 25, 9)]
+    pulsos = {1: [], 2: [], 3: []}
+    def fio(n, *ps, q=.9):
+        d = 'M' + s.pt(*ps[0]); u = s.P(*ps[0])
+        for k in ps[1:]:
+            a, b = s.P(*k); d += f'Q{f((u[0] + a) / 2)} {f((u[1] + b) / 2 + q * 13)} {f(a)} {f(b)}'; u = (a, b)
+        s.fim.append(f'<path class="fio" d="{d}"/>'); pulsos[n].append(f'<path class="pul" d="{d}"/>')
+    def torreao(x, y, h):
+        a, b = s.P(x, y); z = h * s.S; L = 11
+        o = f'<path d="M{f(a-L)} {f(b)}L{f(a)} {f(b-z)}L{f(a+L)} {f(b)}M{f(a-L*.72)} {f(b-z*.28)}L{f(a+L*.46)} {f(b-z*.54)}M{f(a+L*.72)} {f(b-z*.28)}L{f(a-L*.46)} {f(b-z*.54)}M{f(a-L*.72)} {f(b-z*.28)}h{f(L*1.44)}M{f(a-L*.46)} {f(b-z*.54)}h{f(L*.92)}" fill="none" stroke="{T["v2"]}" stroke-width="2.2" stroke-linejoin="round"/><path d="M{f(a-16)} {f(b-z*.8)}h32M{f(a-11)} {f(b-z)}h22" stroke="{T["v2"]}" stroke-width="3.2" stroke-linecap="round"/>'
+        s.add((x - .3, y - .3, 0, .6, .6, h), o, sombra=False); return (x, y, h)
+    def pau(x, y, h=4.2):
+        a, b = s.P(x, y); z = h * s.S
+        s.add((x - .1, y - .1, 0, .2, .2, h), f'<path d="M{f(a)} {f(b)}v{f(-z)}" stroke="{T["pi"]}" stroke-width="3.4" stroke-linecap="round"/><path d="M{f(a-9)} {f(b-z+5)}l18 -6" stroke="{T["pi"]}" stroke-width="3" stroke-linecap="round"/>', sombra=False); return (x, y, h - .1)
+    def placa(cl, x, y, z, t, cor, extra=''):
+        a, b = s.P(x, y, z); w = len(t) * 10.4 + 26; s.topo = min(s.topo, b - 34)
+        s.fim.append(f'<g class="pla {cl}"{extra}><path d="M{f(a-7)} {f(b-9)}L{f(a)} {f(b)}L{f(a+7)} {f(b-9)}z" fill="{cor}"/><rect x="{f(a-w/2)}" y="{f(b-38)}" width="{f(w)}" height="31" rx="15.5" fill="{cor}"/><text x="{f(a)}" y="{f(b-16)}" font-size="18.5" text-anchor="middle" fill="#fff">{t}</text></g>')
+    def placa2(cl, x, t, cor, extra=''):
+        a, b = s.P(x, 20.6, 0); w = len(t) * 10.4 + 26
+        s.fim.append(f'<g class="pla {cl}"{extra}><path d="M{f(a-7)} {f(b+9)}L{f(a)} {f(b)}L{f(a+7)} {f(b+9)}z" fill="{cor}"/><rect x="{f(a-w/2)}" y="{f(b+7)}" width="{f(w)}" height="31" rx="15.5" fill="{cor}"/><text x="{f(a)}" y="{f(b+29)}" font-size="18.5" text-anchor="middle" fill="#fff">{t}</text></g>')
+    # usina
+    if usina == 'solar':
+        s.piso(.5, .5, 9.5, 7, '#e4ecd0', .6)
+        for l in range(3):
+            for c in range(3):
+                x, y = .9 + c * 2.95, .7 + l * 2.2
+                q = [(x, y, 1.55), (x + 2.6, y, 1.55), (x + 2.6, y + 1.5, .45), (x, y + 1.5, .45)]
+                o = s.poly([(x + 2.6, y, 1.55), (x + 2.6, y + 1.5, .45), (x + 2.6, y, 0)], T['g3'], 'opacity=".55"') + ''.join(f'<path d="M{s.pt(k, y + 1.4, .5)}L{s.pt(k, y + 1.4)}" stroke="{T["pi"]}" stroke-width="2"/>' for k in (x + .4, x + 2.2))
+                o += s.poly(q, f'url(#{s.n}pv)', 'stroke="#fff" stroke-width="1.6" stroke-linejoin="round"')
+                ln = ''.join(f'M{s.pt(x + 2.6*k/4, y, 1.55)}L{s.pt(x + 2.6*k/4, y + 1.5, .45)}' for k in (1, 2, 3)) + f'M{s.pt(x, y + .75, 1)}L{s.pt(x + 2.6, y + .75, 1)}'
+                o += f'<path d="{ln}" stroke="#bfe0f5" stroke-width="1" opacity=".8"/>'
+                s.k += 1; i = f'{s.n}c{s.k}'; s.som_c.append(f'<clipPath id="{i}">{s.poly(q, "#000")}</clipPath>')
+                o += f'<g clip-path="url(#{i})"><g class="ref" style="animation-duration:3.6s;animation-delay:{l * .25 + c * .15:.2f}s">{s.poly([(x, y, 1.55), (x + 1, y, 1.55), (x + 1, y + 1.5, .45), (x, y + 1.5, .45)], "#fff", "opacity=%s.55%s" % (chr(34), chr(34)))}</g></g>'
+                s.add((x, y, 0, 2.6, 1.5, 1.55), o, sombra=False); s.sombra(x, y, 2.6, 1.5, .9)
+        s.som_c.append(f'<linearGradient id="{s.n}pv" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4f86bd"/><stop offset="1" stop-color="#1c3f6b"/></linearGradient>')
+        X, Y = s.P(-2.6, 7.2, 9.4); s.topo = min(s.topo, Y - 64)
+        feixe = ''.join(f'<path class="raio" style="animation-delay:-{k * .8}s" d="M{f(X)} {f(Y)}L{s.pt(*a)}L{s.pt(*b)}z" fill="#ffc463"/>' for k, (a, b) in enumerate((((.9, 2.2, .5), (3.5, .7, 1.5)), ((3.6, 4.4, .5), (6.6, 2.9, 1.5)), ((6.4, 6.6, .5), (9.4, 5.1, 1.5)))))
+        s.fim.append(f'<g class="so1">{feixe}</g><circle cx="{f(X)}" cy="{f(Y)}" r="58" fill="#ffc463" opacity=".28"/><g class="sol">' + ''.join(f'<path transform="rotate({k*45} {f(X)} {f(Y)})" d="M{f(X)} {f(Y-40)}v-11" stroke="#ff9c2e" stroke-width="6" stroke-linecap="round"/>' for k in range(8)) + f'</g><circle cx="{f(X)}" cy="{f(Y)}" r="30" fill="#ff9c2e"/><circle cx="{f(X-7)}" cy="{f(Y-8)}" r="14" fill="#ffc463" opacity=".7"/>')
+        s.bloco(9.6, 6.2, 0, .7, 1.1, 1.1, s.ac())
+        placa('pl1', 5, 3, 3, 'Fazenda solar', T['ac2'])
+    else:
+        az = '#8fd3ea'
+        o = s.cubo(.4, .3, 0, 9.6, 3.3, 3.2, (az, T['fo'], T['fo2'])) + ''.join(f'<path transform="{s.mT(1 + (k % 3) * 2.8, .9 + k * .42, 3.2)}" d="M0 0q.4-.28.8 0t.8 0 .8 0" fill="none" stroke="#fff" stroke-width=".13" class="onda o{k % 3}"/>' for k in range(6))
+        s.add((.4, .3, 0, 9.6, 3.3, 3.2), o)
+        o = s.cubo(.2, 3.6, 0, 10, 1, 3.8) + s.poly([(.2, 4.6, 3.1), (10.2, 4.6, 3.1), (10.2, 6, 0), (.2, 6, 0)], T['l']) + s.poly([(10.2, 4.6, 3.1), (10.2, 6, 0), (10.2, 4.6, 0)], T['r'])
+        for k in range(3):
+            x = .9 + k * 2
+            q = [(x, 4.6, 3.1), (x + 1.3, 4.6, 3.1), (x + 1.3, 6, 0), (x, 6, 0)]
+            o += s.poly(q, az) + ''.join(f'<path class="agua" style="animation-delay:-{m * .3}s" d="M{s.pt(x + .25 + m * .4, 4.6, 3.1)}L{s.pt(x + .25 + m * .4, 6, 0)}" stroke="#fff" stroke-width="3" stroke-linecap="round"/>' for m in range(3))
+        s.add((.2, 3.6, 0, 10, 2.4, 3.8), o)
+        s.piso(0, 6, 7.6, 2, az); s.chao.append(''.join(f'<path transform="{s.mT(.6 + k * 1.9, 6.6 + (k % 2) * .7)}" d="M0 0q.4-.28.8 0t.8 0" fill="none" stroke="#fff" stroke-width=".14" class="onda o{k % 3}"/>' for k in range(4)))
+        s.bloco(7.7, 5.9, 0, 2.4, 1.7, 1.7, None, s.janL(8, 7.6, .5, .8, .7) + s.janL(9.1, 7.6, .5, .8, .7) + s.cubo(7.6, 5.8, 1.7, 2.6, 1.9, .3, s.ac()))
+        placa('pl1', 4.6, 3, 4.4, 'Hidrelétrica', T['ac2'])
+    # distribuidora
+    s.piso(14.4, .4, 8.2, 7.2, '#fff', .5)
+    s.bloco(14.8, 4.6, 0, 3.6, 2.6, 2.2, None, s.janL(15.1, 7.2, .6, .9, .9) + s.janL(16.3, 7.2, .6, .9, .9) + s.qL(17.4, 7.2, 0, .7, 1.5, T['ac2']) + s.janR(18.4, 5.1, .6, 1.4, .9) + s.cubo(14.6, 4.4, 2.2, 4, 3, .35, s.ac()))
+    for x, y in ((18.4, 1.2), (20.6, 1.2), (20.2, 4.4)):
+        o = s.cubo(x, y, 0, 1.4, 1.5, 1.5, (T['g1'], T['ac3'], T['ac'])) + ''.join(f'<path d="M{s.pt(x + .35 + k * .35, y + .75, 1.5)}v-13" stroke="{T["pi"]}" stroke-width="4.4" stroke-dasharray="2.4 1.4"/>' for k in range(3))
+        s.add((x, y, 0, 1.4, 1.5, 2.2), o)
+    t1, t2, t3 = torreao(10, 4.6 if usina == 'solar' else 5.1, 5), torreao(15.4, 2, 5.4), torreao(21.8, 6.4, 4.8)
+    fio(1, (9.9, 6.6, 1.1) if usina == 'solar' else (9, 6.6, 1.9), t1, t2, (19, 2, 2.1), q=1)
+    fio(2, (20.8, 5, 2.1), t3, q=.3)
+    placa('pl3', 17.6, 4, 4.6, 'Distribuidora', T['ac2'])
+    if usina == 'solar': placa('cre', 17.6, 4, 7.1, '+ créditos para você', '#0b6b41')
+    # cidade
+    s.rua(0, 18.9, 25, 2.1); s.piso(0, 17.7, 25, 1.1, '#fff')
+    # casa
+    x, y, w, d, h, b = 1.6, 13.6, 4, 3.4, 2.5, 1.6; yf = y + d; m = x + w / 2
+    o = s.cubo(x, y, 0, w, d, h) + s.poly([(x, yf, h), (x + w, yf, h), (m, yf, h + b)], T['l']) + s.qL(x + .5, yf, 0, 1, 1.8, T['ac2']) + s.janL(x + 2.1, yf, .8, 1.3, 1) + s.janR(x + w, y + 1, .8, 1.3, 1)
+    o += s.poly([(m, y - .2, h + b), (m, yf + .25, h + b), (x + w + .3, yf + .25, h - .15), (x + w + .3, y - .2, h - .15)], T['ac']) + s.poly([(m, y - .2, h + b), (m, yf + .25, h + b), (x - .3, yf + .25, h - .15), (x - .3, y - .2, h - .15)], T['ac3'])
+    s.add((x - .3, y - .2, 0, w + .6, d + .45, h + b), o)
+    # condomínio
+    o, hc = torre(s, 7.4, 13.4, 3.8, 3.6, 4, 1.35, 1.5); s.add((7.4, 13.4, 0, 4.4, 3.6, hc), o + s.qL(8.8, 17, 0, 1, 1.3, T['ac2']))
+    # comércio
+    o = s.cubo(13, 13.4, 0, 4.8, 3.6, 3.3) + s.qL(13.3, 17, .3, 1.5, 1.7, V) + s.qL(15, 17, 0, .9, 1.9, T['ac2']) + s.qL(16.1, 17, .3, 1.5, 1.7, V) + s.janR(17.8, 14.2, .7, 1.6, 1.2) + s.cubo(12.9, 13.3, 3.3, 5, 3.9, .3, s.ac()) + toldo(s, 13.1, 17, 2.75, 4.6, .8, 7)
+    s.add((12.9, 13.3, 0, 5, 4.6, 3.6), o)
+    # empresa
+    o = s.cubo(19.4, 13.2, 0, 4, 3.8, 1.5) + s.qL(20.9, 17, 0, 1, 1.25, V) + vidro(s, 19.4, 13.2, 1.5, 4, 3.8, 4.4, 4, 4, 4) + s.cubo(19.25, 13.05, 5.9, 4.3, 4.1, .35)
+    s.add((19.25, 13.05, 0, 4.3, 4.1, 6.3), o)
+    ps = [pau(24.3, 12.6), pau(24.3, 18.2), pau(18.6, 18.2), pau(12.2, 18.2), pau(6.5, 18.2), pau(.8, 18.2)]
+    fio(2, t3, ps[0], ps[1], q=.5)
+    fio(2, *ps[1:], q=.6)
+    dest = (('Casa', (3.6, 15.3, 4.3), ps[4], (4.6, 17, 2.3)), ('Condomínio', (9.2, 15.2, hc + .1), ps[3], (10.6, 17, 3)), ('Comércio', (15.4, 15.2, 3.8), ps[2], (17.3, 17, 2.9)), ('Empresa', (21.4, 15.1, 6.4), ps[1], (22.6, 17, 3.6)))
+    for k, (nome, q, po, en) in enumerate(dest):
+        fio(3, po, en, q=.4)
+    for k, (nome, q, po, en) in enumerate(dest):
+        placa2('des', q[0], nome, T['ac'], f' style="--d:{k * .55:.2f}s"')
+        if usina == 'solar': placa2('men', q[0], 'Conta menor', '#0b6b41', f' style="--d:{k * .25:.2f}s"')
+    for k in (1, 2, 3): s.fim.append(f'<g class="l{k}">{"".join(pulsos[k])}</g>')
+    s.fim.sort(key=lambda z: z.startswith('<g class="pla'))
+    for x, y, e in ((6.5, 14, .8), (12, 14, .7), (18.6, 14, .7), (.8, 15.4, .7), (19.4, 6.9, .6)): s.arvore(x, y, e)
+    s.gente(8, 18.2, T['v2']); s.gente(16.2, 18.3)
+    # carro por baixo das placas
+    fim, s.fim = s.fim, []
+    s.carro(-1, 19.3, 'br', 24, 11, 0); s.fim += fim
+    s.salva(ilhas)
+
+
 predio('luz'); condominio('luz'); empresa('luz'); comercio('luz'); empresa('emp'); comercio('emp'); wttx()
 for t, n in (('padaria', 'Padaria'), ('restaurante', 'Restaurante'), ('mercado', 'Mercado'), ('salao', 'Salão'), ('clinica', 'Clínica'), ('loja', 'Loja')): fachada(t, n)
 unidades()
+rede('solar'); rede('hidro')

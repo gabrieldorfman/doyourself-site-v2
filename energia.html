@@ -38,6 +38,7 @@
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
 <link rel="stylesheet" href="/css/energia.css">
+<link rel="stylesheet" href="/css/cenas.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -104,10 +105,10 @@
           <ul class="pg-chips"><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>CPF e CNPJ</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Contas a partir de R$ 500</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Brasil todo</li></ul>
           <div class="botoes"><a class="bt bt--luz" href="/energia/simulador">Simular minha economia<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" data-zap="Olá! Quero saber da energia por assinatura." href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
         </div>
-        <div class="topo__cena hx" aria-hidden="true">
-          <span class="hx__luz"></span>
-          <div class="obj obj--x"><img src="/img/3d-g/solar.webp" alt="" width="720" height="720"></div>
-          <span class="tag tag--a"><i></i><span>Até 30% menos<small>na conta de luz</small></span></span><span class="tag tag--b"><i></i><span>10% de volta<small>via PIX, uma vez</small></span></span>
+        <div class="topo__cena iso iso--rede" data-iso-passos>
+          <div class="iso__p"><span class="hx__luz" aria-hidden="true"></span><div class="iso__svg" data-iso-svg="rede-solar" role="img" aria-label="Desenho animado: a fazenda solar gera energia, a rede leva até a distribuidora e a luz chega na casa, no condomínio, no comércio e na empresa"></div></div>
+          <p class="iso__t"><b>1</b><span>O sol bate na fazenda solar, longe da sua casa.</span></p>
+          <div class="iso__d" role="group" aria-label="Passos do caminho da energia"><button type="button" aria-label="Passo 1: O sol bate na fazenda solar, longe da sua casa." aria-pressed="true" data-t="O sol bate na fazenda solar, longe da sua casa."></button><button type="button" aria-label="Passo 2: A energia entra na rede elétrica." aria-pressed="false" data-t="A energia entra na rede elétrica."></button><button type="button" aria-label="Passo 3: A distribuidora mede e transforma em créditos para você." aria-pressed="false" data-t="A distribuidora mede e transforma em créditos para você."></button><button type="button" aria-label="Passo 4: A luz chega pelos mesmos fios de sempre." aria-pressed="false" data-t="A luz chega pelos mesmos fios de sempre."></button><button type="button" aria-label="Passo 5: Os créditos entram, e a sua conta fica menor." aria-pressed="false" data-t="Os créditos entram, e a sua conta fica menor."></button></div>
         </div>
       </div>
     </div>
@@ -138,19 +139,14 @@
     </div>
   </section>
 
-  <section class="dy en-cam-sec" id="como-funciona" aria-labelledby="cam-h">
+  <section class="dy hs-sec" id="como-funciona" aria-labelledby="cam-h">
     <div class="cx">
-      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">De onde vem o desconto</span><h2 class="h-sec h-sec--m" id="cam-h">O sol trabalha longe. A economia chega na sua conta</h2><p>Toque em cada passo e siga o caminho da energia.</p></div></div>
-      <div class="en-cam" data-en-cam="0" data-sobe>
-        <div class="en-cam__v"><div class="en-cam__s"><svg viewBox="0 0 1200 400" aria-hidden="true"><defs><linearGradient id="en-ceu" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#ffd9a3"/><stop offset=".5" stop-color="#ffedd5"/><stop offset="1" stop-color="#fff8ef"/></linearGradient></defs>
-<rect width="1200" height="400" fill="url(#en-ceu)"/><g class="en-sol"><circle cx="90" cy="84" r="80" fill="#ffc463" opacity=".35"/><circle cx="90" cy="84" r="46" fill="#ff9c2e"/></g>
-<path d="M0 320q160-50 360-16t420-6 420 4v98H0z" fill="#e9b878"/><path d="M0 344q300-30 640-8t560-6v70H0z" fill="#d99a52"/>
-<g class="en-g en-g--0"><g transform="translate(70 210)"><path class="en-pl" d="M0 46 22 0h92l-18 46z"/><path class="en-pl2" d="M11 23h94M50 0 38 46M82 0 68 46"/><path class="en-pe" d="M48 46v22M76 46v22"/></g><g transform="translate(190 210)"><path class="en-pl" d="M0 46 22 0h92l-18 46z"/><path class="en-pl2" d="M11 23h94M50 0 38 46M82 0 68 46"/><path class="en-pe" d="M48 46v22M76 46v22"/></g><g transform="translate(40 280)"><path class="en-pl" d="M0 46 22 0h92l-18 46z"/><path class="en-pl2" d="M11 23h94M50 0 38 46M82 0 68 46"/><path class="en-pe" d="M48 46v22M76 46v22"/></g><g transform="translate(160 280)"><path class="en-pl" d="M0 46 22 0h92l-18 46z"/><path class="en-pl2" d="M11 23h94M50 0 38 46M82 0 68 46"/><path class="en-pe" d="M48 46v22M76 46v22"/></g><path class="en-raio" d="M130 124 170 196M96 138l14 66M156 106l100 90"/></g>
-<g class="en-g en-g--1"><g class="en-tor" transform="translate(430 120)"><path d="M0 200 26 0l26 200M6 150l36-60M46 150 10 90M-14 40h80M-6 70h64"/></g><g class="en-tor" transform="translate(640 120)"><path d="M0 200 26 0l26 200M6 150l36-60M46 150 10 90M-14 40h80M-6 70h64"/></g><path class="en-fio" d="M290 250Q370 260 416 162Q540 220 626 162Q740 220 830 214"/><path class="en-luz-fio" d="M290 250Q370 260 416 162Q540 220 626 162Q740 220 830 214"/></g>
-<g class="en-g en-g--3"><path d="M830 214 920 140l90 74z" fill="#9a4508"/><rect x="846" y="214" width="148" height="116" fill="#fff"/><rect class="en-jan" x="866" y="236" width="42" height="40"/><rect class="en-jan" x="932" y="236" width="42" height="40"/><rect x="902" y="288" width="36" height="42" fill="#e2700f"/></g>
-<g class="en-g en-g--2"><rect x="1036" y="90" width="136" height="186" rx="14" fill="#fff"/><path d="M1056 122h70M1056 150h96M1056 174h96M1056 198h60" stroke="#e8d9c6" stroke-width="9" stroke-linecap="round"/><rect class="en-desc" x="1056" y="226" width="96" height="32" rx="10"/><path d="m1084 242 8 8 18-18" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g></svg></div></div>
-        <div class="en-cam__b" role="radiogroup" aria-label="Caminho da energia"><button type="button" role="radio" aria-checked="true" data-en-p="0"><span>1</span>A usina gera</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-p="1"><span>2</span>A rede recebe</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-p="2"><span>3</span>Você ganha créditos</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-p="3"><span>4</span>A conta diminui</button></div>
-        <p class="en-cam__t" aria-live="polite" data-en-t>O sol vira energia em uma usina solar, longe da sua casa. Você não instala nada.</p>
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">Como funciona</span><h2 class="h-sec h-sec--m" id="cam-h">Muda de onde a energia vem. O caminho até você é o mesmo</h2><p>Compare a energia comum com a solar por assinatura.</p></div></div>
+      <div class="hs" data-hs data-sobe>
+        <div class="iso__b" role="group" aria-label="Tipo de energia"><button type="button" aria-pressed="false">Hidrelétrica</button><button type="button" aria-pressed="true">Solar por assinatura</button></div>
+        <div class="hs__p" hidden><div class="hs__v" data-iso-svg="rede-hidro" aria-hidden="true"></div><div><ol class="hs__l"><li class=""><b>A usina gera</b><span>A água move as turbinas. Boa parte da energia do Brasil vem assim.</span></li><li class=""><b>A rede leva</b><span>As torres e os postes trazem a energia até a sua cidade.</span></li><li class=""><b>A distribuidora entrega</b><span>Ela cuida dos fios, do relógio e do atendimento.</span></li><li class=""><b>Você paga o valor cheio</b><span>A conta vem sem nenhum crédito.</span></li></ol><p class="hs__c"><span>Exemplo de conta</span><b data-hs-v="de">R$ 0,00</b></p></div></div>
+        <div class="hs__p"><div class="hs__v" data-iso-svg="rede-solar" aria-hidden="true"></div><div><ol class="hs__l"><li class="is-m"><b>A fazenda solar gera</b><span>O sol vira energia em uma usina parceira, longe do seu imóvel.</span></li><li class=""><b>A mesma rede leva</b><span>As torres e os postes continuam os mesmos.</span></li><li class=""><b>A mesma distribuidora entrega</b><span>Ela mede a sua parte e transforma em créditos.</span></li><li class="is-m"><b>Você paga menos</b><span>Os créditos entram na conta, e o valor cai.</span></li></ol><p class="hs__c is-m"><span>O mesmo exemplo, com desconto</span><b data-hs-v="para">R$ 0,00</b></p></div></div>
+        <div class="hs__n"><img src="/img/3d-g/lampada.webp" alt="" width="720" height="720" loading="lazy"><div><h3>Nenhuma placa no seu telhado</h3><p>As placas ficam na fazenda solar. No seu imóvel não muda nada: sem obra, sem técnico e sem equipamento.</p></div></div>
       </div>
     </div>
   </section>
@@ -337,6 +333,7 @@
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
 <script src="/js/energia.js"></script>
+<script src="/js/cenas.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>
