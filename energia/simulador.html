@@ -119,7 +119,7 @@
   <div class="sim" data-sim data-sobe>
     <div class="sim__in">
       <h3 class="sim__q"><label for="sim-conta">Qual é o valor da sua conta de luz?</label></h3>
-      <p class="sim__ajuda" id="sim-ajuda">Digite o total da sua fatura ou a média dos últimos 3 meses.</p>
+      <p class="sim__ajuda" id="sim-ajuda">Digite o total da sua fatura ou a média dos últimos meses.</p>
       <label class="sim__campo"><span aria-hidden="true">R$</span><input id="sim-conta" type="text" inputmode="decimal" autocomplete="off" enterkeyhint="done" placeholder="0" aria-label="Valor da sua conta de luz em reais" aria-describedby="sim-ajuda sim-msg" data-sim-conta></label>
       <p class="sim__msg" id="sim-msg" role="status" data-sim-msg></p>
       <p class="sim__nota">Disponível para contas a partir de <b data-sim-min>R$ 500</b>. Atendemos o Brasil todo e confirmamos a disponibilidade pelo WhatsApp.</p>
@@ -151,15 +151,17 @@
 
   <section class="dy en-fat-sec" id="fatura" aria-labelledby="fat-h">
     <div class="cx">
-      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">Na sua fatura</span><h2 class="h-sec h-sec--m" id="fat-h">Onde achar cada valor na conta de luz</h2><p>Veja o que significa cada item. Os nomes podem mudar um pouco na sua conta.</p></div></div>
+      <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">Na sua fatura</span><h2 class="h-sec h-sec--m" id="fat-h">Onde achar cada valor na conta de luz</h2><p>É isto que a gente confere na sua fatura para gerar a proposta.</p></div></div>
       <div class="en-fat" data-en-fat="total" data-sobe>
         <div class="en-fat__p" aria-hidden="true"><p class="en-fat__l"><b>Conta de energia</b><span>Exemplo ilustrativo</span></p>
-          <div class="en-fat__x" data-x="hist"><small>Histórico de consumo</small><p class="en-fat__g"><i style="height:46%"></i><i style="height:60%"></i><i style="height:52%"></i><i style="height:74%"></i><i style="height:88%"></i><i style="height:70%"></i><i style="height:64%"></i><i style="height:80%"></i></p></div>
-          <div class="en-fat__x en-fat__ln" data-x="consumo"><span>Energia consumida</span><b>940 kWh</b></div>
+          <div class="en-fat__x en-fat__ln" data-x="tipo"><span>Tipo de ligação</span><b>Trifásica</b></div>
+          <div class="en-fat__x" data-x="hist"><small>Histórico de consumo, 12 meses</small><p class="en-fat__g en-fat__g--m"><em></em><i style="height:67%"></i><i style="height:75%"></i><i style="height:72%"></i><i style="height:83%"></i><i style="height:93%"></i><i style="height:82%"></i><i style="height:77%"></i><i style="height:87%"></i><i style="height:80%"></i><i style="height:73%"></i><i style="height:70%"></i><i style="height:82%"></i></p></div>
+          <div class="en-fat__x en-fat__ln" data-x="consumo"><span>Média de consumo</span><b>940 kWh</b></div>
           <div class="en-fat__x en-fat__ln" data-x="ip"><span>Iluminação pública</span><b>R$ 32,00</b></div>
           <div class="en-fat__x en-fat__tt" data-x="total"><span>Total a pagar</span><b>R$ 800,00</b></div></div>
-        <div class="en-fat__b" role="radiogroup" aria-label="Itens da fatura"><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="hist"><b>Histórico de consumo</b><span>Mostra o consumo dos últimos meses. Com ele, a gente calcula a proposta exata.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="consumo"><b>Energia consumida</b><span>É quanta energia você usou. O desconto vale para esta parte, a maior da conta.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="ip"><b>Iluminação pública</b><span>É uma taxa da prefeitura. Ela não entra no desconto e continua na conta.</span></button><button type="button" role="radio" aria-checked="true" data-en-f="total"><b>Total a pagar</b><span>É este valor que você digita no simulador. Se a conta muda muito, use a média dos últimos 3 meses.</span></button></div>
+        <div class="en-fat__b" role="radiogroup" aria-label="Itens da fatura"><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="tipo"><b>Tipo de ligação</b><span>Monofásica, bifásica ou trifásica. Ela define o custo mínimo da conta, que continua.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="hist"><b>Histórico de consumo</b><span>A gente soma o consumo dos últimos 12 meses e divide por 12. Se a conta mostra só 3 ou 4 meses, divide por 3 ou 4.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="consumo"><b>Média de consumo</b><span>É o resultado desse cálculo, em kWh por mês. Com ela, a gente gera a sua proposta.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="ip"><b>Iluminação pública</b><span>É uma taxa da prefeitura. A gente confere o valor: ela não entra no desconto e continua na conta.</span></button><button type="button" role="radio" aria-checked="true" data-en-f="total"><b>Total a pagar</b><span>É este valor que você digita no simulador. Se a conta muda muito, use a média dos últimos meses.</span></button></div>
       </div>
+      <p class="en-fat__n" data-sobe><img src="/img/3d-g/predio.webp" alt="" loading="lazy"><span><b>Tem 2 ou mais unidades?</b> Dá para incluir todas. Só precisam estar no mesmo titular. Envie uma fatura de cada uma.</span></p>
     </div>
   </section>
 
@@ -174,7 +176,7 @@
       <div class="faq" data-sobe>
         <div class="faq__item"><h3>O valor do simulador é garantido?</h3><p>Não. É uma estimativa. O desconto real é calculado com a sua fatura e enviado pelo WhatsApp, para você aprovar antes de qualquer contrato.</p></div>
         <div class="faq__item"><h3>Qual é o valor mínimo da conta?</h3><p>R$ 500 por mês. Não existe valor máximo.</p></div>
-        <div class="faq__item"><h3>Qual valor eu digito?</h3><p>O total da sua última conta. Se ela muda muito de um mês para o outro, use a média dos últimos 3 meses.</p></div>
+        <div class="faq__item"><h3>Qual valor eu digito?</h3><p>O total da sua última conta. Se ela muda muito de um mês para o outro, use a média dos últimos meses.</p></div>
         <div class="faq__item"><h3>A conta de luz zera?</h3><p>Não. O desconto vale para a energia que você consome. O custo mínimo da ligação e a iluminação pública continuam.</p></div>
         <div class="faq__item"><h3>Quando vem a primeira conta com desconto?</h3><p>Pode levar até 90 dias depois da assinatura, que é o tempo de ligar os créditos à sua conta.</p></div>
         <div class="faq__item"><h3>Como recebo o Cashback?</h3><p>Você recebe 10% da nova conta, uma única vez, via PIX na sua conta bancária, em até 7 dias depois da biometria do contrato.</p></div>
