@@ -37,6 +37,8 @@
 <link rel="stylesheet" href="/css/v2.css">
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
+<link rel="stylesheet" href="/css/gamer.css">
+<link rel="stylesheet" href="/css/streaming.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -45,7 +47,7 @@
 <script src="/js/config.js"></script>
 </head>
 <body>
-<!-- Do Yourself v2 · Internet com streaming (/internet/streaming): por enquanto só o topo; as próximas seções entram depois -->
+<!-- Do Yourself v2 · Internet com streaming (/internet/streaming) -->
 <!--#menu-->
 <header class="nav">
   <div class="wrap nav__bar">
@@ -91,25 +93,82 @@
   </div>
 </header>
 <!--/menu-->
-
-<main id="top">
+<main id="top" class="pg-gm pg-st">
   <section class="topo topo--pg topo--so topo--net" aria-labelledby="hero-h" data-bar-hero>
     <div class="topo__painel">
       <div class="cx topo__grid">
         <div class="topo__txt">
           <span class="etq etq--net">Internet com streaming</span>
-          <h1 id="hero-h">Internet fibra com <em>streaming incluso</em></h1>
-          <p class="lede">No 600 Mega, você escolhe Paramount+ ou Globoplay. No 800 Mega, vem o YouTube Premium. No 1.000 Mega, Paramount+, HBO Max ou NoPing.</p>
-          <div class="botoes"><a class="bt bt--net" href="/internet/casa/600-mega">Ver o 600 Mega<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" href="/internet/casa">Todos os planos</a></div>
+          <h1 id="hero-h">A internet já vem com <em>o seu streaming</em></h1>
+          <p class="lede">Filmes, novelas, futebol ou vídeos sem anúncio. Você escolhe o aplicativo, e ele já está no preço do plano.</p>
+          <p class="gm-topo-p">A partir de <b data-st-min>R$ 0,00</b>/mês, com <b data-st-mincb>R$ 0,00</b> de <b>Cashback</b></p>
+          <div class="botoes"><a class="bt bt--net" href="#tv">Escolher o meu<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" href="#gosto">Qual combina comigo?</a></div>
         </div>
         <div class="topo__cena hx" aria-hidden="true">
           <span class="hx__luz"></span>
-          <div class="obj obj--x"><img src="/img/3d-g/tv.webp" alt="" width="720" height="720"></div>
-          
+          <div class="gm-cena"><div class="obj st-o--tv"><img src="/img/3d-g/tv.webp" alt="" width="720" height="720"></div><div class="obj st-o--pp"><img src="/img/3d-g/pipoca.webp" alt="" width="720" height="720"></div><span class="st-f st-f--1"><span class="st-lg st-lg--paramount"><img src="/img/apps/paramount-44.svg" alt=""></span></span><span class="st-f st-f--2"><span class="st-lg st-lg--globoplay"><img src="/img/apps/globoplay.png" alt=""></span></span><span class="st-f st-f--3"><span class="st-lg st-lg--youtube"><img src="/img/apps/youtube-premium-logo.svg" alt=""></span></span><span class="st-f st-f--4"><span class="st-lg st-lg--hbo"><img src="/img/apps/hbo-max.png" alt=""></span></span></div>
         </div>
       </div>
     </div>
   </section>
+
+  <section class="dy" id="tv" aria-labelledby="tv-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Escolha o seu</span><h2 class="h-sec h-sec--m" id="tv-h">Qual vai passar na sua TV?</h2><p>Toque em um aplicativo.</p></div></div>
+    <div class="st-tv" data-st-tv data-app="paramount" data-sobe>
+      <div class="st-tv__e">
+        <div class="st-tela" aria-hidden="true"><div class="st-tela__v"><span class="st-tela__l" data-st-l></span><ul data-st-tit></ul></div></div><span class="st-pe" aria-hidden="true"></span>
+        <div class="st-ct" role="radiogroup" aria-label="Aplicativo"><button type="button" role="radio" aria-checked="true" data-app="paramount"><span class="st-lg st-lg--paramount"><img src="/img/apps/paramount-44.svg" alt=""></span><b>Paramount+</b></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-app="globoplay"><span class="st-lg st-lg--globoplay"><img src="/img/apps/globoplay.png" alt=""></span><b>Globoplay</b></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-app="youtube"><span class="st-lg st-lg--youtube"><img src="/img/apps/youtube-premium-logo.svg" alt=""></span><b>YouTube Premium</b></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-app="hbo"><span class="st-lg st-lg--hbo"><img src="/img/apps/hbo-max.png" alt=""></span><b>HBO Max</b></button></div>
+      </div>
+      <div class="st-inf" aria-live="polite">
+        <h3 data-st-h></h3><p data-st-p></p><ul class="st-inf__l" data-st-f></ul>
+        <div class="st-pl" role="radiogroup" aria-label="Plano" data-st-pl></div>
+        <p class="st-v"><span><b data-st-v>R$ 0,00</b>/mês</span><small>no débito em conta, já com o aplicativo</small></p>
+        <p class="gm-pl__cb"><img src="/img/3d/cashback-p.webp" alt="" width="36" height="36"><span><b data-st-cb>R$ 0,00</b> de <b>Cashback</b>, via PIX na sua conta bancária</span></p>
+        <a class="bt bt--net" data-st-ir href="/contratar?origem=internet&amp;para=casa&amp;plano=600">Quero este<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="st-mais" data-st-mais href="/aplicativos">Conhecer o aplicativo</a>
+      </div>
+    </div>
+    <p class="gm-nota">Preços para <b data-gm-uf>Paraná</b>, no CPF. No boleto ou no PIX, R$ 10 a mais por mês. Os catálogos são dos aplicativos e podem mudar.</p>
+  </div></section>
+
+  <section class="dy" id="gosto" aria-labelledby="go-h"><div class="cx">
+    <div class="st-go" data-st-go data-sobe>
+      <div class="st-go__e"><span class="eyebrow">Na dúvida?</span><h2 class="h-sec h-sec--m" id="go-h">O que a sua casa gosta de ver?</h2><p>Marque quantos quiser.</p><div class="st-go__c" role="group" aria-label="Gostos"><button type="button" aria-pressed="false" data-de="globoplay">Novelas</button><button type="button" aria-pressed="false" data-de="youtube">Vídeos sem anúncio</button><button type="button" aria-pressed="false" data-de="paramount">Libertadores</button><button type="button" aria-pressed="false" data-de="hbo">Champions</button><button type="button" aria-pressed="false" data-de="globoplay">TV Globo ao vivo</button><button type="button" aria-pressed="false" data-de="paramount">Desenhos</button><button type="button" aria-pressed="false" data-de="hbo">A Casa do Dragão</button><button type="button" aria-pressed="false" data-de="youtube">Música</button><button type="button" aria-pressed="false" data-de="globoplay">BBB</button><button type="button" aria-pressed="false" data-de="paramount">Yellowstone</button><button type="button" aria-pressed="false" data-de="youtube">Receitas e aulas</button><button type="button" aria-pressed="false" data-de="hbo">Filmes da DC</button></div></div>
+      <div class="st-go__r" aria-live="polite"><div class="st-go__b" data-st-bar><p data-bar="paramount"><span class="st-lg st-lg--paramount"><img src="/img/apps/paramount-44.svg" alt=""></span><i><em></em></i></p><p data-bar="globoplay"><span class="st-lg st-lg--globoplay"><img src="/img/apps/globoplay.png" alt=""></span><i><em></em></i></p><p data-bar="youtube"><span class="st-lg st-lg--youtube"><img src="/img/apps/youtube-premium-logo.svg" alt=""></span><i><em></em></i></p><p data-bar="hbo"><span class="st-lg st-lg--hbo"><img src="/img/apps/hbo-max.png" alt=""></span><i><em></em></i></p></div><p class="st-go__t" data-st-rt>Marque um gosto para ver a sugestão.</p><a class="bt bt--ouro" href="#tv" data-st-ver hidden>Ver este na TV<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+    </div>
+  </div></section>
+
+  <section class="dy" id="mesmo-preco" aria-labelledby="mp-h" data-st-mp><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">600 Mega</span><h2 class="h-sec h-sec--m" id="mp-h">Com Paramount+ ou sem? O preço é o mesmo</h2><p>Por isso, ele já vem marcado no 600 Mega.</p></div></div>
+    <div class="st-mp" data-sobe><div><p>600 Mega</p><small>só internet</small><b data-st-a>R$ 0,00</b></div><span aria-hidden="true">=</span><div class="is-on"><p>600 Mega</p><small>com Paramount+</small><b data-st-b>R$ 0,00</b><span class="st-lg st-lg--paramount"><img src="/img/apps/paramount-44.svg" alt=""></span></div></div>
+    <div class="botoes gm-c"><a class="bt bt--net" data-st-mpir href="/internet/casa/600-mega">Ver o 600 Mega<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+  </div></section>
+
+  <section class="dy" aria-labelledby="fm-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Sessão em casa</span><h2 class="h-sec h-sec--m" id="fm-h">Na TV, no celular, em todo lugar</h2><p>Um aplicativo, vários aparelhos.</p></div></div>
+    <ul class="gm-pq" data-sobe><li class="gm-pq__f st-foto"><img src="/img/fotos/familia-tv.webp" alt="Avó, mãe, pai e filho rindo e comendo pipoca no sofá, à noite" width="1344" height="752" loading="lazy"><div><h3>Cada um no seu lugar do sofá</h3><p>No Globoplay, são até 3 telas ao mesmo tempo. Na HBO Max e no Paramount+, 2.</p></div></li><li><img src="/img/3d-g/celular.webp" alt="" width="720" height="720" loading="lazy"><h3>No celular</h3><p>Com o Paramount+, a HBO Max ou o YouTube Premium, baixe em casa e veja sem internet.</p></li><li><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720" loading="lazy"><h3>Wi-Fi 6 no <span class="nw">1.000 Mega</span></h3><p>Melhor para várias telas ligadas juntas.</p></li></ul>
+  </div></section>
+
+  <section class="dy" id="telas" aria-labelledby="tl-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Em 4K</span><h2 class="h-sec h-sec--m" id="tl-h">Quantas TVs a sua internet aguenta?</h2><p>Um vídeo em 4K usa perto de 25 Mega.</p></div></div>
+    <div class="st-4k" data-st-4k data-sobe>
+      <div class="st-4k__t" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <label for="st-n">TVs em 4K ao mesmo tempo: <b data-st-n>3</b></label>
+      <input id="st-n" type="range" min="1" max="8" value="3">
+      <ul><li data-m="600"><span>600 Mega</span><b></b><i><em></em></i></li><li data-m="800"><span>800 Mega</span><b></b><i><em></em></i></li><li data-m="1000"><span>1.000 Mega</span><b></b><i><em></em></i></li></ul>
+      <p data-st-c aria-live="polite"></p>
+    </div>
+    <p class="gm-nota">Conta aproximada, só com a velocidade do plano. Cada aplicativo tem o seu limite de telas, e o Wi-Fi depende da distância e das paredes.</p>
+  </div></section>
+
+  <section class="dy" id="duvidas" aria-labelledby="duvidas-h"><div class="cx duv">
+    <div data-sobe><span class="eyebrow"><i style="background:var(--net)">?</i>Dúvidas</span><h2 class="h-sec" id="duvidas-h">Perguntas sobre o streaming</h2><p class="lede">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p><div class="botoes"><a class="bt bt--linha" data-zap="Olá! Tenho uma dúvida sobre a internet com streaming." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></div></div>
+    <div class="faq" data-sobe><div class="faq__item"><h3>O streaming já vem no preço?</h3><p>Sim. O valor do plano já inclui a internet, o modem Wi-Fi, a instalação e o aplicativo.</p></div><div class="faq__item"><h3>Posso ter dois streamings no mesmo plano?</h3><p>Cada plano vem com um aplicativo, que você escolhe na contratação. O <a href="/internet/casa/2000-mega">2.000 Mega</a> é o único que vem com quatro.</p></div><div class="faq__item"><h3>Já assino um deles. E agora?</h3><p>No Paramount+ e no Globoplay, dá para entrar com a sua conta. Na HBO Max, crie outra, com outro e-mail. No YouTube Premium, cancele antes a assinatura paga.</p></div><div class="faq__item"><h3>Tem anúncio?</h3><p>O Globoplay e a HBO Max são as versões com anúncios. O YouTube Premium é sem anúncios.</p></div><div class="faq__item"><h3>Como eu ativo?</h3><p>Pelo celular, em poucos passos, depois da instalação. <a href="/aplicativos/como-entrar">Veja como entrar</a>.</p></div><div class="faq__item"><h3>Posso tirar o streaming do plano?</h3><p>Não. Ele faz parte do plano. Se não quiser streaming, escolha <a href="/internet/casa">um plano só com internet</a>.</p></div><div class="faq__item"><h3>Funciona em qualquer TV?</h3><p>Precisa ser uma Smart TV ou ter um aparelho com o aplicativo. Também dá para assistir no celular e no computador.</p></div><div class="faq__item"><h3>Empresa também recebe?</h3><p>Não. O streaming vem só nos planos no CPF.</p></div></div>
+  </div></section>
+
+  <section class="dy fim-sec" aria-labelledby="fim-h"><div class="cx"><div class="fim" data-sobe>
+    <div class="fim__obj" aria-hidden="true"><div class="obj"><img src="/img/3d-g/pipoca.webp" alt="" width="720" height="720" loading="lazy"></div></div>
+    <div class="fim__txt"><h2 id="fim-h">Prepare a pipoca</h2><p>Consulte o seu CEP e veja se a fibra chega até você.</p><div class="botoes"><a class="bt bt--ouro" href="/contratar?origem=internet&amp;para=casa">Consultar meu CEP<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha-claro" data-zap="Olá! Quero a internet com streaming." href="https://wa.me/5541995701636">Chamar no WhatsApp</a></div></div>
+  </div></div></section>
 </main>
 
 <!--#rodape-->
@@ -196,6 +255,7 @@
 <script src="/js/vendor/ScrollTrigger.min.js"></script>
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
+<script src="/js/streaming.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>
