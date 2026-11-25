@@ -38,6 +38,7 @@
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
 <link rel="stylesheet" href="/css/energia.css">
+<link rel="stylesheet" href="/css/cenas.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -104,10 +105,9 @@
           <ul class="pg-chips"><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Sem obra no prédio</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Sem investimento</li><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>No CNPJ do condomínio</li></ul>
           <div class="botoes"><a class="bt bt--luz" href="#economia">Ver quanto economizo<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" data-zap="Olá! Quero saber da energia por assinatura para condomínio." href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
         </div>
-        <div class="topo__cena hx" aria-hidden="true">
-          <span class="hx__luz"></span>
-          <div class="obj obj--x"><img src="/img/3d-g/predio.webp" alt="" width="720" height="720"></div>
-          
+        <div class="topo__cena iso" data-iso>
+          <div class="iso__p"><span class="hx__luz" aria-hidden="true"></span><img src="/img/cenas/predio-luz.svg" alt="Desenho animado de um prédio de apartamentos com elevador, garagem e piscina" width="660" height="580" class="is-on" fetchpriority="high"><img src="/img/cenas/condominio-luz.svg" alt="Desenho animado de um condomínio de casas com portaria e piscina" width="660" height="580" loading="lazy"></div>
+          <div class="iso__b" role="group" aria-label="Escolha a cena"><button type="button" aria-pressed="true">Prédio</button><button type="button" aria-pressed="false">Casas</button></div>
         </div>
       </div>
     </div>
@@ -116,8 +116,11 @@
   <section class="dy en-pr-sec" id="areas" aria-labelledby="ar-h">
     <div class="cx">
       <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--luz">Áreas comuns</span><h2 class="h-sec h-sec--m" id="ar-h">A conta que todos os moradores pagam</h2><p>Toque em uma área e veja por que ela pesa.</p></div></div>
-      <div class="en-pr" data-en-pr="elev" data-sobe><div class="en-pr__v"><svg viewBox="0 0 460 440" aria-hidden="true"><rect x="0" y="396" width="460" height="44" fill="#e4b377"/><g class="en-ar" data-x="bomba"><rect x="196" y="18" width="68" height="36" rx="8"/><path class="en-ar__l" d="M230 54v22"/></g><rect x="106" y="64" width="248" height="332" rx="14" fill="#fff"/><g fill="#f3e2cd"><rect x="128" y="88" width="28" height="28" rx="5"/><rect x="174" y="88" width="28" height="28" rx="5"/><rect x="266" y="88" width="28" height="28" rx="5"/><rect x="312" y="88" width="28" height="28" rx="5"/><rect x="128" y="136" width="28" height="28" rx="5"/><rect x="174" y="136" width="28" height="28" rx="5"/><rect x="266" y="136" width="28" height="28" rx="5"/><rect x="312" y="136" width="28" height="28" rx="5"/><rect x="128" y="184" width="28" height="28" rx="5"/><rect x="174" y="184" width="28" height="28" rx="5"/><rect x="266" y="184" width="28" height="28" rx="5"/><rect x="312" y="184" width="28" height="28" rx="5"/><rect x="128" y="232" width="28" height="28" rx="5"/><rect x="174" y="232" width="28" height="28" rx="5"/><rect x="266" y="232" width="28" height="28" rx="5"/><rect x="312" y="232" width="28" height="28" rx="5"/><rect x="128" y="280" width="28" height="28" rx="5"/><rect x="174" y="280" width="28" height="28" rx="5"/><rect x="266" y="280" width="28" height="28" rx="5"/><rect x="312" y="280" width="28" height="28" rx="5"/></g><g class="en-ar" data-x="elev"><rect x="214" y="80" width="32" height="250" rx="8"/><rect class="en-cab" x="218" y="262" width="24" height="36" rx="5"/></g><g class="en-ar" data-x="port"><rect x="194" y="338" width="72" height="58" rx="8"/></g><g class="en-ar" data-x="gar"><rect x="284" y="346" width="60" height="50" rx="6"/><path class="en-ar__l" d="M290 358h48M290 370h48M290 382h48"/></g><g class="en-ar" data-x="lazer"><rect x="374" y="356" width="76" height="40" rx="18"/><path class="en-ar__l" d="M386 378q8-8 16 0t16 0 16 0"/></g></svg></div>
+      <div class="iso-tr" data-iso-tr data-sobe><div class="iso__b" role="group" aria-label="Tipo de condomínio"><button type="button" aria-pressed="true">Prédio</button><button type="button" aria-pressed="false">Casas</button></div>
+      <div class="en-pr" data-en-pr="elev"><div class="en-pr__v" data-iso-svg="predio-luz" aria-hidden="true"></div>
         <div class="en-fat__b" role="radiogroup" aria-label="Áreas comuns"><button type="button" role="radio" aria-checked="true" data-en-f="elev"><b>Elevadores</b><span>Sobem e descem o dia todo, e gastam mais nos horários de pico.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="gar"><b>Garagem</b><span>A luz da garagem e os portões funcionam de dia e de noite.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="port"><b>Portaria</b><span>Câmeras, interfone e portões precisam estar sempre ligados.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="bomba"><b>Bombas de água</b><span>Levam a água até a caixa no alto do prédio, várias vezes ao dia.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="lazer"><b>Área de lazer</b><span>Piscina, salão de festas e academia também entram na conta comum.</span></button></div></div>
+      <div class="en-pr" data-en-pr="ruas" hidden><div class="en-pr__v" data-iso-svg="condominio-luz" aria-hidden="true"></div>
+        <div class="en-fat__b" role="radiogroup" aria-label="Áreas comuns do condomínio de casas"><button type="button" role="radio" aria-checked="true" data-en-f="ruas"><b>Luz das ruas</b><span>Os postes ficam acesos a noite toda, todos os dias.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="port"><b>Portaria</b><span>Câmeras, interfone e computadores precisam estar sempre ligados.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="portao"><b>Portões</b><span>Abrem e fecham a cada carro que entra ou sai.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="bomba"><b>Bombas de água</b><span>Enchem a caixa que abastece as casas, várias vezes ao dia.</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-en-f="lazer"><b>Área de lazer</b><span>Piscina, salão de festas e quadra também entram na conta comum.</span></button></div></div></div>
     </div>
   </section>
 
@@ -283,6 +286,7 @@
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
 <script src="/js/energia.js"></script>
+<script src="/js/cenas.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>

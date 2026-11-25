@@ -37,6 +37,7 @@
 <link rel="stylesheet" href="/css/v2.css">
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
+<link rel="stylesheet" href="/css/cenas.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -106,10 +107,9 @@
             <li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3L15 6.5"/></svg>Para CNPJ e MEI</li>
           </ul>
         </div>
-        <div class="topo__cena hx" aria-hidden="true">
-          <span class="hx__luz"></span>
-          <div class="obj obj--x"><img src="/img/3d-g/predio.webp" alt="" width="720" height="720"></div>
-          <span class="tag tag--a"><i></i><span>Instalação grátis<small>em até 48 horas</small></span></span><span class="tag tag--b"><i></i><span>Cashback no PIX<small>50% de uma mensalidade</small></span></span>
+        <div class="topo__cena iso" data-iso>
+          <div class="iso__p"><span class="hx__luz" aria-hidden="true"></span><img src="/img/cenas/empresa-emp.svg" alt="Desenho animado da fachada de uma empresa grande, com vidros e recepção" width="660" height="580" class="is-on" fetchpriority="high"><img src="/img/cenas/comercio-emp.svg" alt="Desenho animado de uma rua com padaria e restaurante" width="660" height="580" loading="lazy"><span class="tag tag--a"><i></i><span>Instalação grátis<small>em até 48 horas</small></span></span><span class="tag tag--b"><i></i><span>Cashback no PIX<small>50% de uma mensalidade</small></span></span></div>
+          <div class="iso__b" role="group" aria-label="Escolha a cena"><button type="button" aria-pressed="true">Empresa</button><button type="button" aria-pressed="false">Comércio</button></div>
         </div>
       </div>
     </div>
@@ -483,6 +483,7 @@
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
 <script src="/js/fibra.js"></script>
+<script src="/js/cenas.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>

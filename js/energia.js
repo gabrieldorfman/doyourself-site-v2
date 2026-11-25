@@ -45,7 +45,8 @@
     const k = 'enFat' in c.dataset ? 'enFat' : 'enPr';
     const acende = (v) => { c.dataset[k] = v; $$('[data-x]', c).forEach((x) => x.classList.toggle('is-on', x.dataset.x === v)); };
     const bts = $$('[data-en-f]', c); grupo(bts, (b) => acende(b.dataset.enF)); acende(c.dataset[k]);
-    $$('[data-x]', c).forEach((x) => x.addEventListener('click', () => bts.find((b) => b.dataset.enF === x.dataset.x).click()));
+    c.addEventListener('click', (e) => { const x = e.target.closest('[data-x]'), b = x && bts.find((y) => y.dataset.enF === x.dataset.x); if (b) b.click(); });
+    c.addEventListener('iso:ok', () => acende(c.dataset[k])); // cena carregada (js/cenas.js)
   });
   $$('[data-en-abas]').forEach((c) => grupo($$('[data-en-aba]', c), (b) => $$('[data-en-painel]', c).forEach((p) => (p.hidden = p.dataset.enPainel !== b.dataset.enAba))));
 
