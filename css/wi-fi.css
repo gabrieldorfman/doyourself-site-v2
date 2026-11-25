@@ -31,3 +31,5 @@
   .wf-lug { padding: 28px 18px; border-radius: 30px; } .wf-lug__b { grid-template-columns: minmax(0, 1fr); } .wf-lug__b button { min-height: 52px; font-size: 17px; } .wf-sala { aspect-ratio: 4 / 3.2; border-radius: 22px; } .wf-mo article { padding: 26px 22px; border-radius: 30px; } .wf-mo article > img { width: 160px; height: 160px; } .wf-mo .is-6 > img { margin-top: 36px; } .pg-wf .wf-mo h3 { font-size: 38px; } .pg-wf .fim .bt { width: 100%; justify-content: center; }
 }
 @media (prefers-reduced-motion: reduce) { .wf-fio i, .wf-md i { animation: none; } .wf-fio--ar i { opacity: 1; } .wf-fio i { left: 0; width: 100%; } .wf-md { transition: none; } }
+@media (min-width: 620px) and (max-width: 779px) { .wf-vans { padding: 24px; } .wf-vans__c { display: grid; justify-content: center; justify-items: center; } .wf-seg button { white-space: nowrap; } .wf-vans__c .bt { justify-self: center; } }
+.wf-cam b { white-space: nowrap; }

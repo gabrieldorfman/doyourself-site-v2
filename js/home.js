@@ -472,7 +472,7 @@
         <span class="mil__selo">${p.selo}</span>
         <p class="mil__vel"><b>${n}</b> Mega</p>
         <p class="mil__nome">Internet no CNPJ com Wi-Fi 6 e ferramentas para a equipe</p>
-        <p class="mil__txt">Velocidade para o caixa, o sistema, as videochamadas e a equipe toda conectada ao mesmo tempo, sem a internet cair no meio do expediente.</p>
+        <p class="mil__txt">Velocidade para o caixa, o sistema, as videochamadas e a equipe toda conectada ao mesmo tempo, com uma conexão estável no expediente.</p>
         <ul class="mil__info"><li><b>${n} Mega de download</b><span>Para a empresa toda</span></li><li><b>${up} de upload</b><span>Nuvem, backup e videochamadas</span></li><li><b>Modem Wi-Fi 6</b><span>Mais alcance, sem custo</span></li><li><b>Instalação em até 48 h</b><span>Grátis, no endereço da empresa</span></li></ul>
       </div>
       <div class="mil__dir">
@@ -840,3 +840,8 @@ document.querySelectorAll('[data-slides]').forEach((m) => {
   });
 })();
 
+/* "Wi-Fi" nunca quebra no hífen: um caractere invisível (U+2060) depois dele, nos textos da página */
+(() => {
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let t;
+  while ((t = w.nextNode())) if (/Wi-Fi/.test(t.data) && !/SCRIPT|STYLE|TEXTAREA|OPTION/.test(t.parentElement.tagName)) t.data = t.data.replace(/Wi-Fi/g, 'Wi-⁠Fi');
+})();

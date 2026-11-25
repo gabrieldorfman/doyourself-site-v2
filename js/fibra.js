@@ -104,7 +104,7 @@
     return s;
   };
   const nivel = (s) => (s >= 60 ? 3 : s >= 35 ? 2 : s >= 15 ? 1 : 0);
-  const NOMES = ['fraco', 'regular', 'bom', 'forte'];
+  const NOMES = ['mais baixo', 'mais baixo', 'bom', 'forte'];
 
   const tela = pl.querySelector('canvas'), ctx = tela.getContext('2d');
   const PASSO = 20, cols = L / PASSO, lins = A / PASSO;
