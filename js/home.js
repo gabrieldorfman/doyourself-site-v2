@@ -568,7 +568,7 @@
         <span class="mil__selo">${p.selo}</span>
         <p class="mil__vel"><b>${p.gb}</b> GB</p>
         <p class="mil__nome">${p.plano} GB do plano + ${p.bonus} GB de bônus</p>
-        <p class="mil__txt">Internet de sobra para a equipe trabalhar na rua, com ligações ilimitadas e os apps do dia a dia sem gastar a franquia.</p>
+        <p class="mil__txt">Internet de sobra para trabalhar na rua, com ligações ilimitadas e os apps do dia a dia sem gastar a franquia.</p>
         <ul class="mil__info"><li><b>Ligações ilimitadas</b><span>Para qualquer operadora do Brasil</span></li><li><b>800 SMS por mês</b><span>Em cada linha</span></li><li><b>${apps.length} apps sem gastar a internet</b><span>WhatsApp, Instagram, Waze e mais</span></li><li><b>Portabilidade grátis</b><span>Traga o número do seu CNPJ</span></li></ul>
       </div>
       <div class="mil__dir">

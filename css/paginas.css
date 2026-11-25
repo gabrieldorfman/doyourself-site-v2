@@ -709,7 +709,6 @@ main > section.fb { background: linear-gradient(180deg, #f3f7fc 0%, #e8f1fb 100%
   .pt__q { font-size: 22px; } .pt__res { padding: 20px 16px; } .pt__res > div { grid-template-columns: 1fr; gap: 10px; justify-items: center; text-align: center; } .pt__res img { width: 104px; height: 104px; } .pt__res h3 { font-size: var(--f-h3); } .pt__res .bt { width: 100%; justify-content: center; } .g5 { gap: 24px; } .g5__p { padding: 16px; }
 }
 @media (max-width: 767px) { .gs__tela { min-height: 330px; padding-top: 52px; } .gs__ic { width: 60px; height: 60px; } }
-@media (min-width: 1124px) { .gs__apps { justify-content: space-between; } }
 @media (max-width: 389px) { .pc--cel .qtd { gap: 2px; padding-left: 12px; padding-right: 4px; } .pc--cel .qtd__l { font-size: 13px; } .pc--cel .qtd__n { width: 40px; } }
 
 /* ---------- /celular/mei e /celular/portabilidade ---------- */
@@ -729,3 +728,17 @@ main > section.fb { background: linear-gradient(180deg, #f3f7fc 0%, #e8f1fb 100%
 @media (max-width: 619px) { .rg li { grid-template-columns: 96px 1fr; } .rg li > b { font-size: 29px; } .rg--p li { grid-template-columns: 54px 1fr; } .rg--p li > b { font-size: 22px; } .du__cena { padding: 34px 4px; border-radius: 26px; } .du__t { width: 162px; min-height: 300px; padding: 46px 8px 14px; border-width: 6px; border-radius: 28px; } .du__t > p { font-size: var(--f-txt); } .du__m { grid-template-columns: 26px 1fr; gap: 8px; padding: 8px; } .du__m img { width: 26px; height: 26px; } .du__m b { font-size: 13px; } .du__m small { font-size: 12px; } .mu { grid-template-columns: 1fr; gap: 12px; margin-top: 26px; } .mu__c { padding: 18px; border-radius: 26px; } .mu__c img { width: 92px; height: 92px; } .mu__s { grid-auto-flow: column; justify-content: center; align-items: center; } .mu__s svg { width: 44px; transform: rotate(90deg); animation: none; } .mu__ls { grid-template-columns: 1fr; gap: 12px; } .mu__ls > div { padding: 22px 20px; } .tk__l label { padding: 14px; gap: 12px; } .tk__r { padding: 24px 20px; } .tk__r .bt { width: 100%; } .pt__mais { margin: 6px 0 0; } }
 @media (prefers-reduced-motion: reduce) { .mu__s svg { animation: none; } }
 .du > * { min-width: 0; } .du__t { flex: 0 1 auto; min-width: 0; }
+
+/* revisão 25/11: celular */
+.pg-cel .jornada--net .jo__p.is-feito::before { background: rgb(27 138 82 / .4); }
+.pg-cel .jornada--net .jo__p.is-feito .jo__n { background: rgb(27 138 82 / .12); color: var(--cel-ink); }
+.pg-cel .jornada--net .jo__item.is-sel { background: rgb(27 138 82 / .06); }
+.gs__apps { display: grid; grid-template-columns: repeat(4, 1fr); } .gs__apps li, body .gs__apps li { width: auto; }
+@media (min-width: 620px) and (max-width: 767px), (min-width: 1124px) { .gs__apps { grid-template-columns: repeat(7, 1fr); } }
+.eq__t p, .al p, .g5__p p, .mu__ls li, .ls p, .rg p { text-wrap: pretty; }
+@media (min-width: 620px) and (max-width: 767px) {
+  .pc--cel .qtd { gap: 2px; padding-left: 12px; padding-right: 4px; } .pc--cel .qtd__n { width: 40px; }
+  .eq__l { grid-template-columns: 56px 1fr auto; gap: 14px; } .eq__l > img { width: 56px; height: 56px; }
+}
+@media (max-width: 1123px) { .mil--cel .qtd__ctrl button { width: 42px; height: 42px; } }
+.eq__t small { display: block; line-height: 1.4; } .eq__t small .nw { display: block; }

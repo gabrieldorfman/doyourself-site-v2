@@ -1773,3 +1773,6 @@ body .bt-mini { min-height: 42px; } .st-mais { min-height: 40px; }
 @media (min-width: 620px) and (max-width: 779px) {
   .pl__lista { column-gap: 18px; } .pl__lista li { font-size: 14px; }
 }
+
+@media (min-width: 560px) and (max-width: 767px) { .jo__obj { width: 19%; left: 5%; } .jo__ui { width: 68%; margin: 8% 0 0 22%; } }
+@media (min-width: 1124px) { .jo__obj[src*="calendario"] { width: 23%; left: 5%; } .jo__obj[src*="conversa"] { width: 26%; left: 5%; } }
