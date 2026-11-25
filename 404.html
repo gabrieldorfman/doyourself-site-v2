@@ -4,13 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Página não encontrada | Do Yourself</title>
-<meta name="description" content="O endereço pode ter mudado ou ter sido digitado errado. Volte para o início ou fale com a gente.">
+<meta name="description" content="O endereço pode ter mudado ou ter sido digitado errado. Veja energia, internet e celular.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Página não encontrada | Do Yourself">
-<meta property="og:description" content="O endereço pode ter mudado ou ter sido digitado errado. Volte para o início ou fale com a gente.">
+<meta property="og:description" content="O endereço pode ter mudado ou ter sido digitado errado. Veja energia, internet e celular.">
 <meta property="og:image" content="https://doyourself.digital/img/og-doyourself.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/img/marca/dy-selo-verde.svg" type="image/svg+xml">
+<meta name="robots" content="noindex">
 <meta name="theme-color" content="#f4f3ee">
 <meta name="site-kind" content="other">
 <meta name="page-type" content="service">
@@ -35,6 +36,7 @@
 <link rel="stylesheet" href="/css/v2.css">
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
+<link rel="stylesheet" href="/css/404.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -43,7 +45,7 @@
 <script src="/js/config.js"></script>
 </head>
 <body>
-<!-- Do Yourself v2 · Página não encontrada (página 404): por enquanto só o topo; as próximas seções entram depois -->
+<!-- Do Yourself v2 · Página não encontrada (página 404) -->
 <!--#menu-->
 <header class="nav">
   <div class="wrap nav__bar">
@@ -90,21 +92,20 @@
 </header>
 <!--/menu-->
 
-<main id="top">
+<main id="top" class="pg-404">
   <section class="topo topo--pg topo--so topo--marca" aria-labelledby="hero-h" data-bar-hero>
     <div class="topo__painel">
-      <div class="cx topo__grid">
-        <div class="topo__txt">
-          <span class="etq etq--marca">Página não encontrada</span>
-          <h1 id="hero-h">Essa página <em>não existe</em></h1>
-          <p class="lede">O endereço pode ter mudado ou ter sido digitado errado. Volte para o início ou fale com a gente.</p>
-          <div class="botoes"><a class="bt bt--marca" href="/">Ir para o início<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" data-zap="Olá! Não encontrei uma página no site." href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
-        </div>
-        <div class="topo__cena hx" aria-hidden="true">
-          <span class="hx__luz"></span>
-          <div class="obj obj--x"><img src="/img/3d-g/pino.webp" alt="" width="720" height="720"></div>
-          
-        </div>
+      <div class="cx">
+        <p class="nf-404" aria-hidden="true"><span>4</span><img src="/img/3d-g/cabo.webp" alt="" width="720" height="720"><span>4</span></p>
+        <h1 id="hero-h">Essa página <em>não existe</em></h1>
+        <p class="lede">O endereço pode ter mudado. O que você está procurando?</p>
+        <ul class="nf-c">
+          <li class="nf-luz"><a href="/energia"><img src="/img/3d-g/solar.webp" alt="" width="720" height="720"><span class="nf-t"><b>Energia</b><span>Até 30% de desconto na luz</span><em><b>Cashback</b> de 10% da nova conta</em></span><span class="nf-s"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a></li>
+          <li class="nf-net"><a href="/internet"><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720"><span class="nf-t"><b>Internet</b><span>Fibra para casa e empresa</span><em><b>Cashback</b> de 50% de uma mensalidade</em></span><span class="nf-s"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a></li>
+          <li class="nf-cel"><a href="/celular"><img src="/img/3d-g/celular.webp" alt="" width="720" height="720"><span class="nf-t"><b>Celular</b><span>Para CNPJ e MEI</span><em><b>Cashback</b> de uma mensalidade por linha</em></span><span class="nf-s"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a></li>
+        </ul>
+        <p class="nf-l"><a href="/">Início</a><a href="/combo">Combo</a><a href="/cashback">Cashback</a><a href="/ajuda">Ajuda</a></p>
+        <div class="botoes nf-b"><a class="bt bt--marca" data-zap="Olá! Não encontrei uma página no site." href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
       </div>
     </div>
   </section>
