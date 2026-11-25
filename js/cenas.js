@@ -35,9 +35,10 @@
     el.addEventListener('iso:ok', poe);
     const parar = () => { clearInterval(t); el.classList.add('is-parado'); };
     bts.forEach((b) => b.addEventListener('click', parar));
+    $$('[data-iso-v]', el).forEach((b) => b.addEventListener('click', () => { parar(); vai((i + +b.dataset.isoV + bts.length) % bts.length); }));
     if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return el.classList.add('is-parado');
     new IntersectionObserver((es) => (vis = es[es.length - 1].isIntersecting)).observe(el);
-    t = setInterval(() => vis && !document.hidden && el.querySelector('svg') && vai((i + 1) % bts.length), 3800);
+    t = setInterval(() => vis && !document.hidden && el.querySelector('svg') && vai((i + 1) % bts.length), 5000);
   });
 
   const carrega = (el) => fetch(`/img/cenas/${el.dataset.isoSvg}.svg`).then((r) => (r.ok ? r.text() : Promise.reject())).then((s) => { el.innerHTML = s; el.dispatchEvent(new CustomEvent('iso:ok', { bubbles: true })); }).catch(() => { el.innerHTML = `<img alt="" src="/img/cenas/${el.dataset.isoSvg}.svg">`; });
