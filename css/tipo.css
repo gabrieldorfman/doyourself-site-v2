@@ -1,0 +1,11 @@
+/* escala única de textos do site. A referência são os cards de Energia, Internet e Celular da home. Não usar tamanho solto em título nem descrição */
+:root {
+  --f-h1: clamp(40px, 4.6vw, 64px);   /* topo das páginas (a home vai até 76 no computador) */
+  --f-h2: clamp(32px, 4.2vw, 54px);   /* título de seção */
+  --f-desc: clamp(17px, 1.4vw, 19px); /* descrição logo abaixo do título */
+  --f-h3g: clamp(26px, 2.6vw, 36px);  /* título de bloco grande */
+  --f-h3: clamp(20px, 1.6vw, 22px);   /* título de card */
+  --f-txt: 16px;                      /* texto de card */
+  --f-nota: 14px;                     /* observações */
+}
+@media (max-width: 374px) { :root { --f-h1: 36px; --f-h2: 29px; } }
