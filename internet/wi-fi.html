@@ -37,6 +37,8 @@
 <link rel="stylesheet" href="/css/v2.css">
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
+<link rel="stylesheet" href="/css/gamer.css">
+<link rel="stylesheet" href="/css/wi-fi.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -45,7 +47,7 @@
 <script src="/js/config.js"></script>
 </head>
 <body>
-<!-- Do Yourself v2 · Wi-Fi (/internet/wi-fi): por enquanto só o topo; as próximas seções entram depois -->
+<!-- Do Yourself v2 · Wi-Fi (/internet/wi-fi) -->
 <!--#menu-->
 <header class="nav">
   <div class="wrap nav__bar">
@@ -91,25 +93,114 @@
   </div>
 </header>
 <!--/menu-->
-
-<main id="top">
+<main id="top" class="pg-gm pg-wf">
   <section class="topo topo--pg topo--so topo--net" aria-labelledby="hero-h" data-bar-hero>
     <div class="topo__painel">
       <div class="cx topo__grid">
         <div class="topo__txt">
           <span class="etq etq--net">Wi-Fi</span>
-          <h1 id="hero-h"><span class="nw">Wi-Fi 5</span>, <span class="nw">Wi-Fi 6</span> ou <span class="nw">Wi-Fi 7</span>: <em>qual é a diferença?</em></h1>
-          <p class="lede">Entenda o que muda em cada tecnologia, qual modem vem em cada plano e como deixar o sinal mais forte em casa.</p>
-          <div class="botoes"><a class="bt bt--net" href="/internet/casa">Ver planos para casa<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+          <h1 id="hero-h"><span class="nw">Wi-Fi 5</span> ou <span class="nw">Wi-Fi 6</span>: <em>qual é a diferença?</em></h1>
+          <p class="lede">Veja na prática o que muda, qual modem vem em cada plano e como deixar o sinal mais forte em casa.</p>
+          <div class="botoes"><a class="bt bt--net" href="#diferenca">Ver a diferença<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" href="#planta">Testar na planta</a></div>
         </div>
         <div class="topo__cena hx" aria-hidden="true">
           <span class="hx__luz"></span>
-          <div class="obj obj--x"><img src="/img/3d-g/wifi.webp" alt="" width="720" height="720"></div>
-          
+          <div class="gm-cena"><div class="obj wf-o--w"><img src="/img/3d-g/wifi.webp" alt="" width="720" height="720"></div><div class="obj wf-o--5"><img src="/img/3d-g/modem5.webp" alt="" width="720" height="720"></div><div class="obj wf-o--6"><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720"></div></div>
         </div>
       </div>
     </div>
   </section>
+
+  <section class="dy" id="o-que-e" aria-labelledby="oq-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Para começar</span><h2 class="h-sec h-sec--m" id="oq-h">Internet é uma coisa. Wi-Fi é outra.</h2><p>A internet chega pela fibra. O Wi-Fi é o último trecho, do modem até você.</p></div></div>
+    <div class="wf-cam" data-sobe><div><img src="/img/3d-g/predio.webp" alt="" width="720" height="720" loading="lazy"><b>A rua</b></div><p class="wf-fio"><span aria-hidden="true"><i></i></span>Fibra</p><div><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720" loading="lazy"><b>O modem</b></div><p class="wf-fio wf-fio--ar"><span aria-hidden="true"><i></i><i></i><i></i><i></i></span>Wi-Fi</p><div><img src="/img/3d-g/celular.webp" alt="" width="720" height="720" loading="lazy"><b>Você</b></div></div>
+  </div></section>
+
+  <section class="dy" id="diferenca" aria-labelledby="df-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">A diferença</span><h2 class="h-sec h-sec--m" id="df-h">Quem entrega mais rápido na sua casa?</h2><p>Pense no Wi-Fi como uma van de entregas. A do <span class="nw">Wi-Fi 6</span> leva pedidos de vários aparelhos na mesma viagem.</p></div></div>
+    <div class="wf-vans" data-wf-vans data-sobe>
+      <div class="wf-vans__c"><div class="wf-seg" role="radiogroup" aria-label="Aparelhos conectados"><button type="button" role="radio" aria-checked="false" tabindex="-1" data-n="2">2<span> aparelhos</span></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-n="4">4<span> aparelhos</span></button><button type="button" role="radio" aria-checked="true" data-n="8">8<span> aparelhos</span></button></div><button type="button" class="bt bt--linha-claro" data-wf-de>Repetir</button></div>
+      <div class="wf-p" data-p="5"><p class="wf-p__n"><span class="nw">Wi-Fi 5</span><span data-st>Pronto</span></p><div class="wf-p__r" aria-hidden="true"><span class="wf-p__m"><img src="/img/3d-g/modem5.webp" alt="" width="720" height="720" loading="lazy"></span><span class="wf-van"><svg viewBox="0 0 92 46" aria-hidden="true"><path class="wf-van__b" d="M4 6h52v30H4z"/><path class="wf-van__b" d="M56 14h18l14 12v10H56z"/><path d="M61 18h11l9 8H61z" fill="#d7ebff"/><circle cx="22" cy="38" r="7" fill="#101a26"/><circle cx="70" cy="38" r="7" fill="#101a26"/></svg><em></em></span><span class="wf-p__d"></span></div></div><div class="wf-p" data-p="6"><p class="wf-p__n"><span class="nw">Wi-Fi 6</span><span data-st>Pronto</span></p><div class="wf-p__r" aria-hidden="true"><span class="wf-p__m"><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720" loading="lazy"></span><span class="wf-van"><svg viewBox="0 0 92 46" aria-hidden="true"><path class="wf-van__b" d="M4 6h52v30H4z"/><path class="wf-van__b" d="M56 14h18l14 12v10H56z"/><path d="M61 18h11l9 8H61z" fill="#d7ebff"/><circle cx="22" cy="38" r="7" fill="#101a26"/><circle cx="70" cy="38" r="7" fill="#101a26"/></svg><em></em></span><span class="wf-p__d"></span></div></div>
+      <p class="wf-vans__t" aria-live="polite" data-wf-t>Quanto mais aparelhos, mais a diferença aparece.</p>
+    </div>
+    <p class="gm-nota">Desenho simplificado, só para explicar a ideia. O resultado depende também dos seus aparelhos.</p>
+  </div></section>
+
+  <section class="dy" aria-labelledby="pt-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Na sua casa</span><h2 class="h-sec h-sec--m" id="pt-h">Arraste o modem e veja o sinal</h2><p>Troque entre <span class="nw">Wi-Fi 5</span> e <span class="nw">Wi-Fi 6</span> e compare.</p></div></div>
+      <div class="pl" id="planta" data-planta data-wifi="5" data-sobe>
+        <div class="pl__cab"><h3>Arraste o modem e veja até onde o <span class="nw">Wi-Fi</span> chega</h3><p>Leve o modem para qualquer cômodo, ou toque onde quer colocar. Compare o <span class="nw">Wi-Fi 5</span> com o <span class="nw">Wi-Fi 6</span>.</p>
+          <div class="pl__abas" role="radiogroup" aria-label="Escolha o modem"><button type="button" role="radio" data-w="5" aria-checked="true">Wi-Fi 5</button><button type="button" role="radio" data-w="6" aria-checked="false" tabindex="-1">Wi-Fi 6</button></div>
+        </div>
+        <div class="pl__grade">
+          <div class="pl__casa" id="pl-casa" role="group" aria-label="Planta da casa com o sinal do Wi-Fi">
+            <canvas aria-hidden="true"></canvas>
+            <svg viewBox="0 0 720 760" aria-hidden="true"><g class="pl__mov"><rect x="40" y="34" width="112" height="96" rx="8" fill="#fff"/><rect x="40" y="68.56" width="112" height="61.44" rx="8" fill="#8fb6e3"/><rect x="48" y="41" width="44" height="19.200000000000003" rx="5" fill="#e8edf3"/><rect x="100" y="41" width="44" height="19.200000000000003" rx="5" fill="#e8edf3"/><rect x="250" y="40" width="44" height="130" rx="5" fill="#d8c3a5"/><path d="M272 40v130" stroke="#c4a27a" stroke-width="2"/>
+<rect x="596" y="34" width="84" height="92" rx="8" fill="#fff"/><rect x="596" y="67.12" width="84" height="58.88" rx="8" fill="#86cfae"/><rect x="604" y="41" width="30" height="18.400000000000002" rx="5" fill="#e8edf3"/><rect x="642" y="41" width="30" height="18.400000000000002" rx="5" fill="#e8edf3"/><rect x="446" y="34" width="112" height="38" rx="5" fill="#d8c3a5"/><rect x="474" y="38" width="46" height="12" rx="3" fill="#1b2a3a"/><rect x="480" y="54" width="36" height="9" rx="3" fill="#5f6f80"/><rect x="528" y="38" width="20" height="28" rx="3" fill="#1b2a3a"/><circle cx="498" cy="88" r="15" fill="#5f6f80"/>
+<rect x="330" y="28" width="28" height="10" rx="3" fill="#fff"/><ellipse cx="344" cy="52" rx="12" ry="15" fill="#fff"/><rect x="384" y="28" width="38" height="60" rx="6" fill="#fff"/><circle cx="403" cy="58" r="4" fill="#9fb3c8"/><rect x="318" y="122" width="26" height="36" rx="8" fill="#fff"/>
+<rect x="34" y="270" width="28" height="10" rx="3" fill="#fff"/><ellipse cx="48" cy="294" rx="12" ry="15" fill="#fff"/><rect x="126" y="268" width="66" height="46" rx="6" fill="#fff"/><rect x="30" y="338" width="44" height="32" rx="8" fill="#fff"/>
+<rect x="34" y="396" width="84" height="92" rx="8" fill="#fff"/><rect x="34" y="429.12" width="84" height="58.88" rx="8" fill="#f0a9c0"/><rect x="42" y="403" width="30" height="18.400000000000002" rx="5" fill="#e8edf3"/><rect x="80" y="403" width="30" height="18.400000000000002" rx="5" fill="#e8edf3"/><rect x="34" y="508" width="96" height="36" rx="5" fill="#d8c3a5"/><circle cx="196" cy="520" r="18" fill="#f7d3de"/>
+<rect x="262" y="372" width="46" height="150" rx="12" fill="#9fb3c8"/><rect x="270" y="384" width="30" height="58" rx="8" fill="#b9c8d8"/><rect x="270" y="452" width="30" height="58" rx="8" fill="#b9c8d8"/><rect x="326" y="472" width="66" height="54" rx="8" fill="#e8dcc8"/><rect x="456" y="490" width="14" height="64" rx="3" fill="#1b2a3a"/>
+<rect x="650" y="240" width="40" height="190" rx="4" fill="#d5dde6"/><rect x="656" y="256" width="28" height="36" rx="5" fill="#fff"/><rect x="654" y="318" width="32" height="44" rx="4" fill="#1b2a3a"/><circle cx="663" cy="330" r="5" fill="#8fa3b8"/><circle cx="678" cy="330" r="5" fill="#8fa3b8"/><circle cx="663" cy="350" r="5" fill="#8fa3b8"/><circle cx="678" cy="350" r="5" fill="#8fa3b8"/><rect x="648" y="442" width="44" height="54" rx="5" fill="#fff"/><rect x="520" y="256" width="92" height="84" rx="12" fill="#d8c3a5"/><circle cx="540" cy="246" r="10" fill="#c4a27a"/><circle cx="592" cy="246" r="10" fill="#c4a27a"/><circle cx="540" cy="350" r="10" fill="#c4a27a"/><circle cx="592" cy="350" r="10" fill="#c4a27a"/>
+<rect x="430" y="604" width="60" height="56" rx="6" fill="#8d6a52"/><rect x="436" y="610" width="48" height="30" rx="4" fill="#3a2a22"/><path d="M442 618h36M442 626h36M442 633h36" stroke="#e2700f" stroke-width="3"/><rect x="190" y="634" width="130" height="62" rx="8" fill="#c4a27a"/><circle cx="209" cy="620" r="10" fill="#a9835c"/><circle cx="255" cy="620" r="10" fill="#a9835c"/><circle cx="301" cy="620" r="10" fill="#a9835c"/><circle cx="209" cy="710" r="10" fill="#a9835c"/><circle cx="255" cy="710" r="10" fill="#a9835c"/><circle cx="301" cy="710" r="10" fill="#a9835c"/><circle cx="64" cy="676" r="36" fill="#7cb98a"/><circle cx="54" cy="666" r="22" fill="#93cc9f"/><circle cx="672" cy="716" r="22" fill="#7cb98a"/></g><path class="pl__ext" d="M300 560H20V20H700V560H630M540 560H420"/><path class="pl__int" d="M310 20V185M310 240V260M20 260H310M430 20V178M430 222V230M310 170H345M395 170H430M430 230H700M200 260V296M200 350V380M20 380H240V410M240 465V560M480 230V330M480 480V560"/></svg>
+            <span class="pl__ondas" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="pl__etq" data-comodo="Quarto dos pais" style="left:22.92%;top:26.32%">Quarto dos pais<i></i></span><span class="pl__etq" data-comodo="Quarto do filho" style="left:78.47%;top:23.42%">Quarto do filho<i></i></span><span class="pl__etq" data-comodo="Quarto da filha" style="left:21.5%;top:61.84%">Quarto da filha<i></i></span><span class="pl__etq" data-comodo="Sala" style="left:53.47%;top:45.39%">Sala<i></i></span><span class="pl__etq" data-comodo="Cozinha" style="left:78.47%;top:68.42%">Cozinha<i></i></span><span class="pl__etq" data-comodo="Banheiro 1" style="left:51.39%;top:13.68%">Banheiro 1<i></i></span><span class="pl__etq" data-comodo="Banheiro 2" style="left:17.2%;top:43.95%">Banheiro 2<i></i></span><span class="pl__etq" data-comodo="Churrasco" style="left:81.94%;top:90.79%">Churrasco<i></i></span>
+            <div class="pl__modem" role="slider" tabindex="0" aria-label="Posição do modem. Use as setas do teclado para mover" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0"><img src="/img/3d-g/modem5.webp" alt="" draggable="false"><span class="pl__dica">Arraste</span></div>
+          </div>
+          <div class="pl__lado">
+            <p class="pl__resumo" data-pl-resumo aria-live="polite"></p>
+            <ul class="pl__lista" data-pl-lista></ul>
+            <div class="pl__leg" aria-hidden="true"><span>mais baixo</span><i></i><span>forte</span></div>
+            <button type="button" class="bt bt--net pl__cta" data-pl-cta aria-expanded="false" aria-controls="pl-planos">Quero ter o Wi-Fi 5</button>
+            <p class="pl__nota">Simulação ilustrativa. O alcance muda com o tamanho da casa, as paredes e os aparelhos.</p>
+          </div>
+        </div>
+        <div class="pl__planos" id="pl-planos" data-pl-planos hidden><h3></h3><ul></ul></div>
+      </div>
+  </div></section>
+
+  <section class="dy" id="redes" aria-labelledby="rd-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">2,4 GHz e 5 GHz</span><h2 class="h-sec h-sec--m" id="rd-h">Uma vai mais longe. A outra é mais rápida.</h2><p>Ande pela casa e veja qual usar.</p></div></div>
+    <div class="wf-and" data-wf-and data-sobe>
+      <div class="wf-and__c" aria-hidden="true"><span class="wf-and__m"><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720" loading="lazy"></span><i></i><i></i><span class="wf-and__v"><img src="/img/3d-g/celular.webp" alt="" width="720" height="720" loading="lazy"></span></div>
+      <label for="wf-d">Você está: <b data-wf-l></b></label><input id="wf-d" type="range" min="0" max="100" value="12">
+      <ul><li data-r="5"><span>Rede 5 GHz</span><b></b><em><i></i></em></li><li data-r="2"><span>Rede 2,4 GHz</span><b></b><em><i></i></em></li></ul>
+      <p aria-live="polite" data-wf-q></p>
+    </div>
+    <p class="gm-nota">Simulação ilustrativa. Alguns modens juntam as duas redes em um nome só e escolhem por você.</p>
+  </div></section>
+
+  <section class="dy" id="onde-deixar" aria-labelledby="od-h"><div class="cx">
+    <div class="wf-lug" data-wf-lug data-l="alto" data-f="5" data-sobe>
+      <div class="wf-lug__e"><span class="eyebrow eyebrow--net">O lugar certo</span><h2 class="h-sec h-sec--m" id="od-h">Onde você deixa o modem?</h2><div class="wf-lug__b" role="radiogroup" aria-label="Lugar do modem"><button type="button" role="radio" aria-checked="true" data-l="alto" data-f="5" data-t="Em uma estante, no meio da casa, o sinal se espalha melhor." data-s="O melhor lugar">No alto e aberto</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-l="chao" data-f="3" data-t="Sofá, mesa e camas ficam no caminho do sinal." data-s="Dá para melhorar">No chão</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-l="armario" data-f="2" data-t="A porta e as paredes do móvel seguram parte do sinal." data-s="Evite">Dentro do armário</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-l="tv" data-f="2" data-t="A TV fica na frente e bloqueia o sinal." data-s="Evite">Atrás da TV</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-l="micro" data-f="2" data-t="Quando está ligado, ele pode atrapalhar a rede 2,4 GHz." data-s="Evite">Perto do micro-ondas</button></div></div>
+      <div class="wf-lug__d"><div class="wf-sala" aria-hidden="true"><span class="wf-est"></span><span class="wf-tv"></span><span class="wf-arm"></span><span class="wf-mic"></span><span class="wf-md"><i></i><i></i><i></i><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720" loading="lazy"></span></div><p aria-live="polite"><b data-wf-s></b> <span data-wf-x></span></p></div>
+    </div>
+  </div></section>
+
+  <section class="dy" id="modens" aria-labelledby="mo-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Qual vem no plano</span><h2 class="h-sec h-sec--m" id="mo-h">O modem já está incluso</h2><p>Sem custo, nos planos de casa no CPF.</p></div></div>
+    <div class="wf-mo" data-sobe>
+      <article class="is-6"><span class="gm-pl__s">Oferta do mês</span><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720" loading="lazy"><h3><span class="nw">Wi-Fi 6</span></h3><p>Para casa cheia, TV em 4K e jogos.</p><p class="wf-mo__p">1.000 Mega</p><p class="wf-mo__v"><b data-wf-v6>R$ 0,00</b>/mês</p><p class="gm-pl__cb"><img src="/img/3d/cashback-p.webp" alt="" width="36" height="36"><span><b data-wf-c6>R$ 0,00</b> de <b>Cashback</b>, via PIX na sua conta bancária</span></p><a class="bt bt--ouro" href="/contratar?origem=internet&amp;para=casa&amp;plano=1000">Quero este plano<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></article>
+      <article><img src="/img/3d-g/modem5.webp" alt="" width="720" height="720" loading="lazy"><h3><span class="nw">Wi-Fi 5</span></h3><p>Para casas e apartamentos médios.</p><p class="wf-mo__p" data-wf-p5>500, 600 e 800 Mega</p><p class="wf-mo__v">a partir de <b data-wf-v5>R$ 0,00</b>/mês</p><p class="gm-pl__cb"><img src="/img/3d/cashback-p.webp" alt="" width="36" height="36"><span><b data-wf-c5>R$ 0,00</b> de <b>Cashback</b> no menor</span></p><a class="bt bt--linha" href="/internet/casa">Ver os planos<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></article>
+    </div>
+    <p class="gm-nota">Preços para <b data-gm-uf>Paraná</b>, no débito em conta. No boleto ou no PIX, R$ 10 a mais por mês.</p>
+  </div></section>
+
+  <section class="dy" id="lento" aria-labelledby="le-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Ficou lento?</span><h2 class="h-sec h-sec--m" id="le-h">Teste em 3 passos</h2><p>Antes de se irritar com a internet.</p></div></div>
+    <ul class="gm-lg" data-sobe><li><img src="/img/3d-g/celular.webp" alt="" width="720" height="720" loading="lazy"><small>1</small><h3>Chegue perto do modem</h3><p>Se melhorar, era a distância ou uma parede no caminho.</p></li><li><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720" loading="lazy"><small>2</small><h3>Reinicie o modem</h3><p>Tire da tomada, espere um pouco e ligue de novo.</p></li><li><img src="/img/3d-g/cabo.webp" alt="" width="720" height="720" loading="lazy"><small>3</small><h3>Teste no cabo</h3><p>Se no cabo está normal, o problema é no Wi-Fi.</p></li></ul>
+    <div class="botoes gm-c"><a class="bt bt--linha" href="/ajuda/internet">Abrir a ajuda da internet<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+  </div></section>
+
+  <section class="dy" id="duvidas" aria-labelledby="duvidas-h"><div class="cx duv">
+    <div data-sobe><span class="eyebrow"><i style="background:var(--net)">?</i>Dúvidas</span><h2 class="h-sec" id="duvidas-h">Perguntas sobre o Wi-Fi</h2><p class="lede">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p><div class="botoes"><a class="bt bt--linha" data-zap="Olá! Tenho uma dúvida sobre o Wi-Fi." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></div></div>
+    <div class="faq" data-sobe><div class="faq__item"><h3>O Wi-Fi tem a mesma velocidade do cabo?</h3><p>Nem sempre. O cabo é a ligação mais direta. No Wi-Fi, a velocidade muda com a distância, as paredes e o aparelho.</p></div><div class="faq__item"><h3>Posso escolher o modem?</h3><p>Ele vem de acordo com o plano: Wi-Fi 5 até o 800 Mega e Wi-Fi 6 no 1.000 Mega. O modelo depende da sua região.</p></div><div class="faq__item"><h3>Pago pelo modem?</h3><p>Não. Ele vem incluso e continua com você enquanto durar o plano.</p></div><div class="faq__item"><h3>Meu celular é antigo. Funciona no Wi-Fi 6?</h3><p>Funciona. Só que ele usa a tecnologia que tem. Para aproveitar tudo do Wi-Fi 6, o aparelho também precisa ser Wi-Fi 6.</p></div><div class="faq__item"><h3>E o Wi-Fi 7?</h3><p>Ele vem no <a href="/internet/casa/2000-mega">2.000 Mega</a>, para quem tem muitos aparelhos ou envia arquivos muito pesados.</p></div><div class="faq__item"><h3>Se acabar a luz, o Wi-Fi continua?</h3><p>Não. O modem precisa de energia elétrica para funcionar.</p></div><div class="faq__item"><h3>Como troco o nome e a senha do Wi-Fi?</h3><p>O atendente explica no WhatsApp, de acordo com o seu modem. <a href="/ajuda/internet">Veja a ajuda da internet</a>.</p></div></div>
+  </div></section>
+
+  <section class="dy fim-sec" aria-labelledby="fim-h"><div class="cx"><div class="fim" data-sobe>
+    <div class="fim__obj" aria-hidden="true"><div class="obj"><img src="/img/3d-g/wifi.webp" alt="" width="720" height="720" loading="lazy"></div></div>
+    <div class="fim__txt"><h2 id="fim-h">Leve o <span class="nw">Wi-Fi 6</span> para casa</h2><p>Consulte o seu CEP e veja se a fibra chega até você.</p><div class="botoes"><a class="bt bt--ouro" href="/contratar?origem=internet&amp;para=casa&amp;plano=1000">Consultar meu CEP<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha-claro" data-zap="Olá! Quero a internet com Wi-Fi 6." href="https://wa.me/5541995701636">Chamar no WhatsApp</a></div></div>
+  </div></div></section>
 </main>
 
 <!--#rodape-->
@@ -196,6 +287,8 @@
 <script src="/js/vendor/ScrollTrigger.min.js"></script>
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
+<script src="/js/fibra.js"></script>
+<script src="/js/wi-fi.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>
