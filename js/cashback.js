@@ -25,7 +25,7 @@
     pinta(pn, pc);
   };
   const pinta = (pn, pc) => {
-    let paga, pct, volta, rot = 'Você paga por mês', conta, ir, msg, obs = `Preço no débito em conta para ${DY.UFS[uf()] || uf()}.`;
+    let paga, pct, volta, rot = 'Você paga por mês', conta, ir, msg, obs = `Preço ${DY.prepUF(uf())} ${DY.UFS[uf()] || uf()}, no débito em conta.`;
     if (st.s === 'luz') {
       const e = E.simular(st.luz); paga = e.elegivel ? e.comDesconto : 0; pct = 10; volta = e.elegivel ? e.cashback : 0; rot = 'Sua nova conta de luz';
       conta = e.elegivel ? `10% de ${brl(paga)}` : ''; ir = '/contratar?origem=energia' + (e.elegivel ? '&conta=' + st.luz : ''); msg = 'energia solar';
@@ -36,7 +36,7 @@
       ir = `/contratar?origem=internet&para=${st.para}&plano=${encodeURIComponent(pn.id)}&opcao=${encodeURIComponent(o.nome)}`;
     } else if (st.s === 'cel') {
       paga = c(pc.preco) * st.n; pct = 100; conta = st.n > 1 ? `${st.n} linhas de ${brl(c(pc.preco))}` : `100% de ${brl(paga)}`; msg = `${st.n} ${st.n > 1 ? 'linhas' : 'linha'} de celular de ${pc.gb} GB`;
-      ir = `/contratar?origem=celular&para=cnpj&plano=${pc.id}&linhas=${st.n}`; obs = `Preço para ${DY.UFS[uf()] || uf()}. Mais de ${DY.linhasEspecial} linhas? Fale com a gente.`;
+      ir = `/contratar?origem=celular&para=cnpj&plano=${pc.id}&linhas=${st.n}`; obs = `Preço ${DY.prepUF(uf())} ${DY.UFS[uf()] || uf()}. Mais de ${DY.linhasEspecial} linhas? Fale com a gente.`;
     } else {
       const p = DY.wttx.find((x) => x.id === st.wtx); paga = c(p.preco); pct = 50; conta = `50% de ${brl(paga)}`; msg = `WTTx de ${p.gb} GB`; obs = 'A cobertura é consultada pelo WhatsApp.';
     }

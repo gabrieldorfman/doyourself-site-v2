@@ -497,7 +497,7 @@
   function desenhaNet(anim, antigos) {
     if (!net) { // página sem os planos de casa
       blocoEmp();
-      $$('[data-uf-nome]').forEach((n) => (n.textContent = DY.UFS[DY.uf]));
+      $$('[data-uf-nome]').forEach((n) => (n.textContent = DY.UFS[DY.uf])); $$('[data-uf-prep]').forEach((n) => (n.textContent = DY.prepUF(DY.uf)));
       $$('[data-uf-sel]').forEach((s) => (s.value = DY.uf));
       if (anim) { contar(document, antigos || {}); if (temGsap && emp_) gsap.fromTo([...$$('.pc', emp_), $('[data-emp-dest]')].filter(Boolean), { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .5, stagger: .05, ease: 'power3.out', clearProps: 'transform,opacity,visibility' }); }
       return;
@@ -510,12 +510,10 @@
     cards.innerHTML = lista.map(cardNet).join('');
     blocoMil(destaque);
     blocoEmp();
-    $$('[data-uf-nome]').forEach((n) => (n.textContent = DY.UFS[DY.uf]));
+    $$('[data-uf-nome]').forEach((n) => (n.textContent = DY.UFS[DY.uf])); $$('[data-uf-prep]').forEach((n) => (n.textContent = DY.prepUF(DY.uf)));
     $$('[data-uf-sel]').forEach((s) => (s.value = DY.uf));
     tNet.desenhou();
     if (anim) { contar(document, antigos || {}); if (temGsap) gsap.fromTo([...(net ? $$('.pc', net) : []), $('[data-mil]'), ...(emp_ ? $$('.pc', emp_) : []), $('[data-emp-dest]')].filter(Boolean), { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .5, stagger: .05, ease: 'power3.out', clearProps: 'transform' }); }
-    const p2 = (todos.find((p) => p.id === '2000') || {}).opcoes;
-    if (p2) { $$('[data-2000]').forEach((e) => (e.textContent = brl(p2[0].preco))); }
     const min = Math.min(...todos.map((p) => p.opcoes[0].preco));
     $$('[data-net-min]').forEach((e) => (e.textContent = brl(min)));
   }
@@ -604,7 +602,7 @@
   function combo() {
     const box = $('[data-combo]'); if (!box) return;
     const on = (k) => $(`[data-cmb="${k}"] [data-cmb-on]`, box).checked;
-    const planosNet = casa();
+    const planosNet = casa().filter((p) => p.id !== '2000');
     if (!planosNet.find((p) => p.id === cmb.net)) cmb.net = (planosNet.find((p) => p.id === '1000') || planosNet[0]).id;
     const chip = (tipo, v, txt, ativo) => `<button type="button" role="radio" aria-checked="${ativo}" class="cmb__chip${ativo ? ' is-on' : ''}" data-cmb-${tipo}-v="${v}">${txt}</button>`;
     $('[data-cmb-luz]', box).innerHTML = CONTAS.map((v) => chip('luz', v, 'R$ ' + partes(v).i, v === cmb.luz)).join('');
@@ -624,7 +622,7 @@
     if (temGsap && totalAntes !== total) { const o = { v: totalAntes }; gsap.to(o, { v: total, duration: .6, ease: 'power3.out', onUpdate: () => (el.textContent = DY.brl(Math.round(o.v))) }); } else el.textContent = DY.brl(total);
     $('[data-eco]', box).textContent = DY.brl(s.economiaMes || 0); $('[data-cmb-eco]', box).hidden = !on('luz');
     const qtos = ['luz', 'net', 'cel'].filter(on).length;
-    $('[data-cmb-ir]', box).href = `/contratar?origem=combo${on('luz') ? '&conta=' + cmb.luz : ''}${on('net') ? '&plano=' + cmb.net : ''}${on('cel') ? '&linhas=' + cmb.linhas : ''}`;
+    $('[data-cmb-ir]', box).href = `/contratar?origem=combo&servicos=${[on('luz') && 'energia', on('net') && 'internet', on('cel') && 'celular'].filter(Boolean).join(',')}${on('luz') ? '&conta=' + cmb.luz : ''}${on('net') ? '&para=casa&plano=' + cmb.net : ''}${on('cel') ? `&cel=${pc.id}&linhas=${cmb.linhas}` : ''}`;
     const nomes = [on('luz') && `energia solar (conta de R$ ${partes(cmb.luz).i})`, on('net') && `internet de ${milhar(pn.num)} Mega`, on('cel') && `${cmb.linhas} ${cmb.linhas > 1 ? 'linhas' : 'linha'} de celular de ${pc.gb} GB`].filter(Boolean);
     const zap = $('[data-cmb-zap]', box); zap.href = DY.linkWhatsApp(`Olá! Quero montar um combo com ${nomes.join(', ').replace(/, ([^,]*)$/, ' e $1') || 'os serviços da Do Yourself'}.`); zap.target = '_blank'; zap.rel = 'noopener';
     box.classList.toggle('is-vazio', qtos === 0);

@@ -1682,7 +1682,7 @@ main > section.combo .conta .bt { flex: 1 1 180px; justify-content: center; }
   .combo__passos img { width: 48px; height: 48px; } .combo__passos b { font-size: 16px; padding-right: 30px; display: block; }
   main > section.combo .combo__painel { padding: 24px 16px 16px; gap: 20px; }
   .combo__t { font-size: 25px; }
-  .cmb { padding: 12px; } .cmb__chip { height: 34px; padding: 0 12px; font-size: 13px; }
+  .cmb { padding: 12px; } .cmb__chip { padding: 0 12px; font-size: 13.5px; }
   main > section.combo .conta { padding: 18px; }
 }
 
@@ -1776,3 +1776,21 @@ body .bt-mini { min-height: 42px; } .st-mais { min-height: 40px; }
 
 @media (min-width: 560px) and (max-width: 767px) { .jo__obj { width: 19%; left: 5%; } .jo__ui { width: 68%; margin: 8% 0 0 22%; } }
 @media (min-width: 1124px) { .jo__obj[src*="calendario"] { width: 23%; left: 5%; } .jo__obj[src*="conversa"] { width: 26%; left: 5%; } }
+
+/* revisão 25/11: início e combo */
+.abre h2, .abre .lede, .lede, .checks span, .perfil p, .nos__col li, .combo__cards p, .faq__item p, .sub__topo p, .jo__p p, .cm-ju li, .ata small { text-wrap: pretty; }
+.sub__topo--c p { text-wrap: balance; }
+@media (min-width: 620px) and (max-width: 779px) {
+  .abre { grid-template-columns: minmax(0, 1fr) 170px; padding: 44px 32px; }
+  .abre__obj .obj, .svc--wtx .abre__obj .obj { width: 230px; right: -40px; top: -110px; }
+  .abre__obj .obj--2, .svc--wtx .abre__obj .obj--2 { width: 120px; right: auto; left: 10%; top: 56%; }
+  .abre .etq { white-space: nowrap; } .abre .bt { white-space: nowrap; }
+}
+@media (min-width: 1124px) { .mil > .obj { width: 150px; right: -34px; top: -96px; } }
+.jo__trio img { width: clamp(64px, 6.6vw, 104px); }
+@media (max-width: 767px) { .jo__trio { top: 5%; } .jo__trio img { width: 50px; margin-right: -14px; } .jo__obj[src*="cashback"] { width: 18%; left: 5%; top: 5%; } }
+@media (min-width: 1124px) { .jo__obj[src*="cashback"] { width: 23%; left: 5%; } }
+.cmb__chip { height: 44px; } .cmb__qtd button { width: 44px; height: 44px; }
+@media (max-width: 380px) { .mil .op--inc .op__n { letter-spacing: -.045em; } .mil .op--inc { padding-inline: 2px; } }
+.conta__total b { white-space: nowrap; } .conta__total span { text-wrap: balance; }
+.conta__total { align-items: center; } .mil__info span, .conta__l span { text-wrap: balance; }

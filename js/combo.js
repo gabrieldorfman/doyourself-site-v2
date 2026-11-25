@@ -35,7 +35,7 @@
     const k = conta(st);
     $('[data-cm-net]', box).innerHTML = k.ns.map((p) => opcao(p.id, mil(p.num) + ' Mega', brl(precoNet(p)) + '/mês', p === k.pn, p.selo === 'OFERTA DO MÊS' ? 'Oferta do mês' : '')).join('');
     $('[data-cm-cel]', box).innerHTML = k.cs.map((p) => opcao(p.id, `${p.gb} GB`, brl(DY.centavos(p.preco)) + '/linha', p === k.pc, p.selo === 'OFERTA DO MÊS' ? 'Oferta do mês' : '')).join('');
-    $('[data-cm-uf]', box).textContent = `Preços no débito em conta para ${DY.UFS[uf()] || uf()}. A fibra é confirmada pelo seu CEP.`;
+    $('[data-cm-uf]', box).textContent = `Preços ${DY.prepUF(uf())} ${DY.UFS[uf()] || uf()}, no débito em conta. A fibra é confirmada pelo seu CEP.`;
   };
   let antes = 0, anim = 0;
   const conta1 = (el, de, para) => {
