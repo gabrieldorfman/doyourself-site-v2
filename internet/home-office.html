@@ -37,6 +37,8 @@
 <link rel="stylesheet" href="/css/v2.css">
 <link rel="stylesheet" href="/css/home.css">
 <link rel="stylesheet" href="/css/paginas.css">
+<link rel="stylesheet" href="/css/gamer.css">
+<link rel="stylesheet" href="/css/home-office.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="/kit/moments/moments.js">
@@ -45,7 +47,7 @@
 <script src="/js/config.js"></script>
 </head>
 <body>
-<!-- Do Yourself v2 · Internet para home office (/internet/home-office): por enquanto só o topo; as próximas seções entram depois -->
+<!-- Do Yourself v2 · Internet para home office (/internet/home-office) -->
 <!--#menu-->
 <header class="nav">
   <div class="wrap nav__bar">
@@ -91,25 +93,89 @@
   </div>
 </header>
 <!--/menu-->
-
-<main id="top">
+<main id="top" class="pg-gm pg-ho">
   <section class="topo topo--pg topo--so topo--net" aria-labelledby="hero-h" data-bar-hero>
     <div class="topo__painel">
       <div class="cx topo__grid">
         <div class="topo__txt">
           <span class="etq etq--net">Internet para home office</span>
           <h1 id="hero-h">Internet estável para <em>trabalhar de casa</em></h1>
-          <p class="lede">Fibra até dentro de casa, upload de 50% da velocidade para videochamadas e a VPN da empresa funcionando normalmente.</p>
-          <div class="botoes"><a class="bt bt--net" href="/internet/casa">Ver planos para casa<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" data-zap="Olá! Quero internet para trabalhar de casa." href="https://wa.me/5541995701636">Falar no WhatsApp</a></div>
+          <p class="lede">Fibra de 1.000 Mega, com 500 Mega só para enviar: sua imagem na reunião, seus arquivos e seus backups.</p>
+          <p class="gm-topo-p" data-gm-plano="1000">Por <b data-gm-v>R$ 0,00</b>/mês, com <b data-gm-cb>R$ 0,00</b> de <b>Cashback</b></p>
+          <div class="botoes"><a class="bt bt--net" href="/contratar?origem=internet&amp;para=casa&amp;plano=1000">Quero este plano<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha" href="#reuniao">Ver a diferença</a></div>
         </div>
         <div class="topo__cena hx" aria-hidden="true">
           <span class="hx__luz"></span>
-          <div class="obj obj--x"><img src="/img/3d-g/casa.webp" alt="" width="720" height="720"></div>
-          
+          <div class="gm-cena"><div class="obj ho-o--nb"><img src="/img/3d-g/notebook.webp" alt="" width="720" height="720"></div><div class="obj ho-o--cv"><img src="/img/3d-g/conversa.webp" alt="" width="720" height="720"></div><div class="obj ho-o--md"><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720"></div></div>
         </div>
       </div>
     </div>
   </section>
+
+  <section class="dy" id="reuniao" aria-labelledby="rn-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Videochamada</span><h2 class="h-sec h-sec--m" id="rn-h">É assim que os outros veem você</h2><p>O que chega até você é o download. O que você envia é o <b>upload</b>. Na reunião, sua imagem depende dele.</p></div></div>
+    <div class="gm-jg ho-rn" data-ho-rn data-sobe>
+      <div class="gm-ch" role="radiogroup" aria-label="Upload"><button type="button" role="radio" aria-checked="true" data-u="ruim">Pouco upload<small>imagem travando</small></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-u="bom">Muito upload<small>imagem nítida</small></button></div>
+      <div class="ho-tela"><canvas width="1344" height="752" role="img" aria-label="Uma pessoa falando em uma videochamada"></canvas><span class="ho-tela__s" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="ho-gira" aria-hidden="true"></span><p class="ho-leg" data-ho-leg aria-hidden="true"></p></div>
+      <p class="ho-rn__t" aria-live="polite" data-ho-t></p>
+    </div>
+    <p class="gm-nota">Simulação ilustrativa. A chamada também depende do seu aparelho, do aplicativo e da internet dos outros participantes.</p>
+  </div></section>
+
+  <section class="dy" aria-labelledby="fb-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Por que fibra</span><h2 class="h-sec h-sec--m" id="fb-h">Feita para o dia inteiro</h2><p>O que a sua mesa de trabalho precisa.</p></div></div>
+    <ul class="gm-pq" data-sobe><li class="gm-pq__f ho-f"><img src="/img/fotos/home-office.webp" alt="Homem trabalha no notebook enquanto a filha estuda no tablet, na sala" width="1344" height="752" loading="lazy"><div><h3>Você trabalha.<br>A casa segue a vida.</h3><p>A fibra vai até dentro de casa e não tem limite de dados.</p></div></li><li><img src="/img/3d-g/notebook.webp" alt="" width="720" height="720" loading="lazy"><h3>Metade é upload</h3><p>No 1.000 Mega, são <span class="nw">500 Mega</span> para enviar.</p></li><li><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720" loading="lazy"><h3>Modem <span class="nw">Wi-Fi 6</span></h3><p>Muitos aparelhos juntos, com mais estabilidade.</p></li></ul>
+  </div></section>
+
+  <section class="dy" id="seu-dia" aria-labelledby="di-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Seu dia</span><h2 class="h-sec h-sec--m" id="di-h">Das 8h às 18h, o que conta muda</h2><p>Toque em um horário.</p></div></div>
+    <div class="ho-dia" data-ho-dia data-k="0" data-sobe>
+      <span class="ho-sol" aria-hidden="true"></span>
+      <div class="ho-dia__c" aria-live="polite"><div class="ho-dia__i is-on"><div><h3>Você abre os sistemas</h3><p>A VPN da empresa conecta e o dia começa.</p><small>O que conta agora: <b>Conexão estável</b></small></div><img src="/img/3d-g/escudo.webp" alt="" width="720" height="720" loading="lazy"></div><div class="ho-dia__i"><div><h3>Reunião com a equipe</h3><p>Sua imagem e sua voz saem de casa para todo mundo.</p><small>O que conta agora: <b>Upload</b></small></div><img src="/img/3d-g/notebook.webp" alt="" width="720" height="720" loading="lazy"></div><div class="ho-dia__i"><div><h3>Envio do arquivo pesado</h3><p>O vídeo sobe para a nuvem enquanto você segue trabalhando.</p><small>O que conta agora: <b>Upload</b></small></div><img src="/img/3d-g/pc.webp" alt="" width="720" height="720" loading="lazy"></div><div class="ho-dia__i"><div><h3>As crianças chegam</h3><p>Desenho na TV, aula no tablet e você em outra reunião.</p><small>O que conta agora: <b>Wi-Fi 6</b></small></div><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720" loading="lazy"></div><div class="ho-dia__i"><div><h3>Cliente na tela</h3><p>Você muda de cômodo e continua conectado.</p><small>O que conta agora: <b>Sinal na casa</b></small></div><img src="/img/3d-g/wifi.webp" alt="" width="720" height="720" loading="lazy"></div><div class="ho-dia__i"><div><h3>Acabou o expediente</h3><p>Notebook fechado. Agora é a vez da série.</p><small>O que conta agora: <b>Download</b></small></div><img src="/img/3d-g/tv.webp" alt="" width="720" height="720" loading="lazy"></div></div>
+      <div class="ho-dia__h" role="radiogroup" aria-label="Horário"><button type="button" role="radio" aria-checked="true" data-k="0">8h</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-k="1">9h</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-k="2">11h</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-k="3">14h</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-k="4">16h</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-k="5">18h</button></div>
+    </div>
+  </div></section>
+
+  <section class="dy" id="arquivos" aria-labelledby="ar-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Enviar arquivos</span><h2 class="h-sec h-sec--m" id="ar-h">Quanto tempo leva para enviar?</h2><p>Escolha um arquivo.</p></div></div>
+    <div class="gm-bx ho-bx" data-gm-bx data-sobe>
+      <div class="gm-bx__l" role="radiogroup" aria-label="Arquivo"><button type="button" role="radio" aria-checked="false" tabindex="-1" data-g="0.1" data-n="Apresentação"><img src="/img/3d-g/notebook.webp" alt="" width="720" height="720" loading="lazy"><span><b>Apresentação</b></span><em>100 MB</em></button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-g="5" data-n="Fotos de um evento"><img src="/img/3d-g/celular.webp" alt="" width="720" height="720" loading="lazy"><span><b>Fotos de um evento</b></span><em>5 GB</em></button><button type="button" role="radio" aria-checked="true" data-g="20" data-n="Vídeo para o cliente"><img src="/img/3d-g/pc.webp" alt="" width="720" height="720" loading="lazy"><span><b>Vídeo para o cliente</b></span><em>20 GB</em></button></div>
+      <div class="gm-bx__r" aria-live="polite"><p class="gm-bx__q"><span data-gm-n>Vídeo</span> no 1.000 Mega</p><p class="gm-bx__t" data-gm-tempo></p><ul><li data-d="500" class="is-on"><span>500 Mega de upload</span><b></b><i><em></em></i></li><li data-d="250"><span>250 Mega de upload</span><b></b><i><em></em></i></li><li data-d="50"><span>50 Mega de upload</span><b></b><i><em></em></i></li></ul></div>
+    </div>
+    <p class="gm-nota">500 Mega de upload vêm no plano de 1.000 Mega, e 250, no de 500 Mega. Os 50 Mega são só para comparar. Tempo calculado com a velocidade cheia, no cabo; o site ou a nuvem que recebe o arquivo pode limitar.</p>
+  </div></section>
+
+  <section class="dy" id="vpn" aria-labelledby="vp-h"><div class="cx">
+    <div class="ho-vpn" data-sobe>
+      <div class="ho-vpn__t"><span class="eyebrow eyebrow--net">VPN da empresa</span><h2 class="h-sec h-sec--m" id="vp-h">A VPN do trabalho funciona</h2><p>A VPN é um caminho fechado entre a sua casa e a empresa. Siga as orientações da TI e trabalhe como se estivesse lá.</p></div>
+      <div class="ho-tun" aria-hidden="true"><span><img src="/img/3d-g/casa.webp" alt="" width="720" height="720" loading="lazy"><b>Sua casa</b></span><div class="ho-tun__c"><i></i><i></i><i></i><img src="/img/3d-g/escudo.webp" alt="" width="720" height="720" loading="lazy"></div><span><img src="/img/3d-g/predio.webp" alt="" width="720" height="720" loading="lazy"><b>Empresa</b></span></div>
+    </div>
+  </div></section>
+
+  <section class="dy" id="seu-canto" aria-labelledby="sc-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Seu canto</span><h2 class="h-sec h-sec--m" id="sc-h">Três ajustes que ajudam muito</h2><p>Simples e rápidos.</p></div></div>
+    <ul class="gm-lg" data-sobe><li><img src="/img/3d-g/cabo.webp" alt="" width="720" height="720" loading="lazy"><small>Mesa fixa</small><h3>Use o cabo</h3><p>Se o notebook não sai da mesa, é a ligação mais estável.</p></li><li><img src="/img/3d-g/wifi.webp" alt="" width="720" height="720" loading="lazy"><small>No mesmo cômodo</small><h3>Use a rede 5 GHz</h3><p>É a mais rápida perto do modem.</p></li><li><img src="/img/3d-g/modem6.webp" alt="" width="720" height="720" loading="lazy"><small>Na casa toda</small><h3>Deixe o modem no alto</h3><p>No meio da casa, longe de espelhos e do micro-ondas.</p></li></ul>
+    <div class="ho-res" data-sobe><div><h3>Tem CNPJ ou MEI e não pode parar?</h3><p>Tenha a internet sem fio 4G como reserva. Se a fibra cair, você liga o modem na tomada e continua.</p></div><a class="bt bt--linha" href="/internet/wttx">Conhecer o WTTx<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+  </div></section>
+
+  <section class="dy" id="planos" aria-labelledby="pl-h"><div class="cx">
+    <div class="sub__topo sub__topo--c" data-sobe><div><span class="eyebrow eyebrow--net">Os planos</span><h2 class="h-sec h-sec--m" id="pl-h">Planos para trabalhar de casa</h2><p>Preços para <b data-gm-uf>Paraná</b>, no CPF e no débito em conta.</p></div></div>
+    <div class="gm-pl" data-sobe>
+      <article class="gm-pl__d" data-gm-plano="1000"><img class="gm-pl__m" src="/img/3d-g/notebook.webp" alt="" width="720" height="720" loading="lazy"><span class="gm-pl__s">Oferta do mês</span><p class="gm-pl__q">Para a casa que trabalha e estuda</p><h3>1.000 Mega</h3><ul><li>500 Mega de upload</li><li>Modem <span class="nw">Wi-Fi 6</span> incluso</li><li>Instalação gratuita</li></ul><p class="gm-pl__v"><s data-gm-de></s><span><b data-gm-v>R$ 0,00</b>/mês</span></p><p class="gm-pl__cb"><img src="/img/3d/cashback-p.webp" alt="" width="36" height="36"><span><b data-gm-cb>R$ 0,00</b> de <b>Cashback</b>, via PIX na sua conta bancária</span></p><div class="botoes"><a class="bt bt--ouro" href="/contratar?origem=internet&amp;para=casa&amp;plano=1000">Quero este plano<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha-claro" href="/internet/casa/1000-mega">Ver detalhes</a></div></article>
+      <article class="gm-pl__o" data-gm-plano="500" data-ho-500><div><p class="gm-pl__q">Para quem trabalha sem companhia</p><h3>500 Mega</h3><ul><li>250 Mega de upload</li><li>Modem <span class="nw">Wi-Fi 5</span> incluso</li></ul></div><div><p class="gm-pl__v"><span><b data-gm-v>R$ 0,00</b>/mês</span></p><p class="gm-pl__cb"><img src="/img/3d/cashback-p.webp" alt="" width="36" height="36"><span><b data-gm-cb>R$ 0,00</b> de <b>Cashback</b></span></p><a class="bt bt--linha" href="/internet/casa/500-mega">Ver o plano<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div></article><article class="gm-pl__o" data-gm-plano="800" data-ho-800><div><p class="gm-pl__q">Para trabalhar e ver vídeos</p><h3>800 Mega <small>com YouTube Premium</small></h3><ul><li>400 Mega de upload</li><li>Modem <span class="nw">Wi-Fi 5</span> incluso</li></ul></div><div><p class="gm-pl__v"><span><b data-gm-v>R$ 0,00</b>/mês</span></p><p class="gm-pl__cb"><img src="/img/3d/cashback-p.webp" alt="" width="36" height="36"><span><b data-gm-cb>R$ 0,00</b> de <b>Cashback</b></span></p><a class="bt bt--linha" href="/internet/casa/800-mega">Ver o plano<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div></article>
+    </div>
+    <p class="gm-nota">No boleto ou no PIX, R$ 10 a mais por mês. <a href="/internet/casa">Ver todos os planos</a></p>
+  </div></section>
+
+  <section class="dy" id="duvidas" aria-labelledby="duvidas-h"><div class="cx duv">
+    <div data-sobe><span class="eyebrow"><i style="background:var(--net)">?</i>Dúvidas</span><h2 class="h-sec" id="duvidas-h">Perguntas de quem trabalha em casa</h2><p class="lede">Não achou a sua? A gente responde no WhatsApp, a qualquer hora.</p><div class="botoes"><a class="bt bt--linha" data-zap="Olá! Tenho uma dúvida sobre a internet para trabalhar de casa." href="https://wa.me/5541995701636">Perguntar no WhatsApp</a></div></div>
+    <div class="faq" data-sobe><div class="faq__item"><h3>A VPN da empresa funciona?</h3><p>Sim. Basta seguir as orientações da área de TI da sua empresa.</p></div><div class="faq__item"><h3>Vocês têm IP fixo?</h3><p>Não, só IP dinâmico. Se a sua empresa pede IP fixo, confirme com a TI antes de contratar.</p></div><div class="faq__item"><h3>Quantos Mega eu preciso para trabalhar?</h3><p>Para uma pessoa, 500 Mega já dão conta de reuniões e sistemas. Com mais gente em casa ou arquivos pesados, o 1.000 Mega dá mais folga.</p></div><div class="faq__item"><h3>O que é upload?</h3><p>É a velocidade para enviar: a sua imagem na reunião, um arquivo, um backup. Nos nossos planos, ele é metade da velocidade contratada.</p></div><div class="faq__item"><h3>É melhor usar cabo ou Wi-Fi?</h3><p>Se o notebook fica sempre na mesma mesa, o cabo é o mais estável. Para andar pela casa, use o Wi-Fi na rede 5 GHz.</p></div><div class="faq__item"><h3>Preciso de plano empresarial para trabalhar em casa?</h3><p>Não. No seu CPF, o plano de casa já serve. Se você quer contratar no CNPJ, <a href="/internet/empresa">veja os planos para empresa</a>.</p></div><div class="faq__item"><h3>Em quanto tempo instala?</h3><p>Em até 48 horas, com data combinada com você.</p></div></div>
+  </div></section>
+
+  <section class="dy fim-sec" aria-labelledby="fim-h"><div class="cx"><div class="fim" data-sobe>
+    <div class="fim__obj" aria-hidden="true"><div class="obj"><img src="/img/3d-g/notebook.webp" alt="" width="720" height="720" loading="lazy"></div></div>
+    <div class="fim__txt"><h2 id="fim-h">Seu escritório começa na internet</h2><p>Consulte o seu CEP e veja se a fibra chega até você.</p><div class="botoes"><a class="bt bt--ouro" href="/contratar?origem=internet&amp;para=casa&amp;plano=1000">Consultar meu CEP<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="bt bt--linha-claro" data-zap="Olá! Quero internet para trabalhar de casa." href="https://wa.me/5541995701636">Chamar no WhatsApp</a></div></div>
+  </div></div></section>
 </main>
 
 <!--#rodape-->
@@ -196,6 +262,8 @@
 <script src="/js/vendor/ScrollTrigger.min.js"></script>
 <script src="/js/home.js"></script>
 <script src="/js/paginas.js"></script>
+<script src="/js/gamer.js"></script>
+<script src="/js/home-office.js"></script>
 <script type="module" src="/kit/system.js"></script>
 <script type="module" src="/kit/motion/motion.js"></script>
 </body>

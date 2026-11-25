@@ -25,11 +25,11 @@
   /* 2. tempo para baixar */
   const bx = $('[data-gm-bx]');
   if (bx) {
-    const ls = $$('li', bx), dur = (x) => { const t = Math.round(x), h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, g = t % 60; return h ? h + ' h' + (m ? ' ' + m + ' min' : '') : m ? m + ' min' + (g ? ' ' + g + ' s' : '') : g + ' s'; };
+    const ls = $$('li', bx), dur = (x) => { const t = Math.round(x), h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, g = t % 60; return h ? h + ' h' + (m ? ' ' + m + ' min' : '') : m ? m + ' min' + (g ? ' ' + g + ' s' : '') : g ? g + ' s' : 'menos de 1 s'; };
     const roda = (b) => {
       const t = (d) => (b.dataset.g * 8000) / d, max = Math.max(...ls.map((l) => t(+l.dataset.d)));
       ls.forEach((l) => { l.style.setProperty('--w', (t(+l.dataset.d) / max) * 100 + '%'); $('b', l).textContent = dur(t(+l.dataset.d)); });
-      $('[data-gm-n]', bx).textContent = b.dataset.n; $('[data-gm-tempo]', bx).textContent = dur(t(1000));
+      $('[data-gm-n]', bx).textContent = b.dataset.n; $('[data-gm-tempo]', bx).textContent = dur(t(+ls[0].dataset.d));
     };
     radios($$('[data-g]', bx), roda); roda($('[aria-checked=true]', bx));
   }
