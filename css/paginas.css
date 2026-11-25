@@ -742,3 +742,6 @@ main > section.fb { background: linear-gradient(180deg, #f3f7fc 0%, #e8f1fb 100%
 }
 @media (max-width: 1123px) { .mil--cel .qtd__ctrl button { width: 42px; height: 42px; } }
 .eq__t small { display: block; line-height: 1.4; } .eq__t small .nw { display: block; }
+/* etiquetas sem cobrir o logo */
+.zz__tag--2 { top: 12%; } .zz__tag--1 { top: 20%; left: 5%; } .zz__tag--3 { bottom: 10%; } .zz__tag--4 { bottom: 18%; right: 5%; }
+@media (max-width: 767px) { .zz__tag--1 { top: 14%; } .zz__tag--2 { top: 8%; } .zz__tag--3 { bottom: 7%; } .zz__tag--4 { bottom: 14%; } }

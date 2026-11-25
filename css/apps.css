@@ -83,3 +83,22 @@
 @media (prefers-reduced-motion: reduce) { .ax-r, .ax-yt__som i, .ax-at__t, .ax-at__bt, .ax-ver__l li, .ax-qz__r { animation: none; } }
 .ax-out [data-ax-preco] { white-space: nowrap; }
 @media (max-width: 619px) { .ax-qz__t .bt { flex: none; } .ax-rota__s { margin-top: 132px; } }
+
+/* revisão 25/11 */
+.pg-ax .zz__nota { margin-top: 24px; text-wrap: balance; }
+.pg-ax .zzs + .zz__nota { margin-top: 40px; }
+.pg-ax .faq__item a, .pg-ax .zz__nota a { white-space: nowrap; }
+.ax-at__l small, .ax-ex small, .ax-ex p, .ax-3 p, .ax-an p, .ax-ga p { text-wrap: pretty; }
+@media (max-width: 1123px) {
+  .pg-ax .topo__cena:has(.ax-cena) { margin-top: 28px; }
+  .ax-qz__m { gap: 8px; } .ax-qz__m button { padding: 0 16px; font-size: 15.5px; }
+  .hx-l { gap: 6px; }
+}
+@media (min-width: 780px) and (max-width: 1123px) {
+  .ax-pls { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 396px)); gap: 16px; }
+  .ax-en__m { gap: 8px; flex-wrap: nowrap; } .ax-en__m button { width: auto; flex: 1; padding-inline: 6px; font-size: 14.5px; }
+  .pg-ax .topo__txt .hx-l { max-width: none; }
+}
+@media (min-width: 620px) and (max-width: 779px) { .ax-rota__p { top: 116px; } .ax-rota__s { margin-bottom: 44px; } .ax-rota__p--a { left: 12px; } .ax-rota__p--b { right: 12px; } }
+@media (min-width: 1124px) and (max-width: 1279px) { .pg-ax .pg-chips { flex-wrap: nowrap; gap: 6px; } .pg-ax .pg-chips li { padding: 8px 11px 8px 8px; font-size: 13.5px; gap: 6px; white-space: nowrap; } }
+@media (max-width: 430px) { .hx-l a { padding: 6px 12px 6px 7px; gap: 7px; } .pg-ax .hx-l svg { display: none; } .ax-qz__p span { width: 100%; } }

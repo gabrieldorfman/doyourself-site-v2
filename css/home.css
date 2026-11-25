@@ -1794,3 +1794,4 @@ body .bt-mini { min-height: 42px; } .st-mais { min-height: 40px; }
 @media (max-width: 380px) { .mil .op--inc .op__n { letter-spacing: -.045em; } .mil .op--inc { padding-inline: 2px; } }
 .conta__total b { white-space: nowrap; } .conta__total span { text-wrap: balance; }
 .conta__total { align-items: center; } .mil__info span, .conta__l span { text-wrap: balance; }
+.nw { white-space: nowrap; }
