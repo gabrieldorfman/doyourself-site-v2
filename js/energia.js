@@ -2,7 +2,7 @@
    1. Régua: arrasta o valor e a conta cai
    2. Caminho da energia, itens da fatura, áreas do prédio e tipos de comércio
    3. Faixas de desconto, lidas de DY.energia
-   4. Soma das unidades (empresas) e lista do síndico */
+   4. Soma das unidades (empresas) e perguntas do síndico */
 (function () {
   if (!window.DY) return;
   const $ = (s, e = document) => e.querySelector(s), $$ = (s, e = document) => [...e.querySelectorAll(s)];
@@ -87,8 +87,11 @@
       cena.addEventListener('click', (e) => { const m = e.target.closest('[data-x-u]'); if (!m) return; const l = $$('li', ul)[m.dataset.xU]; if (l) $('input', l).focus(); else nova('', true); });
     }
   });
-  $$('[data-en-lista]').forEach((el) => {
-    const cx = $$('input', el);
-    cx.forEach((x) => x.addEventListener('change', () => { const n = cx.filter((c) => c.checked).length; $('[data-en-lt]', el).textContent = n === cx.length ? 'Tudo pronto para a assembleia.' : `${n} de ${cx.length} prontos`; }));
+  $$('[data-en-qa]').forEach((el) => {
+    const bts = $$('button', el), largo = matchMedia('(min-width: 761px)');
+    const abre = (b) => bts.forEach((x) => { const on = x === b; x.setAttribute('aria-expanded', on); $('#' + x.getAttribute('aria-controls')).hidden = !on; });
+    // no celular, tocar de novo fecha; no computador, sempre há uma resposta aberta
+    bts.forEach((b) => b.addEventListener('click', () => abre(!largo.matches && b.getAttribute('aria-expanded') === 'true' ? null : b)));
+    largo.addEventListener('change', () => largo.matches && !bts.some((b) => b.getAttribute('aria-expanded') === 'true') && abre(bts[0]));
   });
 })();
