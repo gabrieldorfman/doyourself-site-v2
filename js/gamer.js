@@ -27,11 +27,25 @@
   if (bx) {
     const ls = $$('li', bx), dur = (x) => { const t = Math.round(x), h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, g = t % 60; return h ? h + ' h' + (m ? ' ' + m + ' min' : '') : m ? m + ' min' + (g ? ' ' + g + ' s' : '') : g + ' s'; };
     const roda = (b) => {
-      const t = (d) => (b.dataset.g * 8000) / d, max = t(100);
+      const t = (d) => (b.dataset.g * 8000) / d, max = Math.max(...ls.map((l) => t(+l.dataset.d)));
       ls.forEach((l) => { l.style.setProperty('--w', (t(+l.dataset.d) / max) * 100 + '%'); $('b', l).textContent = dur(t(+l.dataset.d)); });
       $('[data-gm-n]', bx).textContent = b.dataset.n; $('[data-gm-tempo]', bx).textContent = dur(t(1000));
     };
     radios($$('[data-g]', bx), roda); roda($('[aria-checked=true]', bx));
+  }
+
+  /* casa cheia: liga e desliga a família; os fios seguem o modem da planta (js/fibra.js) */
+  const cc = $('[data-gm-cc]');
+  if (cc) {
+    const bts = $$('[data-casa]', cc), md = $('.pl__modem', cc), mega = (n) => n.toLocaleString('pt-BR') + ' Mega';
+    const soma = () => {
+      let u = 8; // o jogo
+      bts.forEach((b) => { const on = b.getAttribute('aria-pressed') === 'true'; if (on) u += +b.dataset.m; $$(`[data-comodo="${b.dataset.casa}"], [data-fio="${b.dataset.casa}"]`, cc).forEach((x) => x.classList.toggle('is-off', !on)); });
+      $('[data-cc-u]', cc).textContent = mega(u); $('[data-cc-s]', cc).textContent = mega(1000 - u); cc.style.setProperty('--u', u / 10 + '%');
+    };
+    bts.forEach((b) => b.addEventListener('click', () => { b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); soma(); }));
+    const fios = () => $$('[data-fio]', cc).forEach((l) => { l.setAttribute('x1', parseFloat(md.style.left || 50) * 7.2); l.setAttribute('y1', parseFloat(md.style.top || 56.6) * 7.6); });
+    new MutationObserver(fios).observe(md, { attributes: true, attributeFilter: ['style'] }); soma(); fios();
   }
 
   /* 3. a bolinha que pula: o comando só vale depois do atraso escolhido */

@@ -166,6 +166,7 @@
   const eWifi = (p) => (+p.id >= 2000 ? '7' : +p.id >= 1000 ? '6' : '5');
   const milhar = (n) => String(n).replace(/^(\d)(\d{3})$/, '$1.$2');
   const desenhaPlanos = () => {
+    if (!planos) return; // planta sem a lista de planos (/internet/gamer)
     const ps = (DY.catalogo.casa[DY.blocoInternet(DY.uf)] || []).filter((p) => eWifi(p) === wifi);
     planos.querySelector('h3').innerHTML = ps.length > 1 ? `Planos com modem <span class="nw">Wi-Fi ${wifi}</span>` : `O plano com modem <span class="nw">Wi-Fi ${wifi}</span>`;
     planos.querySelector('ul').innerHTML = ps.map((p) => {
@@ -184,10 +185,10 @@
     a.addEventListener('click', () => escolhe(a.dataset.w));
     a.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); escolhe(wifi === '5' ? '6' : '5', true); } });
   });
-  cta.addEventListener('click', () => {
+  if (cta) cta.addEventListener('click', () => {
     planos.hidden = false; cta.setAttribute('aria-expanded', 'true');
     planos.scrollIntoView({ behavior: calmo ? 'auto' : 'smooth', block: 'center' });
   });
   document.addEventListener('dy:planos', desenhaPlanos);
-  escolhe('5');
+  escolhe(pl.dataset.so || '5');
 })();
