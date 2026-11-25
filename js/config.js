@@ -318,4 +318,23 @@ DY.formatarReais = (v) => {
 };
 DY.lerReais = (v) => Number(String(v || '').replace(/\./g, '').replace(',', '.')) || 0;
 
+// origem do pedido: o serviço (e o plano) que a página mostra, o endereço dela e o lugar do clique
+DY.servicoDaPagina = function () {
+  const p = location.pathname.replace(/\.html$/, '').replace(/^\/|\/$/g, ''), m = p.match(/^internet\/casa\/(\d+)-mega/);
+  if (m) return { origem: 'internet', para: 'casa', plano: m[1] };
+  if (p === 'internet/empresa') return { origem: 'internet', para: 'empresa' };
+  if (p === 'internet') return { origem: 'internet' };
+  if (p === 'internet/wttx') return {};
+  if (/^(internet\/|aplicativos)/.test(p)) return { origem: 'internet', para: 'casa' };
+  const s = p.split('/')[0];
+  return ['energia', 'celular', 'combo'].includes(s) ? { origem: s } : {};
+};
+DY.linkContratar = function (dados, lugar) {
+  const d = Object.assign({}, dados && dados.origem ? {} : DY.servicoDaPagina(), dados || {});
+  const q = new URLSearchParams({ origem: d.origem || 'home' });
+  Object.keys(d).forEach((k) => { if (k !== 'origem' && d[k] != null && d[k] !== '') q.set(k, d[k]); });
+  q.set('pagina', location.pathname.replace(/\.html$/, '').replace(/^\/|\/$/g, '') || 'inicio');
+  if (lugar) q.set('botao', lugar);
+  return '/contratar?' + q.toString().replace(/%2F/g, '/').replace(/%2C/g, ',');
+};
 DY.linkWhatsApp = (texto) => 'https://wa.me/' + DY.config.whatsapp + (texto ? '?text=' + encodeURIComponent(texto) : '');

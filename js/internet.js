@@ -25,7 +25,7 @@
       const apps = p.opcoes.map((x) => (/noping/i.test(x.resumo || '') ? { img: 'noping.svg', nome: 'NoPing', preto: true } : x.logo ? { img: LOGO[x.logo] || x.logo + '.png', nome: x.nome } : null)).filter(Boolean);
       const ul = of.querySelector('[data-of-apps]'); const rot = of.querySelector('[data-of-rot]');
       if (apps.length) { ul.innerHTML = apps.map((a) => `<li><span${a.preto ? ' class="is-preto"' : ''}><img src="/img/apps/${a.img}" alt=""></span>${a.nome}</li>`).join(''); rot.textContent = apps.length > 1 ? 'Escolha um' : 'Já vem incluso'; }
-      of.querySelector('.of__bt').setAttribute('href', '#planos-internet');
+      of.querySelector('.of__bt').setAttribute('href', '/contratar?origem=internet&para=casa&plano=' + p.id);
     };
     preenche(); document.addEventListener('dy:planos', preenche);
     if (window.gsap && !calmo) {

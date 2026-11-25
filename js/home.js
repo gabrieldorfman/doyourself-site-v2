@@ -55,7 +55,7 @@
     return lista.filter((e) => { const f = faixa(e.complemento); return f && f.exato == null && n >= f.de && n <= f.ate && (f.par == null || n % 2 === f.par); });
   }
   const tiraTipo = (q) => q.replace(/^(rua|r\.|avenida|av\.?|travessa|tv\.|alameda|al\.|rodovia|estrada)\s+/i, '').trim() || q;
-  const irContratar = (f, cep, num) => { location.href = `/contratar?origem=${f.dataset.cep || 'home'}${f.dataset.para ? '&para=' + f.dataset.para : ''}&cep=${cep.replace(/\D/g, '').replace(/^(\d{5})/, '$1-')}&numero=${encodeURIComponent(num)}`; };
+  const irContratar = (f, cep, num) => { location.href = DY.linkContratar({ ...(f.dataset.cep && f.dataset.cep !== 'home' ? { origem: f.dataset.cep, para: f.dataset.para } : {}), cep: cep.replace(/\D/g, '').replace(/^(\d{5})/, '$1-'), numero: num }, f.closest('footer') ? 'cep-rodape' : 'cep-topo'); };
 
   $$('[data-cep]').forEach((f) => {
     const inCep = $('[name=cep]', f), inNum = $('[name=numero]', f), erro = $('.cep__erro', f);
@@ -686,8 +686,16 @@
     addEventListener('load', () => ScrollTrigger.refresh());
   }
 })();
-/* atalhos para o campo de CEP do topo */
-document.querySelectorAll('a[href="#cep-topo"]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); const f = document.querySelector('#cep-topo'); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => f.querySelector('input[name=cep]').focus({ preventScroll: true }), 500); }));
+/* origem: todo link para /contratar leva o serviço, a página e o lugar do clique (menu, barra, seção) */
+(() => {
+  const lugar = (a) => { if (a.closest('header.nav')) return 'menu'; if (a.closest('.actionbar')) return 'barra'; if (a.closest('footer')) return 'rodape'; const s = a.closest('section'); return (s && (s.id || (s.getAttribute('aria-labelledby') || '').replace(/-h$/, '') || (s.className.split(' ')[0]))) || 'pagina'; };
+  const marca = (e) => {
+    const a = e.target.closest && e.target.closest('a[href^="/contratar"]'); if (!a) return;
+    const q = new URLSearchParams(a.getAttribute('href').split('?')[1] || ''); if (q.get('pagina')) return;
+    a.setAttribute('href', DY.linkContratar(Object.fromEntries(q), lugar(a)));
+  };
+  ['pointerdown', 'focusin', 'click'].forEach((ev) => document.addEventListener(ev, marca, true));
+})();
 /* menu: clicar num item com submenu abre as opções e nunca sai da página (celular, tablet e desktop).
    No computador, passar o mouse também abre (CSS do kit). O href fica só para quem está sem JavaScript. */
 (() => {

@@ -37,6 +37,8 @@
   // CPF de teste 000.000.000-00: passa só no ambiente de teste (Vercel e cópia local), nunca no domínio oficial
   const AMBIENTE_TESTE = /(^localhost$|^127\.0\.0\.1$|\.vercel\.app$)/.test(location.hostname);
   const cpfTeste = (v) => AMBIENTE_TESTE && so(v) === '00000000000';
+  // CNPJ de teste 00.000.000/0000-00: mesma regra do CPF de teste (tirar no lançamento)
+  const cnpjTeste = (v) => AMBIENTE_TESTE && so(v) === '00000000000000';
   DY.validar = {
     cep: (v) => (so(v).length === 8 ? '' : 'Digite os 8 números do CEP.'),
     numero: (v) => (String(v).trim() ? '' : 'Informe o número do imóvel. Se não tiver, escreva S/N.'),
@@ -57,7 +59,7 @@
     },
     email: (v) => (/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(String(v).trim()) ? '' : 'Esse e-mail parece incompleto. Ex.: seunome@gmail.com'),
     cpf: (v) => (so(v).length < 11 ? 'O CPF tem 11 números.' : cpfOk(v) || cpfTeste(v) ? '' : 'Esse CPF não é válido. Confira os números.'),
-    cnpj: (v) => (so(v).length < 14 ? 'O CNPJ tem 14 números.' : cnpjOk(v) ? '' : 'Esse CNPJ não é válido. Confira os números.'),
+    cnpj: (v) => (so(v).length < 14 ? 'O CNPJ tem 14 números.' : cnpjOk(v) || cnpjTeste(v) ? '' : 'Esse CNPJ não é válido. Confira os números.'),
   };
   DY.so = so;
 

@@ -13,16 +13,18 @@
   const q = new URLSearchParams(location.search);
   const ORDEM = ['energia', 'internet', 'celular'];
   const S = {
-    energia: { k: 'luz', t: 'Desconto na conta de luz', curto: 'Energia', art: 'a energia', img: '/img/3d-g/lampada.webp', cb: '10% da nova conta de luz', marco: 'depois da biometria do contrato' },
-    internet: { k: 'net', t: 'Internet fibra', curto: 'Internet', art: 'a internet', img: '/img/3d-g/modem6.webp', cb: '50% de uma mensalidade', marco: 'depois da instalação' },
-    celular: { k: 'cel', t: 'Plano de celular', curto: 'Celular', art: 'o celular', img: '/img/3d-g/celular.webp', cb: '100% de uma mensalidade por linha', marco: 'depois do chip ativado' },
+    energia: { k: 'luz', t: 'Desconto na conta de luz', curto: 'Energia', art: 'a energia', ok: 'Energia adicionada!', de: 'da energia', img: '/img/3d-g/lampada.webp', cb: '10% da nova conta de luz', marco: 'depois da biometria do contrato' },
+    internet: { k: 'net', t: 'Internet fibra', curto: 'Internet', art: 'a internet', ok: 'Internet adicionada!', de: 'da internet', img: '/img/3d-g/modem6.webp', cb: '50% de uma mensalidade', marco: 'depois da instalação' },
+    celular: { k: 'cel', t: 'Plano de celular', curto: 'Celular', art: 'o celular', ok: 'Celular adicionado!', de: 'do celular', img: '/img/3d-g/celular.webp', cb: '100% de uma mensalidade por linha', marco: 'depois do chip ativado' },
   };
   const LOGO = { 'GloboPlay': ['/img/apps/globoplay.png', 'Globoplay'], 'Paramount+': ['/img/apps/paramount-44.svg', 'Paramount+'], 'HBO Max': ['/img/apps/hbo-max.png', 'HBO Max'], 'YouTube Premium': ['/img/apps/youtube-premium-logo.svg', 'YouTube Premium'] };
+  const nb = (t) => String(t).replace(/(\d) (Mega|GB)/g, '$1\u00a0$2').replace(/R\$ /g, 'R$\u00a0'), junta = (l) => l.join(', ').replace(/, ([^,]*)$/, ' e $1');
   const nomeOp = (o) => (o.nome === 'Somente Internet' ? 'Só internet' : (LOGO[o.nome] || [0, o.nome])[1]);
 
   /* ---------- estado ---------- */
   const st = {
     id: DY.novoIdPedido(), origem: ['internet', 'celular', 'energia', 'combo', 'home'].includes(q.get('origem')) ? q.get('origem') : 'home',
+    pagina: (q.get('pagina') || (() => { try { const u = new URL(document.referrer); return u.host === location.host ? u.pathname : ''; } catch (e) { return ''; } })()).replace(/[^a-z0-9/-]/gi, '').replace(/^\/|\/$/g, '').slice(0, 60), botao: (q.get('botao') || '').replace(/[^a-z0-9-]/gi, '').slice(0, 40),
     end: { cep: '', logradouro: '', bairro: '', cidade: '', uf: '', numero: '', comp: '' }, modo: location.hash === '#buscar-cep' ? 'rua' : 'cep', achou: false,
     rua: { uf: DY.uf, cidade: '', nome: '', num: '' }, fibra: 'talvez', disp: {}, sel: [], idx: 0, editando: false, todosNet: false,
     luz: { conta: 0, tit: '' }, net: { id: '', op: 0, para: '' }, cel: { id: '', n: 1, tipo: '', porta: null }, ok: {},
@@ -35,6 +37,10 @@
     st.opcaoUrl = q.get('opcao');
     if ([...DY.planosCnpj, ...DY.celularPorta].some((p) => p.id === cel)) st.cel.id = cel;
     if (n > 0) st.cel.n = Math.min(n, DY.linhasEspecial);
+    // o que a página de origem já diz: condomínio e empresas no CNPJ, MEI e portabilidade
+    if (/^energia\/(condominio|empresas)$/.test(st.pagina)) st.luz.tit = 'cnpj';
+    if (st.pagina === 'celular/mei') { st.cel.tipo = 'mei'; st.cel.n = Math.min(st.cel.n, 3); }
+    if (st.pagina === 'celular/portabilidade' || DY.celularPorta.some((p) => p.id === st.cel.id)) st.cel.porta = true;
     const sv = (q.get('servicos') || '').split(',').filter((x) => ORDEM.includes(x));
     if (st.origem === 'combo') st.sel = sv.length ? sv : conta || plano || n ? [conta && 'energia', plano && 'internet', n && 'celular'].filter(Boolean) : ['energia', 'internet'];
     else if (ORDEM.includes(st.origem)) st.sel = [st.origem];
@@ -55,7 +61,7 @@
   /* itens do pedido: só o que já foi confirmado */
   function itens() {
     return ORDEM.filter(tem).map((s) => {
-      if (s === 'energia') { const e = E.simular(st.luz.conta), t = st.luz.tit.toUpperCase(); return { produto: s, titulo: S[s].t, sub: `No ${t} · simulação com ${e.pct}% de desconto`, antes: e.conta, mensal: e.comDesconto, cashback: e.cashback, conta_luz: e.conta, estimativa_desconto_pct: e.pct, titular: st.luz.tit, linhaZap: `Desconto na conta de luz, para uma conta de ${brl(e.conta)} (${t})` }; }
+      if (s === 'energia') { const e = E.simular(st.luz.conta), t = st.luz.tit.toUpperCase(); return { produto: s, titulo: S[s].t, sub: `No ${t} · estimativa com ${e.pct}% de desconto`, antes: e.conta, mensal: e.comDesconto, cashback: e.cashback, conta_luz: e.conta, estimativa_desconto_pct: e.pct, titular: st.luz.tit, linhaZap: `Desconto na conta de luz, para uma conta de ${brl(e.conta)} (${t})` }; }
       if (s === 'internet') { const p = pNet(), o = p.opcoes[opNet(p)], v = c(o.preco), doc = st.net.para === 'empresa' ? 'CNPJ' : 'CPF', mais = o.nome === 'Somente Internet' ? '' : ' com ' + nomeOp(o); return { produto: s, titulo: `Internet fibra de ${mil(p.num)} Mega${mais}`, sub: `No ${doc} · Wi-Fi e instalação inclusos`, mensal: v, cashback: cbk(v, 50), plano: p.id, opcao: o.nome, para: st.net.para, titular: doc.toLowerCase(), linhaZap: `Internet fibra de ${mil(p.num)} Mega${mais}, ${brl(v)} por mês no débito em conta (${doc})` }; }
       const p = pCel(), u = c(p.preco), t = u * st.cel.n, doc = st.cel.tipo === 'mei' ? 'MEI' : 'CNPJ', l = `${st.cel.n} ${st.cel.n > 1 ? 'linhas' : 'linha'}`, num = st.cel.porta ? 'com portabilidade' : 'com número novo';
       return { produto: s, titulo: `${l} de celular de ${p.gb} GB`, sub: `No ${doc} · ${num} · ${brl(u)} por linha`, mensal: t, cashback: cbk(t, 100), plano: p.id, linhas: st.cel.n, para: st.cel.tipo, portabilidade: st.cel.porta, titular: 'cnpj', linhaZap: `${l} de celular de ${p.gb} GB ${num}, ${brl(u)} cada, total de ${brl(t)} por mês (${doc})` };
@@ -69,18 +75,18 @@
   /* ---------- resumo ---------- */
   function htmlResumo({ editar = true } = {}) {
     const l = itens(); if (!l.length) return '<p class="rs__vazio">Escolha um serviço para começar.</p>';
-    const tel = l.filter((i) => i.produto !== 'energia');
-    return `<ul class="rs">${l.map((i) => `<li data-s="${S[i.produto].k}"><img src="${S[i.produto].img}" alt="" width="64" height="64"><div class="rs__tx"><b>${i.titulo}</b><small>${i.sub}</small></div>
-      <p class="rs__v">${i.antes ? `<s>${brl(i.antes)}</s>` : ''}<b>${i.produto === 'energia' ? 'cerca de ' : ''}${brl(mes(i))}</b><small>/mês</small><em>Cashback ${brl(i.cashback)}</em></p>
+    const tel = l.filter((i) => i.produto !== 'energia'), net = tel.some((i) => i.produto === 'internet');
+    return `<ul class="rs">${l.map((i) => `<li data-s="${S[i.produto].k}"><img src="${S[i.produto].img}" alt="" width="64" height="64"><div class="rs__tx"><b>${nb(i.titulo)}</b><small>${nb(i.sub)}</small></div>
+      <p class="rs__v">${i.antes ? `<s>${brl(i.antes)}</s>` : ''}<span><b>${brl(mes(i))}</b><small>/mês</small></span></p>${chipCb(i.cashback)}
       ${editar ? `<p class="rs__a"><button type="button" data-editar="${i.produto}">Alterar</button><button type="button" data-remover="${i.produto}">Remover</button></p>` : ''}</li>`).join('')}</ul>
-      <div class="rs__cb"><span>Cashback total</span><b>${brl(soma(l, (i) => i.cashback))}</b><small>Pago uma vez, via PIX na sua conta bancária, em até 7 dias depois que cada contrato é concluído. <button type="button" data-cb>Como funciona</button></small></div>
-      ${tel.length ? `<p class="rs__t"><span>${tel.length > 1 ? 'Internet e celular' : S[tel[0].produto].curto}<small>${tel.some((i) => i.produto === 'internet') ? (boleto() ? 'Internet no boleto ou PIX' : 'Internet no débito em conta') : 'Valor das linhas'}</small></span><b>${brl(soma(tel, mes))}<small>/mês</small></b></p>` : ''}
-      ${tem('energia') ? `<p class="rs__t"><span>Conta de luz<small>Estimativa, depende da sua fatura</small></span><b>${brl(l.find((i) => i.produto === 'energia').mensal)}<small>/mês</small></b></p>` : ''}`;
+      <div class="rs__tot">${tel.length ? `<p class="rs__t"><span>${tel.length > 1 ? 'Internet e celular' : S[tel[0].produto].curto}<small>${net ? (boleto() ? 'Internet no boleto ou PIX' : `Internet no débito em conta${st.pag.banco ? ` (${st.pag.banco})` : ''}`) : 'Valor das linhas'}</small></span><b>${brl(soma(tel, mes))}<small>/mês</small></b></p>` : ''}
+      ${tem('energia') ? `<p class="rs__t"><span>Conta de luz<small>Estimativa, depende da fatura</small></span><b>${brl(l.find((i) => i.produto === 'energia').mensal)}<small>/mês</small></b></p>` : ''}
+      <div class="rs__cb"><img src="/img/3d-g/cashback.webp" alt=""><p><span>Cashback total</span><b data-cbt>${brl(soma(l, (i) => i.cashback))}</b></p><small>Pago uma vez, via PIX na sua conta bancária, em até 7 dias depois que cada contrato é concluído. <button type="button" data-cb>Como funciona</button></small></div></div>`;
   }
   function atualiza() {
     const l = itens(), lado = $('[data-lado]'), semLado = ['endereco', 'consulta', 'servicos', 'resumo', 'gerando', 'fim'].includes(tela);
     lado.hidden = semLado || tela === 'produto' || !l.length; document.body.classList.toggle('com-lado', !lado.hidden);
-    if (!lado.hidden) lado.innerHTML = `<h2>Seu pedido</h2>${htmlResumo()}<p class="lado__n">Nada é cobrado agora.</p>`;
+    if (!lado.hidden) lado.innerHTML = `<div class="lado__c"><h2>Seu pedido</h2><button class="link" type="button" data-alterar>Alterar</button></div>${htmlResumo({ editar: false })}<p class="lado__n">Nada é cobrado agora.</p>`;
     const r = $('[data-abrir-resumo]'); r.hidden = semLado || !l.length; const rv = $('[data-rod-v]'), nv = 'Cashback ' + brl(soma(l, (i) => i.cashback)); if (rv.textContent !== nv) { rv.textContent = nv; if (gs && !r.hidden) gs.fromTo(r, { scale: 1.08 }, { scale: 1, duration: .5, ease: 'back.out(3)', clearProps: 'all' }); }
     $('[data-jan-resumo]').innerHTML = htmlResumo();
   }
@@ -109,9 +115,10 @@
     const t = T[tela], b = $('[data-ir]'), r = $('[data-rod]'); r.hidden = !t.bt; if (!t.bt) return;
     b.innerHTML = `${t.bt()}<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5"/></svg>`; b.disabled = t.pode ? !t.pode() : false;
   }
-  const acao = () => { const t = T[tela]; if (!t.ir) return; if (t.pode && !t.pode()) return; t.ir(); };
+  const acao = () => { const t = T[tela]; if (!t.ir || cortOn) return; if (t.pode && !t.pode()) return; t.ir(); };
   $('[data-ir]').addEventListener('click', acao);
   addEventListener('popstate', (e) => {
+    if (cortOn) cortOn();
     const s = e.state || { t: 'endereco' };
     if (tela === 'fim' || tela === 'gerando') { history.pushState({ t: 'fim' }, ''); return; }
     if (s.t === 'produto' && !st.sel[s.i]) s.t = 'servicos';
@@ -155,8 +162,16 @@
   }
   const sn = () => /^s/i.test(st.end.numero);
   const endOk = () => st.achou && st.end.logradouro.trim().length >= 3 && !!st.end.numero.trim();
+  // o que a pessoa já escolheu na página de onde veio
+  function vindo() {
+    const o = st.opcaoUrl, l = [];
+    if (st.sel.includes('energia') && st.luz.conta) l.push(['energia', `Conta de luz de ${brl(c(st.luz.conta))}`]);
+    if (st.sel.includes('internet') && q.get('plano') && st.origem !== 'celular') l.push(['internet', `Internet fibra de ${mil(pNet().num)} Mega${o && o !== 'Somente Internet' ? ' com ' + nomeOp({ nome: o }) : ''}`]);
+    if (st.sel.includes('celular') && st.cel.id) l.push(['celular', `${st.cel.n} ${st.cel.n > 1 ? 'linhas' : 'linha'} de ${pCel().gb} GB`]);
+    return l.length ? `<div class="vindo"><p>Você escolheu</p><ul>${l.map(([s, t]) => `<li data-s="${S[s].k}"><img src="${S[s].img}" alt=""><b>${nb(t)}</b></li>`).join('')}</ul></div>` : '';
+  }
   T.endereco = {
-    html: () => `<div class="end"><div class="end__a"><div class="end__m" aria-hidden="true">${MAPA}<i class="cons__on"></i><i class="cons__on"></i><img src="/img/3d-g/pino.webp" alt=""></div><header><h1>Qual é o seu endereço?</h1><p>Com ele, mostramos o que chega na sua rua e os preços do seu estado.</p></header></div>
+    html: () => `<div class="end"><div class="end__a"><div class="end__m" aria-hidden="true">${MAPA}<i class="cons__on"></i><i class="cons__on"></i><img src="/img/3d-g/pino.webp" alt=""></div><header><h1>Qual é o seu endereço?</h1><p>Com ele, mostramos o que chega na sua rua e os preços do seu estado.</p>${vindo()}</header></div>
       <div class="end__f"><form class="cx-f" data-form novalidate>
         <div data-modo="cep"${st.modo === 'cep' ? '' : ' hidden'}>${campo('cep', 'CEP', 'inputmode="numeric" autocomplete="postal-code" maxlength="9"', mascara.cep(st.end.cep))}</div>
         <div class="dupla" data-modo="rua"${st.modo === 'rua' ? '' : ' hidden'}>
@@ -290,24 +305,42 @@
       return `${cab('O que você quer contratar?', 'Escolha um, dois ou os três. O Cashback de cada um se soma.', { img: '/img/3d-g/casa.webp', extra: `<p class="ondes"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 18s6-5.2 6-10a6 6 0 1 0-12 0c0 4.800 6 10 6 10z"/><circle cx="10" cy="8" r="2.200"/></svg>${esc(st.end.logradouro)}, ${esc(st.end.numero)} · ${esc(st.end.cidade)}/${esc(st.end.uf)}</p>` })}
       <div class="svs">${ORDEM.map((s) => (st.disp[s] === 'nao'
         ? `<div class="sv is-nao" data-s="${S[s].k}"><img src="${S[s].img}" alt=""><div class="sv__x"><h2>${S[s].t}</h2><p>${s === 'internet' ? 'Ainda não temos fibra no seu endereço. Tem CNPJ? Conheça a <a href="/internet/wttx" target="_blank" rel="noopener">internet sem fio</a>.' : 'Ainda não atende a sua região.'}</p></div></div>`
-        : `<button type="button" class="sv" role="checkbox" aria-checked="${st.sel.includes(s)}" data-sv="${s}" data-s="${S[s].k}"><span class="sv__d">Disponível</span><img src="${S[s].img}" alt=""><span class="sv__x"><span class="sv__h">${S[s].t}</span><span class="sv__p">${I[s][0]}</span><span class="sv__i">${I[s][1]}</span><span class="sv__cb"><img src="/img/3d/cashback-p.webp" alt="">Cashback de ${S[s].cb}</span></span><span class="sv__b"><i aria-hidden="true"></i><em class="nao">Quero</em><em class="sim">No pedido</em></span></button>`)).join('')}</div>
+        : `<button type="button" class="sv" role="checkbox" aria-checked="${st.sel.includes(s)}" data-sv="${s}" data-s="${S[s].k}"><span class="sv__d">Disponível</span><img src="${S[s].img}" alt=""><span class="sv__x"><span class="sv__h">${S[s].t}</span><span class="sv__p">${I[s][0]}</span><span class="sv__i">${I[s][1]}</span><span class="sv__cb"><img src="/img/3d/cashback-p.webp" alt="">Cashback de ${S[s].cb}</span></span><span class="sv__b"><i aria-hidden="true"></i><em class="nao">Quero</em><em class="sim">Escolhido</em></span></button>`)).join('')}</div>
       ${st.disp.internet === 'talvez' ? '<p class="nota nota--c">A fibra no seu número é confirmada no WhatsApp, antes de qualquer contrato.</p>' : ''}`;
     },
     bt: () => (st.sel.length ? (st.sel.length > 1 ? `Continuar com ${st.sel.length} serviços` : 'Continuar') : 'Escolha um serviço'), pode: () => !!st.sel.length,
-    ir() { ORDEM.forEach((s) => { if (!st.sel.includes(s)) delete st.ok[s]; }); st.idx = 0; st.editando = false; cortina(st.sel[0]); mostra('produto'); },
+    ir() { ORDEM.forEach((s) => { if (!st.sel.includes(s)) delete st.ok[s]; }); st.idx = 0; st.editando = false; cortina(st.sel[0], '', () => mostra('produto')); },
     liga(el) {
       if (gs) gs.from($$('.sv', el), { scale: .82, y: 40, duration: .6, stagger: .13, delay: .15, ease: 'back.out(1.5)', clearProps: 'transform' });
       el.querySelector('.svs').addEventListener('click', (e) => { const b = e.target.closest('[data-sv]'); if (!b) return; const s = b.dataset.sv, on = !st.sel.includes(s); st.sel = ORDEM.filter((x) => (x === s ? on : st.sel.includes(x))); b.setAttribute('aria-checked', on); if (gs && on) { gs.fromTo($('img', b), { scale: .8, rotate: -8 }, { scale: 1, rotate: 0, duration: .6, ease: 'back.out(2.6)', clearProps: 'all' }); gs.fromTo($('.sv__b i', b), { scale: 0 }, { scale: 1, duration: .4, ease: 'back.out(3)', clearProps: 'all' }); } botao(); progresso(); });
     },
   };
-  // passagem rápida entre os serviços: o que entrou no pedido e o que vem agora
-  function cortina(prox, feito) {
-    if (!gs) return; const x = $('[data-cort]'), a = prox && S[prox]; x.dataset.s = a ? a.k : 'marca'; x.hidden = false;
-    x.innerHTML = `<div>${feito ? `<p class="cort__f">${CHECK}${feito}</p>` : ''}<img src="${a ? a.img : '/img/3d-g/cashback.webp'}" alt=""><b>${a ? (feito ? 'Agora, ' + a.art : a.t) : 'Seu pedido está montado'}</b></div>`;
-    gs.killTweensOf([x, x.firstChild, x.querySelectorAll('img,b,.cort__f')]);
-    gs.timeline({ onComplete: () => (x.hidden = true) }).set(x, { clipPath: 'circle(0% at 50% 100%)', yPercent: 0 }).to(x, { clipPath: 'circle(150% at 50% 100%)', duration: .4, ease: 'power2.in' }, 0)
-      .from(x.querySelector('.cort__f') || x, x.querySelector('.cort__f') ? { y: 24, autoAlpha: 0, duration: .3 } : { duration: .01 }, .25).from(x.querySelector('img'), { scale: .4, rotate: -16, autoAlpha: 0, duration: .5, ease: 'back.out(1.8)' }, .3).from(x.querySelector('b'), { y: 24, autoAlpha: 0, duration: .3 }, .4)
-      .to(x, { yPercent: -100, duration: .45, ease: 'power3.inOut' }, feito ? 1.25 : .95);
+  /* passagem entre serviços, um momento por vez: primeiro o que entrou no pedido, depois o que vem agora.
+     Um toque na tela adianta. A próxima tela só é desenhada quando a passagem termina. */
+  let cortOn = null;
+  function cortina(prox, feito, troca) {
+    if (cortOn) return; const x = $('[data-cort]'), m = $('main'), a = prox && S[prox], f = feito && S[feito], it = feito && itens().find((i) => i.produto === feito);
+    const obj = (img, ok) => `<div class="cort__o"><img src="${img}" alt="">${ok ? CHECK : ''}</div>`, l = [];
+    if (f) l.push([f.k, `${obj(f.img, true)}<b>${f.ok}</b>${chipCb(it.cashback)}${st.sel.length > 1 ? `<ul class="cort__p" aria-hidden="true">${st.sel.map((s) => `<li class="${st.ok[s] ? 'is-ok' : ''}" data-s="${S[s].k}"><img src="${S[s].img}" alt=""></li>`).join('')}</ul>` : ''}`]);
+    l.push(a ? [a.k, `${obj(a.img)}<b>${f ? 'Agora, ' + a.art : st.sel.length > 1 ? 'Primeiro, ' + a.art : a.t}</b>`] : ['marca', `${obj('/img/3d-g/cashback.webp')}<b>Seu pedido está montado!</b>`]);
+    x.innerHTML = l.map(([k, h]) => `<div class="cort__q" data-s="${k}"><div>${h}</div></div>`).join(''); x.hidden = false; m.inert = true;
+    const qs = $$('.cort__q', x), DUR = f ? [1.9, 1.5] : [1.2]; let tl, tm, trocou = false;
+    const some = () => { if (tl) tl.kill(); clearTimeout(tm); x.hidden = true; x.innerHTML = ''; m.inert = false; cortOn = x.onclick = null; };
+    const passa = () => { if (!trocou) { trocou = true; m.inert = false; troca(); m.inert = true; } };
+    const acaba = () => { passa(); some(); const h = $('h1', m); if (h) h.focus({ preventScroll: true }); };
+    cortOn = some;
+    if (!gs) { let k = 0; const vez = () => { if (k >= qs.length) return acaba(); qs.forEach((e, j) => (e.hidden = j !== k)); tm = setTimeout(vez, DUR[k++] * 1000); }; x.onclick = () => { clearTimeout(tm); vez(); }; return vez(); }
+    gs.set(x, { clearProps: 'all' }); tl = gs.timeline({ onComplete: acaba }); let t = 0; const troco = [];
+    qs.forEach((e, k) => {
+      const im = $('.cort__o img', e), ck = $('.ck', e), tx = $$('b, .cbk, .cort__p', $('div', e)).filter((z) => z.parentElement === e.firstChild);
+      tl.fromTo(e, { clipPath: 'circle(0% at 50% 100%)' }, { clipPath: 'circle(150% at 50% 100%)', duration: .45, ease: 'power2.in' }, t);
+      tl.from(im, { scale: .4, rotate: -14, y: 40, autoAlpha: 0, duration: .55, ease: 'back.out(1.8)' }, t + .25);
+      if (ck) { tl.from(ck, { scale: 0, duration: .45, ease: 'back.out(2.4)' }, t + .65); tl.to($('path', ck), { strokeDashoffset: 0, duration: .4, ease: 'power2.out' }, t + .8); }
+      tl.from(tx, { y: 24, autoAlpha: 0, duration: .35, stagger: .1 }, t + (ck ? .6 : .4));
+      t += DUR[k]; troco.push(t);
+    });
+    tl.call(passa, null, t - .1).to(x, { yPercent: -100, duration: .5, ease: 'power3.inOut' }, t);
+    x.onclick = () => { const p = troco.find((v) => v > tl.time() + .05); if (p) tl.time(Math.min(p, t - .12), false); };
   }
 
   /* ========== 4. PRODUTO ========== */
@@ -343,7 +376,7 @@
     },
     celular() {
       if (!st.cel.id) return ''; const p = pCel(), n = st.cel.n, v = c(p.preco) * n, apps = (p.apps || []).filter((k) => APPC[k]);
-      return `<div class="pn" data-s="cel"><div class="pn__a"><h2>Seu plano de ${p.gb} GB</h2><div class="qtd"><p><b>Quantas linhas?</b><small>${st.cel.tipo === 'mei' ? 'No MEI, até 3 linhas' : `${brl(c(p.preco))} cada linha`}</small></p><div class="qtd__c"><button type="button" data-l="-1" aria-label="Tirar uma linha"${n <= 1 ? ' disabled' : ''}>−</button><output aria-live="polite">${n}</output><button type="button" data-l="1" aria-label="Adicionar uma linha"${n >= maxLinhas() ? ' disabled' : ''}>+</button></div></div>
+      return `<div class="pn" data-s="cel"><div class="pn__a"><h2>Seu plano de ${p.gb} GB</h2><div class="qtd"><p><b>Quantas linhas?</b><small>${st.cel.tipo === 'mei' ? 'No MEI, até 3 linhas' : `${nb(brl(c(p.preco)))} cada`}</small></p><div class="qtd__c"><button type="button" data-l="-1" aria-label="Tirar uma linha"${n <= 1 ? ' disabled' : ''}>−</button><output aria-live="polite">${n}</output><button type="button" data-l="1" aria-label="Adicionar uma linha"${n >= maxLinhas() ? ' disabled' : ''}>+</button></div></div>
         ${apps.length ? `<p class="pn__q">Usar estes aplicativos não gasta a sua internet</p><ul class="pn__ap">${apps.map((k) => `<li><img src="/img/apps/${k}.svg" alt="">${k === 'whatsapp-business' ? 'Business' : APPC[k]}</li>`).join('')}</ul>` : ''}
         ${st.cel.tipo === 'mei' ? '' : `<p class="nota">Mais de ${DY.linhasEspecial} linhas? <a class="link" target="_blank" rel="noopener" href="${esc(DY.linkWhatsApp(`Olá! Quero mais de ${DY.linhasEspecial} linhas de celular para a minha empresa.`))}">Peça a condição especial</a></p>`}</div>${tot(v, '/mês', cbk(v, 100), n > 1 ? `${n} linhas de ${brl(c(p.preco))}` : 'Valor de 1 linha')}</div>`;
     },
@@ -372,8 +405,8 @@
       const l = planosCel(), of = oferta(l), sel = st.cel.id ? pCel() : null, tud = [...l, ...(st.cel.porta ? DY.celularPorta : [])].sort((a, b) => c(a.preco) - c(b.preco)), ord = [of, ...tud.filter((p) => p.id !== of.id)];
       const um = (p, i) => { const on = !!sel && p.id === sel.id, v = c(p.preco), apps = (p.apps || []).filter((k) => APPC[k]); return card({ id: p.id, s: 'cel', of: p.id === of.id, selo: p.soPorta ? 'Para quem traz o número' : p.selo, num: p.gb, uni: 'GB', sub: `${p.plano} GB do plano + ${p.bonus} GB de bônus`, meio: lista(['Ligações ilimitadas']) + (apps.length ? `<span class="pc__lg"><small>Sem gastar a internet</small><span>${apps.map((k) => `<img src="/img/apps/${k}.svg" alt="">`).join('')}</span></span>` : ''), de: p.id === of.id && p.de ? c(p.de) : 0, v, per: '/linha', cbv: v, on, foco: sel ? on : !i, obj: '/img/3d-g/celular.webp' }); };
       return `${passos()}${cab('Escolha o plano de celular', 'Ligações ilimitadas para todo o Brasil.', { s: 'cel', img: S.celular.img })}
-      <section class="bl"><h2>As linhas ficam em qual CNPJ?</h2>${opcoes('cel.tipo', 'Tipo de CNPJ', [['cnpj', 'Empresa', 'LTDA, ME, EPP e outras', '/img/3d-g/predio.webp'], ['mei', 'MEI', 'Até 3 linhas', '/img/3d-g/casa.webp']], st.cel.tipo, 'ops--2')}${st.cel.tipo ? '' : '<p class="nota">O plano de celular é só para empresas e MEI.</p>'}</section>
-      <section class="bl" data-b2${st.cel.tipo ? '' : ' hidden'}><h2>Vai trazer o seu número?</h2>${opcoes('cel.porta', 'Número', [['1', 'Quero trazer', 'Grátis, do número que já está no CNPJ'], ['0', 'Número novo', 'Enviamos o chip para você']], st.cel.porta === null ? '' : st.cel.porta ? '1' : '0', 'ops--2')}</section>
+      <section class="bl"><h2>Qual é o tipo do seu CNPJ?</h2>${opcoes('cel.tipo', 'Tipo de CNPJ', [['cnpj', 'Empresa', 'LTDA, ME, EPP e outras', '/img/3d-g/predio.webp'], ['mei', 'MEI', 'Até 3 linhas', '/img/3d-g/casa.webp']], st.cel.tipo, 'ops--2')}${st.cel.tipo ? '' : '<p class="nota">O plano de celular é só para empresas e MEI.</p>'}</section>
+      <section class="bl" data-b2${st.cel.tipo ? '' : ' hidden'}><h2>Vai trazer o seu número?</h2>${opcoes('cel.porta', 'Número', [['1', 'Sim, quero trazer', 'Grátis, se ele já está no mesmo CNPJ'], ['0', 'Não, número novo', 'Enviamos o chip para todo o Brasil']], st.cel.porta === null ? '' : st.cel.porta ? '1' : '0', 'ops--2')}</section>
       <section class="bl" data-b3${st.cel.tipo && st.cel.porta !== null ? '' : ' hidden'}><h2>Toque no plano que você quer</h2>${trilho('Planos de celular', ord.map(um).join(''))}<div data-painel aria-live="polite">${painel.celular()}</div></section>
       ${duvida('Dúvidas sobre o celular?', st.cel.tipo === 'mei' ? '/celular/mei' : '/celular', 'Veja como os planos funcionam.')}`;
     },
@@ -382,7 +415,7 @@
   T.produto = {
     html: () => P[sAtual()]() + `<button class="link link--c pular-s" type="button" data-pular>${st.ok[sAtual()] ? 'Tirar ' + S[sAtual()].art + ' do pedido' : 'Continuar sem ' + S[sAtual()].art}</button>`,
     bt: () => (pronto[sAtual()]() ? (st.editando ? 'Salvar' : 'Adicionar e continuar') : falta()), pode: () => pronto[sAtual()](),
-    ir() { const s = sAtual(); st.ok[s] = true; if (!st.editando) cortina(st.sel[st.idx + 1], `${S[s].curto} no pedido`); segue(); },
+    ir() { const s = sAtual(); st.ok[s] = true; if (st.editando) return segue(); cortina(st.sel[st.idx + 1], s, segue); },
     liga(el) {
       const s = sAtual(), refaz = (foco) => { const y = scrollY; el.innerHTML = T.produto.html(); T.produto.liga(el); scrollTo({ top: y, behavior: 'instant' }); botao(); atualiza(); const f = foco && $(foco, el); if (f) f.focus({ preventScroll: true }); };
       const surge = (x) => { if (!x) return; if (gs) { gs.from(x, { y: 30, autoAlpha: 0, duration: .5, ease: 'power3.out', clearProps: 'all' }); const pcs = $$('.pc', x); if (pcs.length) gs.from(pcs, { y: 60, scale: .9, autoAlpha: 0, duration: .55, stagger: .09, ease: 'back.out(1.3)', clearProps: 'all' }); } rola(x, 'start'); };
@@ -445,13 +478,15 @@
   const MIN = new Set(['de', 'da', 'do', 'das', 'dos', 'e']);
   const nomeProprio = (v) => { let k = 0; return v.replace(/^\s+/, '').replace(/\s{2,}/g, ' ').replace(/[^\s]+/g, (w) => { const l = w.toLocaleLowerCase('pt-BR'); return k++ && MIN.has(l) ? l : l.charAt(0).toLocaleUpperCase('pt-BR') + l.slice(1); }); };
   T.contato = {
-    html: () => `${cab('Como podemos te chamar?', 'É pelo WhatsApp que a gente finaliza o pedido com você.', { img: '/img/3d-g/conversa.webp' })}<form class="cx-f" data-form novalidate>${campo('nome', 'Nome completo', 'autocomplete="name" autocapitalize="words" maxlength="80"', st.nome)}${campo('tel', 'Celular com WhatsApp', 'type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="15"', mascara.telefone(st.tel))}<button hidden></button></form><p class="nota">Usamos o seu contato só para falar deste pedido.</p>`,
+    html: () => `${cab('Qual é o seu nome e WhatsApp?', 'É pelo WhatsApp que a gente finaliza o pedido com você.', { img: '/img/3d-g/conversa.webp' })}<form class="cx-f" data-form novalidate>${campo('nome', 'Nome completo', 'autocomplete="name" autocapitalize="words" maxlength="80"', st.nome)}${campo('tel', 'Celular com WhatsApp', 'type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="15"', mascara.telefone(st.tel))}<button hidden></button></form><p class="nota">Usamos o seu contato só para falar deste pedido.</p>`,
     bt: () => 'Continuar', pode: () => !validar.nome(st.nome) && !validar.telefone(st.tel),
     ir() { st.nome = st.nome.trim(); mostra('dados'); },
     liga(el) { liga('nome', { masc: nomeProprio, val: validar.nome, guarda: (v) => (st.nome = v) }); liga('tel', { masc: mascara.telefone, val: validar.telefone, guarda: (v) => (st.tel = v) }); $('[data-form]', el).addEventListener('submit', (e) => { e.preventDefault(); acao(); }); },
   };
+  // em qual documento fica cada contrato
+  const noDoc = (d) => itens().filter((i) => i.titular === d).map((i) => S[i.produto].de);
   T.dados = {
-    html: () => `${cab('Dados para o contrato', 'Assim você não precisa repetir tudo no WhatsApp.', { img: '/img/3d-g/escudo.webp' })}<form class="cx-f" data-form novalidate>${campo('email', 'E-mail', 'type="email" inputmode="email" autocomplete="email" autocapitalize="none" maxlength="120"', st.email)}${campo('cpf', precisaCnpj() ? 'CPF do responsável' : 'CPF do titular', 'inputmode="numeric" autocomplete="off" maxlength="14"', mascara.cpf(st.cpf))}${precisaCnpj() ? campo('cnpj', 'CNPJ', 'inputmode="numeric" autocomplete="off" maxlength="18"', mascara.cnpj(st.cnpj), 'É o CNPJ que vai no contrato.') : ''}
+    html: () => `${cab('Dados para o contrato', 'Assim você não precisa repetir tudo no WhatsApp.', { img: '/img/3d-g/escudo.webp' })}<form class="cx-f" data-form novalidate>${campo('email', 'E-mail', 'type="email" inputmode="email" autocomplete="email" autocapitalize="none" maxlength="120"', st.email)}${campo('cpf', noDoc('cpf').length ? 'CPF do titular' : 'CPF do responsável', 'inputmode="numeric" autocomplete="off" maxlength="14"', mascara.cpf(st.cpf), noDoc('cpf').length ? `Para o contrato ${junta(noDoc('cpf'))}.` : 'De quem responde pela empresa.')}${precisaCnpj() ? campo('cnpj', 'CNPJ', 'inputmode="numeric" autocomplete="off" maxlength="18"', mascara.cnpj(st.cnpj), `Para o contrato ${junta(noDoc('cnpj'))}.`) : ''}
       <label class="aceite"><input type="checkbox" data-aceite${st.aceite ? ' checked' : ''}><i aria-hidden="true"></i><span>Autorizo o uso dos meus dados para este pedido. <a class="link" href="/privacidade" target="_blank" rel="noopener">Política de privacidade</a></span></label><button hidden></button></form><p class="nota">O CPF, o CNPJ e o e-mail não ficam salvos neste aparelho.</p>`,
     bt: () => (tem('internet') ? 'Continuar' : 'Gerar meu pedido'), pode: () => !validar.email(st.email) && !validar.cpf(st.cpf) && (!precisaCnpj() || !validar.cnpj(st.cnpj)) && st.aceite,
     ir: () => (tem('internet') ? mostra('pagamento') : gera()),
@@ -462,10 +497,10 @@
   T.pagamento = {
     html() {
       const i = itens().find((x) => x.produto === 'internet'), mais = DY.boletoPix * 100, n = st.nome.split(/\s+/)[0];
-      return `${cab(`${esc(n)}, como prefere pagar a internet?`, 'Nada é cobrado agora. A primeira fatura vem cerca de 30 dias depois da instalação.', { img: '/img/3d-g/calendario.webp' })}
+      return `${cab(`${esc(n)}, como prefere pagar a internet?`, 'Nada é cobrado agora.', { img: '/img/3d-g/calendario.webp' })}
       <section class="bl">${`<div class="ops ops--p" role="radiogroup" aria-label="Forma de pagamento" data-pag>${[['debito', 'Débito em conta', 'Sai da sua conta no vencimento', i.mensal, 'Melhor preço'], ['boleto', 'Boleto ou PIX', `${brl(mais)} a mais por mês`, i.mensal + mais, '']].map(([k, t, s, v, tag]) => `<button type="button" role="radio" aria-checked="${st.pag.tipo === k}" tabindex="${st.pag.tipo === k ? 0 : -1}" data-v="${k}"><span><b>${t}</b><small>${s}</small>${tag ? `<em>${tag}</em>` : ''}</span><strong>${brl(v)}<small>/mês</small></strong></button>`).join('')}</div>`}</section>
       <section class="bl" data-bancos${st.pag.tipo === 'debito' ? '' : ' hidden'}><h2>Qual é o seu banco?</h2><div class="bancos" role="radiogroup" aria-label="Banco">${DY.bancosDebito.map(([, b], k) => `<button type="button" role="radio" aria-checked="${st.pag.banco === b}" tabindex="${st.pag.banco === b || (!st.pag.banco && !k) ? 0 : -1}" data-banco="${b}">${b}</button>`).join('')}</div><p class="nota">Seu banco não está na lista? Escolha boleto ou PIX. A conta e a agência são combinadas no WhatsApp.</p></section>
-      <p class="nota">O Cashback é o mesmo nas duas formas: sempre calculado no valor do débito em conta.</p>`;
+      <p class="nota">A primeira fatura vem cerca de 30 dias depois da instalação. O Cashback é o mesmo nas duas formas.</p>`;
     },
     bt: () => (T.pagamento.pode() ? 'Gerar meu pedido' : 'Escolha o seu banco'), pode: () => st.pag.tipo === 'boleto' || !!st.pag.banco, ir: () => gera(),
     liga(el) {
@@ -481,7 +516,7 @@
   function montaPedido() {
     const l = itens(), utm = {}; ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'gclid', 'fbclid'].forEach((k) => q.get(k) && (utm[k] = q.get(k)));
     const { travado, ...end } = st.end;
-    return { id: st.id, etapa: 'pedido_criado', origem: st.origem, atualizado_em: new Date().toISOString(), endereco: end, fibra_viabilidade: st.fibra, itens: l.map(({ linhaZap, antes, ...r }) => r), cashback_total_centavos: soma(l, (i) => i.cashback), nome: st.nome, telefone: so(st.tel), email: st.email, cpf: st.cpf, cnpj: precisaCnpj() ? st.cnpj : '', consentimento: st.aceite, pagamento: tem('internet') ? { tipo: st.pag.tipo, banco: st.pag.tipo === 'debito' ? st.pag.banco : '', mensal_centavos: mes(l.find((i) => i.produto === 'internet')) } : null, utm };
+    return { id: st.id, etapa: 'pedido_criado', origem: st.origem, pagina: st.pagina, botao: st.botao, atualizado_em: new Date().toISOString(), endereco: end, fibra_viabilidade: st.fibra, itens: l.map(({ linhaZap, antes, ...r }) => r), cashback_total_centavos: soma(l, (i) => i.cashback), nome: st.nome, telefone: so(st.tel), email: st.email, cpf: st.cpf, cnpj: precisaCnpj() ? st.cnpj : '', consentimento: st.aceite, pagamento: tem('internet') ? { tipo: st.pag.tipo, banco: st.pag.tipo === 'debito' ? st.pag.banco : '', mensal_centavos: mes(l.find((i) => i.produto === 'internet')) } : null, utm };
   }
   // carregando → confirmação
   T.gerando = {
@@ -499,15 +534,6 @@
   };
   function gera() { if (tela !== 'gerando' && tela !== 'fim') mostra('gerando', { empurra: false }); }
   const formaPg = () => (st.pag.tipo === 'boleto' ? 'Boleto ou PIX' : `Débito em conta (${st.pag.banco})`);
-  // resumo do pedido concluído, separado por serviço
-  function blocosFim() {
-    const l = itens(), luz = l.find((i) => i.produto === 'energia'), tel = l.filter((i) => i.produto !== 'energia');
-    const it = (i, v) => `<li data-s="${S[i.produto].k}"><img src="${S[i.produto].img}" alt=""><div><b>${i.titulo}</b><small>${i.sub}</small><span class="cbk"><img src="/img/3d/cashback-p.webp" alt="">Cashback de <b>${brl(i.cashback)}</b></span></div><p>${v}</p></li>`;
-    return `${luz ? `<h3>Conta de luz com desconto de ${luz.estimativa_desconto_pct}%</h3><ul class="fb">${it(luz, `<s>${brl(luz.antes)}</s><b>${brl(luz.mensal)}</b><small>/mês, estimativa</small>`)}</ul>` : ''}
-      ${tel.length ? `<h3>${tel.length > 1 ? 'Internet e celular' : S[tel[0].produto].t}</h3><ul class="fb">${tel.map((i) => it(i, `<b>${brl(mes(i))}</b><small>/mês</small>`)).join('')}</ul>` : ''}
-      <h3>Cashback e valores por mês</h3><dl class="fv">${tel.map((i) => `<div><dt>${S[i.produto].t}</dt><dd>${brl(mes(i))}</dd></div>`).join('')}${luz ? `<div><dt>Conta de luz, cerca de</dt><dd>${brl(luz.mensal)}</dd></div>` : ''}${tem('internet') ? `<div><dt>Pagamento da internet</dt><dd class="fv__p">${formaPg()}</dd></div>` : ''}</dl>
-      <div class="rs__cb"><span>Cashback total</span><b data-cbt data-v="0">${brl(soma(l, (i) => i.cashback))}</b><small>Pago uma vez, via PIX na sua conta bancária. <button type="button" data-cb>Como funciona</button></small></div>`;
-  }
   T.fim = {
     html() {
       const l = itens(), msg = DY.mensagemPedido({ id: st.id, itens: l }).replace('Meu pedido é', (tem('internet') ? `Pagamento da internet: ${formaPg()}\n` : '') + 'Meu pedido é');
@@ -517,10 +543,10 @@
         ...(tem('internet') ? [['Agende a instalação', 'Enviamos as datas disponíveis para você escolher.', 'calendario']] : []),
         ...(tem('internet') || tem('energia') ? [['Confirme pelo link', `${so1 ? 'Você revisa e confirma' : 'Na internet e na energia, você revisa e confirma'} o contrato com biometria.`.replace('Na internet e na energia', tem('internet') && tem('energia') ? 'Na internet e na energia' : tem('internet') ? 'Na internet' : 'Na energia'), 'escudo']] : []),
         ...(tem('celular') ? [['Receba e ative o chip', 'Enviamos o chip para todo o Brasil.', 'celular']] : []),
-        ['Receba o seu Cashback', `Via PIX na sua conta bancária, em até 7 dias: ${l.map((i) => ({ energia: 'energia depois da biometria', internet: 'internet depois da instalação', celular: 'celular depois do chip ativado' }[i.produto])).join(', ')}.`, 'cashback']];
+        ['Receba o seu Cashback', `Via PIX na sua conta bancária, em até 7 dias ${l.length > 1 ? 'depois de cada etapa:' : S[l[0].produto].marco + '.'}</span>${l.length > 1 ? `<ul class="fim__m">${l.map((i) => `<li data-s="${S[i.produto].k}"><b>${S[i.produto].curto}</b>${{ energia: 'biometria do contrato', internet: 'instalação', celular: 'chip ativado' }[i.produto]}</li>`).join('')}</ul>` : ''}<span>`, 'cashback']];
       return `<div class="fim"><div class="fim__ck">${CHECK}</div><p class="fim__n">Pedido <b>${st.id}</b></p><h1>Pedido pronto! Falta enviar.</h1><p>Toque no botão e envie a mensagem. Um atendente continua com você.</p>${bt}
         <p class="fim__c"><button class="link" type="button" data-copia>Copiar a mensagem</button><span>Não abriu? Mande para ${DY.config.whatsappExibicao}</span></p></div>
-        <div class="fim__g"><section class="cx-r fim__r"><h2>Resumo do pedido</h2>${blocosFim()}</section>
+        <div class="fim__g"><section class="cx-r fim__r"><h2>Resumo do pedido</h2>${htmlResumo({ editar: false })}</section>
         <section class="fim__s"><h2>Pedido feito. E agora?</h2><ol class="fim__p">${passo.map(([t, s, im], i) => `<li><i aria-hidden="true">${i + 1}</i><div><b>${t}</b><span>${s}</span>${i ? '' : bt}</div><img src="/img/3d-g/${im}.webp" alt=""></li>`).join('')}</ol></section></div><p class="fim__h"><a class="link" href="/">Voltar para o início</a></p>`;
     },
     liga(el) {
@@ -540,6 +566,7 @@
     else if (ed) edita(ed.dataset.editar);
     else if (rm) { tirar = rm.dataset.remover; $('[data-jan-txt]').textContent = itens().find((i) => i.produto === tirar).titulo; jan('remover').showModal(); }
     else if (t.closest('[data-sim]') && t.closest('[data-jan]')) { delete st.ok[tirar]; st.sel = st.sel.filter((s) => s !== tirar); $$('dialog[open]').forEach((d) => d.close()); if (!itens().length) { st.idx = 0; st.editando = false; mostra('servicos'); } else if (tela === 'produto') { if (!st.sel.length || !st.sel[st.idx]) mostra('resumo'); else { st.idx = Math.min(st.idx, st.sel.length - 1); mostra('produto', { empurra: false }); } } else if (tela === 'resumo') mostra('resumo', { empurra: false }); else { if (tela === 'pagamento' && !tem('internet')) mostra('dados'); else mostra(tela, { empurra: false }); } }
+    else if (t.closest('[data-alterar]')) mostra('resumo', { volta: true });
     else if (t.closest('[data-cb]')) jan('cashback').showModal();
     else if (t.closest('[data-abrir-resumo]')) jan('resumo').showModal();
     else if (t.closest('[data-fechar]') || t.tagName === 'DIALOG') t.closest('dialog').close();
