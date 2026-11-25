@@ -14,7 +14,6 @@
     $$('[data-gm-plano]').forEach((el) => {
       const p = lista.find((x) => x.id === el.dataset.gmPlano); el.hidden = !p; if (!p) return;
       const o = p.opcoes[0], c = DY.centavos(o.preco);
-      const mil = lista.find((x) => x.id === '1000'); if (+p.id < 800 && mil && mil.opcoes[0].preco <= o.preco) { el.hidden = true; return; } // não vale indicar um plano menor pelo mesmo preço
       $$('[data-gm-v]', el).forEach((x) => (x.textContent = DY.brl(c)));
       $$('[data-gm-cb]', el).forEach((x) => (x.textContent = DY.brl(DY.cashbackCentavos(c, 50))));
       $$('[data-gm-de]', el).forEach((x) => (x.textContent = o.de ? 'de ' + DY.brl(DY.centavos(o.de)) : ''));
@@ -26,11 +25,13 @@
   /* 2. tempo para baixar */
   const bx = $('[data-gm-bx]');
   if (bx) {
-    const ls = $$('li', bx), roda = (g) => {
-      const s = ls.map((l) => (g * 8000) / l.dataset.d), m = Math.max(...s);
-      ls.forEach((l, i) => { const t = Math.round(s[i]); l.style.setProperty('--w', (s[i] / m) * 100 + '%'); $('b', l).textContent = Math.floor(t / 60) + ' min' + (t % 60 ? ' ' + (t % 60) + ' s' : ''); });
+    const ls = $$('li', bx), dur = (x) => { const t = Math.round(x), h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, g = t % 60; return h ? h + ' h' + (m ? ' ' + m + ' min' : '') : m ? m + ' min' + (g ? ' ' + g + ' s' : '') : g + ' s'; };
+    const roda = (b) => {
+      const t = (d) => (b.dataset.g * 8000) / d, max = t(100);
+      ls.forEach((l) => { l.style.setProperty('--w', (t(+l.dataset.d) / max) * 100 + '%'); $('b', l).textContent = dur(t(+l.dataset.d)); });
+      $('[data-gm-n]', bx).textContent = b.dataset.n; $('[data-gm-tempo]', bx).textContent = dur(t(1000));
     };
-    radios($$('[data-g]', bx), (b) => roda(+b.dataset.g)); roda(+$('[aria-checked=true]', bx).dataset.g);
+    radios($$('[data-g]', bx), roda); roda($('[aria-checked=true]', bx));
   }
 
   /* 3. a bolinha que pula: o comando só vale depois do atraso escolhido */
